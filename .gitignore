@@ -1,3 +1,8 @@
+# User defined files
+.idea
+.target
+*.iml
+
 # Compiled class file
 *.class
 
