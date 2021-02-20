@@ -1,1 +1,2 @@
-# stsynin-trains-and-passengers
+# trains-and-passengers
+Web приложение для работы по учёту рейсов и пассажиров в базе данных.
