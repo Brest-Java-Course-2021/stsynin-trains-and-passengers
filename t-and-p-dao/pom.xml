@@ -15,6 +15,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>by.epam.brest</groupId>
+            <artifactId>t-and-p-model</artifactId>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
