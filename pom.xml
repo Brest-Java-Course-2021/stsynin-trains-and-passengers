@@ -11,6 +11,7 @@
 
     <modules>
         <module>t-and-p-model</module>
+        <module>t-and-p-dao</module>
     </modules>
 
     <properties>
