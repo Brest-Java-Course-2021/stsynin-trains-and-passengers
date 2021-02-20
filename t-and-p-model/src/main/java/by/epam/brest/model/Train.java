@@ -50,4 +50,14 @@ public class Train {
     public void setTrainDepartureDate(LocalDate trainDepartureDate) {
         this.trainDepartureDate = trainDepartureDate;
     }
+
+    @Override
+    public String toString() {
+        return "Train{" +
+                "trainId=" + trainId +
+                ", trainName='" + trainName + '\'' +
+                ", trainDestination='" + trainDestination + '\'' +
+                ", trainDepartureDate=" + trainDepartureDate +
+                '}';
+    }
 }

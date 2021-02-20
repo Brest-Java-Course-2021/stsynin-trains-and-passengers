@@ -38,4 +38,13 @@ public class Passenger {
     public void setTrain(Train train) {
         this.train = train;
     }
+
+    @Override
+    public String toString() {
+        return "Passenger{" +
+                "passengerId=" + passengerId +
+                ", passengerName='" + passengerName + '\'' +
+                ", train=" + train +
+                '}';
+    }
 }
