@@ -4,6 +4,13 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <import resource="test-db.xml"/>
+    <!--    <import resource="test-db.xml"/>-->
+    <bean id="NamedParameterJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg ref="dataSource"/>
+    </bean>
+
+    <bean id="trainDao" class="by.epam.brest.jdbc.TrainDaoJdbc">
+        <constructor-arg ref="NamedParameterJdbcTemplate"/>
+    </bean>
 
 </beans>

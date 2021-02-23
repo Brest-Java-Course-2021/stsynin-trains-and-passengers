@@ -5,7 +5,6 @@ import by.epam.brest.model.Train;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -17,8 +16,8 @@ public class TrainDaoJdbc implements TrainDao {
 
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public TrainDaoJdbc(DataSource dataSource) {
-        namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+    public TrainDaoJdbc(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
     @Override
