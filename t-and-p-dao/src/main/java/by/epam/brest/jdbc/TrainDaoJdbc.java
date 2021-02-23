@@ -12,7 +12,7 @@ import java.util.List;
 public class TrainDaoJdbc implements TrainDao {
 
     private static final String SQL_GET_ALL_TRAINS =
-            "SELECT D.TRAIN_ID, D. FROM TRAIN AS D ORDER BY R.TRAIN_NAME";
+            "SELECT D.TRAIN_ID, D.TRAIN_NAME FROM TRAIN AS D ORDER BY D.TRAIN_NAME";
 
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -22,14 +22,18 @@ public class TrainDaoJdbc implements TrainDao {
 
     @Override
     public List<Train> findAll() {
-        return namedParameterJdbcTemplate.query(SQL_GET_ALL_TRAINS, new DepartmentRowMapper());
+        return namedParameterJdbcTemplate.query(SQL_GET_ALL_TRAINS, new TrainRowMapper());
     }
 
-    private class DepartmentRowMapper implements RowMapper<Train>{
+    private class TrainRowMapper implements RowMapper<Train> {
 
         @Override
         public Train mapRow(ResultSet resultSet, int i) throws SQLException {
-            return null;
+            Train train = new Train();
+            train.setTrainId(resultSet.getInt("TRAIN_ID"));
+            train.setTrainName(resultSet.getString("TRAIN_NAME"));
+            //TODO add other fields
+            return train;
         }
     }
 }
