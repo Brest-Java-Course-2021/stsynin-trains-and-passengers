@@ -10,4 +10,8 @@ public interface TrainDao {
     List<Train> findAll();
 
     Optional<Train> findById(Integer trainId);
+
+    Integer createTrain(Train train);
+
+    Integer updateTrain(Train train);
 }
