@@ -9,6 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -24,6 +25,14 @@ public class TrainDaoJdbcTest {
         List<Train> trains = trainDao.findAll();
         assertNotNull(trains);
         assertTrue(trains.size() > 0);
+    }
+
+    @Test
+    public void test_findById() {
+        Integer testId = 2;
+        Optional<Train> trainOptional = trainDao.findById(testId);
+        assertTrue(trainOptional.isPresent());
+        assertEquals(testId, trainOptional.get().getTrainId());
     }
 
 }
