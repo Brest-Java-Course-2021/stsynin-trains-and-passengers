@@ -14,4 +14,6 @@ public interface TrainDao {
     Integer createTrain(Train train);
 
     Integer updateTrain(Train train);
+
+    Integer deleteTrain(Integer trainId);
 }

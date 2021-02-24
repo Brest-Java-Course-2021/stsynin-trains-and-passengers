@@ -75,7 +75,7 @@ public class TrainDaoJdbcTest {
         String newTrainName = "nameless";
         Train newTrain = new Train(newTrainName);
         Integer newTrainId = trainDao.createTrain(newTrain);
-        assertEquals(3,(int) newTrainId);
+        assertEquals(3, (int) newTrainId);
 
         Optional<Train> trainOptional = trainDao.findById(newTrainId);
         assertTrue(trainOptional.isPresent());
@@ -84,10 +84,24 @@ public class TrainDaoJdbcTest {
 //        assertEquals(newTrainName, trainOptional.get().getTrainDepartureDate());
     }
 
-    @Test (expected = IllegalArgumentException.class)
-    public void test_createTrainWithExistsName(){
+    @Test(expected = IllegalArgumentException.class)
+    public void test_createTrainWithExistsName() {
         String newTrainName = "first";
         Train newTrain = new Train(newTrainName);
         trainDao.createTrain(newTrain);
+    }
+
+    @Test
+    public void test_deleteTrain() {
+        Integer testId = 1;
+        Integer resultOfDelete = trainDao.deleteTrain(testId);
+        assertEquals(1, (int) resultOfDelete);
+    }
+
+    @Test
+    public void test_deleteNonExistsTrain() {
+        Integer testId = 5;
+        Integer resultOfDelete = trainDao.deleteTrain(testId);
+        assertEquals(0, (int) resultOfDelete);
     }
 }

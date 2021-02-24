@@ -2,7 +2,6 @@ package by.epam.brest.jdbc;
 
 import by.epam.brest.TrainDao;
 import by.epam.brest.model.Train;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -13,7 +12,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -31,6 +29,8 @@ public class TrainDaoJdbc implements TrainDao {
             "INSERT INTO TRAIN (TRAIN_NAME) VALUES(:TRAIN_NAME)";
     private static final String SQL_GET_TRAIN_BY_NAME =
             "SELECT * FROM TRAIN AS D WHERE TRAIN_NAME = :TRAIN_NAME";
+    private static final String SQL_DELETE_TRAIN =
+            "DELETE FROM TRAIN WHERE TRAIN_ID = :TRAIN_ID";
 
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -78,6 +78,14 @@ public class TrainDaoJdbc implements TrainDao {
                 parameterSource,
                 keyHolder);
         return Objects.requireNonNull(keyHolder.getKey()).intValue();
+    }
+
+    @Override
+    public Integer deleteTrain(Integer trainId) {
+        parameterSource.addValue(TRAIN_ID, trainId);
+        return namedParameterJdbcTemplate.update(
+                SQL_DELETE_TRAIN,
+                parameterSource);
     }
 
     private static class TrainRowMapper implements RowMapper<Train> {
