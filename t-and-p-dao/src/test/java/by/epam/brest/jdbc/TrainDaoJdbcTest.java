@@ -69,4 +69,25 @@ public class TrainDaoJdbcTest {
         Integer resultOfUpdate = trainDao.updateTrain(renewableTrain);
         assertEquals("update nonexistent train", 0, (int) resultOfUpdate);
     }
+
+    @Test
+    public void test_createNewTrain() {
+        String newTrainName = "nameless";
+        Train newTrain = new Train(newTrainName);
+        Integer newTrainId = trainDao.createTrain(newTrain);
+        assertEquals(3,(int) newTrainId);
+
+        Optional<Train> trainOptional = trainDao.findById(newTrainId);
+        assertTrue(trainOptional.isPresent());
+        assertEquals(newTrainName, trainOptional.get().getTrainName());
+//        assertEquals(newTrainName, trainOptional.get().getTrainDestination());
+//        assertEquals(newTrainName, trainOptional.get().getTrainDepartureDate());
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void test_createTrainWithExistsName(){
+        String newTrainName = "first";
+        Train newTrain = new Train(newTrainName);
+        trainDao.createTrain(newTrain);
+    }
 }
