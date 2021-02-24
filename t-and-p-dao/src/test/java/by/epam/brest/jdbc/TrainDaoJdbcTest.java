@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ public class TrainDaoJdbcTest {
     private TrainDao trainDao;
 
     @Test
+    @Sql({"/create-test-db.sql", "/init-test-db.sql"})
     public void test_findAllTrains() {
         List<Train> trains = trainDao.findAll();
         assertNotNull(trains);
@@ -29,6 +31,7 @@ public class TrainDaoJdbcTest {
     }
 
     @Test
+    @Sql({"/create-test-db.sql", "/init-test-db.sql"})
     public void test_findTrainById() {
         Integer testId = 2;
         Optional<Train> trainOptional = trainDao.findById(testId);
@@ -37,6 +40,7 @@ public class TrainDaoJdbcTest {
     }
 
     @Test
+    @Sql({"/create-test-db.sql", "/init-test-db.sql"})
     public void test_updateTrain() {
         Integer renewableTrainId = 2;
         String newNameOfTrain = "newName";
@@ -59,6 +63,7 @@ public class TrainDaoJdbcTest {
     }
 
     @Test
+    @Sql({"/create-test-db.sql", "/init-test-db.sql"})
     public void test_updateNonexistentTrain() {
         Integer renewableTrainId = 3;
         String newNameOfTrain = "newName";
@@ -71,6 +76,7 @@ public class TrainDaoJdbcTest {
     }
 
     @Test
+    @Sql({"/create-test-db.sql", "/init-test-db.sql"})
     public void test_createNewTrain() {
         String newTrainName = "nameless";
         Train newTrain = new Train(newTrainName);
@@ -85,6 +91,7 @@ public class TrainDaoJdbcTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
+    @Sql({"/create-test-db.sql", "/init-test-db.sql"})
     public void test_createTrainWithExistsName() {
         String newTrainName = "first";
         Train newTrain = new Train(newTrainName);
@@ -92,6 +99,7 @@ public class TrainDaoJdbcTest {
     }
 
     @Test
+    @Sql({"/create-test-db.sql", "/init-test-db.sql"})
     public void test_deleteTrain() {
         Integer testId = 1;
         Integer resultOfDelete = trainDao.deleteTrain(testId);
@@ -99,6 +107,7 @@ public class TrainDaoJdbcTest {
     }
 
     @Test
+    @Sql({"/create-test-db.sql", "/init-test-db.sql"})
     public void test_deleteNonExistsTrain() {
         Integer testId = 5;
         Integer resultOfDelete = trainDao.deleteTrain(testId);
