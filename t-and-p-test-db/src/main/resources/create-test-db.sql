@@ -13,6 +13,6 @@ CREATE TABLE passenger (
     passenger_id INT NOT NULL AUTO_INCREMENT,
     passenger_name VARCHAR(128) NOT NULL,
     train_id INT NULL,
-    PRIMARY KEY (passenger_id)
---    CONSTRAINT trainFk FOREIGN KEY (TRAIN_ID) REFERENCES TRAIN (TRAIN_ID) ON DELETE CASCADE
+    PRIMARY KEY (passenger_id),
+    CONSTRAINT train_fk FOREIGN KEY (train_id) REFERENCES TRAIN (TRAIN_ID) ON DELETE CASCADE
 );

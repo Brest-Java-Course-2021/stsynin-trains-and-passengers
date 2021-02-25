@@ -11,6 +11,14 @@
                         http://www.springframework.org/schema/jdbc
                         http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:sql-requests.properties</value>
+            </list>
+        </property>
+    </bean>
+
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.h2.Driver"/>
         <property name="url" value="jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1"/>
