@@ -3,14 +3,14 @@ package by.epam.brest.jdbc;
 import by.epam.brest.TrainDao;
 import by.epam.brest.model.Train;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -24,9 +24,9 @@ public class TrainDaoJdbc implements TrainDao {
     private static final String SQL_GET_TRAIN_BY_ID =
             "SELECT * FROM TRAIN AS D WHERE TRAIN_ID = :TRAIN_ID ORDER BY TRAIN_NAME";
     private static final String SQL_UPDATE_TRAIN =
-            "UPDATE TRAIN SET TRAIN_NAME = :TRAIN_NAME WHERE TRAIN_ID = :TRAIN_ID";
+            "UPDATE TRAIN SET TRAIN_NAME = :TRAIN_NAME, TRAIN_DESTINATION = :TRAIN_DESTINATION, TRAIN_DEPARTURE_DATE = :TRAIN_DEPARTURE_DATE WHERE TRAIN_ID = :TRAIN_ID";
     private static final String SQL_CREATE_TRAIN =
-            "INSERT INTO TRAIN (TRAIN_NAME) VALUES(:TRAIN_NAME)";
+            "INSERT INTO TRAIN (TRAIN_NAME, TRAIN_DESTINATION, TRAIN_DEPARTURE_DATE) VALUES(:TRAIN_NAME, :TRAIN_DESTINATION, :TRAIN_DEPARTURE_DATE)";
     private static final String SQL_GET_TRAIN_BY_NAME =
             "SELECT * FROM TRAIN AS D WHERE TRAIN_NAME = :TRAIN_NAME";
     private static final String SQL_DELETE_TRAIN =
@@ -38,28 +38,30 @@ public class TrainDaoJdbc implements TrainDao {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+    RowMapper<Train> rowMapper = BeanPropertyRowMapper.newInstance(Train.class);
 
     @Override
     public List<Train> findAll() {
         return namedParameterJdbcTemplate.query(
                 SQL_GET_ALL_TRAINS,
-                new TrainRowMapper());
+                rowMapper);
     }
 
     @Override
     public Optional<Train> findById(Integer trainId) {
-        parameterSource.addValue(TRAIN_ID, trainId); // TODO constant file need
         List<Train> trains = namedParameterJdbcTemplate.query(
                 SQL_GET_TRAIN_BY_ID,
-                parameterSource,
-                new TrainRowMapper());
+                new MapSqlParameterSource(TRAIN_ID, trainId),
+                rowMapper);
+        if (trains.size() == 0) {
+            throw new IllegalArgumentException("Unknown train id: " + trainId);
+        }
         return Optional.ofNullable(DataAccessUtils.uniqueResult(trains));
     }
 
     @Override
     public Integer updateTrain(Train train) {
-        fillParameterSource(train);
+        SqlParameterSource parameterSource = newFillParameterSource(train);
         return namedParameterJdbcTemplate.update(
                 SQL_UPDATE_TRAIN,
                 parameterSource);
@@ -68,9 +70,9 @@ public class TrainDaoJdbc implements TrainDao {
     @Override
     public Integer createTrain(Train train) {
         if (isTrainNameExists(train)) {
-            throw new IllegalArgumentException("Duplicate train name");
+            throw new IllegalArgumentException("Duplicate train name: " + train.getTrainName());
         }
-        fillParameterSource(train);
+        SqlParameterSource parameterSource = newFillParameterSource(train);
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         namedParameterJdbcTemplate.update(
@@ -82,39 +84,26 @@ public class TrainDaoJdbc implements TrainDao {
 
     @Override
     public Integer deleteTrain(Integer trainId) {
-        parameterSource.addValue(TRAIN_ID, trainId);
         return namedParameterJdbcTemplate.update(
                 SQL_DELETE_TRAIN,
-                parameterSource);
+                new MapSqlParameterSource(TRAIN_ID, trainId));
     }
 
-    private static class TrainRowMapper implements RowMapper<Train> {
-
-        @Override
-        public Train mapRow(ResultSet resultSet, int i) throws SQLException {
-            Train train = new Train();
-            train.setTrainId(resultSet.getInt("TRAIN_ID"));
-            train.setTrainName(resultSet.getString("TRAIN_NAME"));
-            //TODO add other fields
-            return train;
-        }
-    }
-
-    private void fillParameterSource(Train train) {
-        parameterSource.addValue(TRAIN_ID, train.getTrainId()).
+    private SqlParameterSource newFillParameterSource(Train train) {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.
+                addValue(TRAIN_ID, train.getTrainId()).
                 addValue(TRAIN_NAME, train.getTrainName()).
                 addValue(TRAIN_DESTINATION, train.getTrainDestination()).
                 addValue(TRAIN_DEPARTURE_DATE, train.getTrainDepartureDate());
+        return parameterSource;
     }
 
     private boolean isTrainNameExists(Train train) {
-        parameterSource.addValue(TRAIN_NAME, train.getTrainName());
-        Object result;
         List<Train> trains = namedParameterJdbcTemplate.query(
                 SQL_GET_TRAIN_BY_NAME,
-                parameterSource,
-                new TrainRowMapper()
-        );
+                new MapSqlParameterSource(TRAIN_NAME, train.getTrainName()),
+                rowMapper);
         return trains.size() > 0;
     }
 }
