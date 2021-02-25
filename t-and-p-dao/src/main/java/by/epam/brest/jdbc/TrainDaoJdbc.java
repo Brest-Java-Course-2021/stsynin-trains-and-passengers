@@ -82,6 +82,10 @@ public class TrainDaoJdbc implements TrainDao {
 
     @Override
     public Integer updateTrain(Train train) {
+        if (isTrainNameExists(train)) {
+            logger.error("Train named {} is already exists", train.getTrainName());
+            throw new IllegalArgumentException("Duplicate train name: " + train.getTrainName());
+        }
         logger.debug("Update {}", train);
         SqlParameterSource parameterSource = newFillParameterSource(train);
         return namedParameterJdbcTemplate.update(

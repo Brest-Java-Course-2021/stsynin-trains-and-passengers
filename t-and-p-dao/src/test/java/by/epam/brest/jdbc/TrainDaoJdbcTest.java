@@ -68,13 +68,12 @@ public class TrainDaoJdbcTest {
         assertEquals(oldDbSize, trainsAfterUpdate.size());
     }
 
-    @Test(expected = DuplicateKeyException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void test_updateTrainWithDuplicatedName() {
         List<Train> trains = trainDao.findAll();
         Train renewableTrain = trains.get(0);
         renewableTrain.setTrainName(trains.get(1).getTrainName());
         trainDao.updateTrain(renewableTrain);
-
     }
 
     @Test
