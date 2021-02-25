@@ -1,6 +1,7 @@
 package by.epam.brest.model;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Train {
 
@@ -59,5 +60,21 @@ public class Train {
                 ", trainDestination='" + trainDestination + '\'' +
                 ", trainDepartureDate=" + trainDepartureDate +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Train train = (Train) o;
+        return Objects.equals(trainId, train.trainId) &&
+                Objects.equals(trainName, train.trainName) &&
+                Objects.equals(trainDestination, train.trainDestination) &&
+                Objects.equals(trainDepartureDate, train.trainDepartureDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(trainId, trainName, trainDestination, trainDepartureDate);
     }
 }
