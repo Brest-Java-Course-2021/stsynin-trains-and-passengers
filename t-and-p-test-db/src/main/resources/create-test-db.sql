@@ -9,7 +9,7 @@ CREATE TABLE TRAIN (
     PRIMARY KEY (TRAIN_ID)
 );
 
-CREATE TABLE passengers (
+CREATE TABLE passenger (
     passenger_id INT NOT NULL AUTO_INCREMENT,
     passenger_name VARCHAR(128) NOT NULL,
     train_id INT NULL,
