@@ -2,6 +2,8 @@ package by.epam.brest.jdbc;
 
 import by.epam.brest.TrainDao;
 import by.epam.brest.model.Train;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -20,25 +22,33 @@ import static by.epam.brest.model.constants.TrainConstants.*;
 
 public class TrainDaoJdbc implements TrainDao {
 
+    @SuppressWarnings("unused")
     @Value("${TRN.sqlGetAllTrains}")
     private String sqlGetAllTrains;
 
+    @SuppressWarnings("unused")
     @Value("${TRN.sqlGetTrainById}")
     private String sqlGetTrainById;
 
+    @SuppressWarnings("unused")
     @Value("${TRN.sqlGetTrainByName}")
     private String sqlGetTrainByName;
 
+    @SuppressWarnings("unused")
     @Value("${TRN.sqlUpdateTrain}")
     private String sqlUpdateTrain;
 
+    @SuppressWarnings("unused")
     @Value("${TRN.sqlCreateTrain}")
     private String sqlCreateTrain;
 
+    @SuppressWarnings("unused")
     @Value("${TRN.sqlDeleteTrainById}")
     private String sqlDeleteTrainById;
 
-    NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    Logger logger = LoggerFactory.getLogger(TrainDaoJdbc.class);
+
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public TrainDaoJdbc(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
@@ -48,18 +58,23 @@ public class TrainDaoJdbc implements TrainDao {
 
     @Override
     public List<Train> findAll() {
-        return namedParameterJdbcTemplate.query(
+        logger.debug("Get all trains");
+        List<Train> allTrains = namedParameterJdbcTemplate.query(
                 sqlGetAllTrains,
                 rowMapper);
+        logger.debug("... found {} train(s)", allTrains.size());
+        return allTrains;
     }
 
     @Override
     public Optional<Train> findById(Integer trainId) {
+        logger.debug("Find train by id: {}", trainId);
         List<Train> trains = namedParameterJdbcTemplate.query(
                 sqlGetTrainById,
                 new MapSqlParameterSource(TRAIN_ID, trainId),
                 rowMapper);
         if (trains.size() == 0) {
+            logger.error("Train id: {} not found", trainId);
             throw new IllegalArgumentException("Unknown train id: " + trainId);
         }
         return Optional.ofNullable(DataAccessUtils.uniqueResult(trains));
@@ -67,6 +82,7 @@ public class TrainDaoJdbc implements TrainDao {
 
     @Override
     public Integer updateTrain(Train train) {
+        logger.debug("Update {}", train);
         SqlParameterSource parameterSource = newFillParameterSource(train);
         return namedParameterJdbcTemplate.update(
                 sqlUpdateTrain,
@@ -76,6 +92,7 @@ public class TrainDaoJdbc implements TrainDao {
     @Override
     public Integer createTrain(Train train) {
         if (isTrainNameExists(train)) {
+            logger.error("Train named {} is already exists", train.getTrainName());
             throw new IllegalArgumentException("Duplicate train name: " + train.getTrainName());
         }
         SqlParameterSource parameterSource = newFillParameterSource(train);
@@ -85,11 +102,14 @@ public class TrainDaoJdbc implements TrainDao {
                 sqlCreateTrain,
                 parameterSource,
                 keyHolder);
+        logger.debug("Create new {}", train);
+        logger.debug("... with new id: {}", keyHolder.getKey());
         return Objects.requireNonNull(keyHolder.getKey()).intValue();
     }
 
     @Override
     public Integer deleteTrain(Integer trainId) {
+        logger.debug("Delete train id: {}", trainId);
         return namedParameterJdbcTemplate.update(
                 sqlDeleteTrainById,
                 new MapSqlParameterSource(TRAIN_ID, trainId));
