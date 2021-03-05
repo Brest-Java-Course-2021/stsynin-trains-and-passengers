@@ -108,6 +108,7 @@ public class TrainDaoJdbc implements TrainDao {
                 keyHolder);
         logger.debug("Create new {}", train);
         logger.debug("... with new id: {}", keyHolder.getKey());
+//        train.setTrainId();
         return Objects.requireNonNull(keyHolder.getKey()).intValue();
     }
 

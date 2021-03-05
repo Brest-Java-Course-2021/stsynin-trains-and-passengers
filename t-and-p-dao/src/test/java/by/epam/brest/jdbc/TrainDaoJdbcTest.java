@@ -106,6 +106,7 @@ public class TrainDaoJdbcTest {
         List<Train> trains = trainDao.findAll();
         Train newTrainWithDuplicatedName = new Train(trains.get(0).getTrainName());
         trainDao.createTrain(newTrainWithDuplicatedName);
+        //TODO test for register
     }
 
     @Test
