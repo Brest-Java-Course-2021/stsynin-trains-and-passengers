@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="../../resources/static/css/bootstrap.css"
+          th:href="@{/resources/static/css/bootstrap.css}">
+    <link rel="stylesheet" href="../../resources/static/css/style.css"
+          th:href="@{/resources/static/css/style.css}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="css/style.css">
     <meta charset="UTF-8">
     <title>Train</title>
 </head>
@@ -18,14 +20,18 @@
             <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a href="index.html" class="navbar-brand"><img src="img/train.svg" height="32" width="32" alt="TP"></a>
+            <a href="/" class="navbar-brand"><img src="../../resources/static/img/train.svg"
+                                                  th:src="@{/resources/static/img/train.svg}"
+                                                  height="32" width="32" alt="TP"></a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" href="trains.html">Trains</a>
+                        <a class="nav-link active" href="trains.html"
+                           th:href="@{/trains}">Trains</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="passengers.html">Passengers</a>
+                        <a class="nav-link" href="passengers.html"
+                           th:href="@{/passengers}">Passengers</a>
                     </li>
                 </ul>
             </div>
@@ -36,7 +42,9 @@
          class="ps-1 py-1 mb-3 navbar navbar-light bg-light text-dark">
         <ul class="navbar-nav float-start">
             <li class="nav-item" title="Back to list">
-                <a href="trains.html" class="btn btn-light btn-block"><i class="bi-arrow-left"></i></a>
+                <a href="trains.html"
+                   th:href="@{/trains}"
+                   class="btn btn-light btn-block"><i class="bi-arrow-left"></i></a>
             </li>
         </ul>
         <span class="navbar-brand text-uppercase me-auto">Edit Train</span>
@@ -87,6 +95,7 @@
     <p class="text-center">&copy; 2021 Trains & Passengers</p>
 </footer>
 
-<script src="js/bootstrap.bundle.min.js"></script>
+<script src="../../resources/static/js/bootstrap.bundle.min.js"
+        th:src="@{/resources/static/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
