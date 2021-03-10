@@ -14,6 +14,8 @@
 
     <!-- Use @MVC annotations -->
     <mvc:annotation-driven/>
+    
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
 
     <!-- Component scan for @Controller, @Service... annotations -->
     <context:component-scan base-package="by.epam.brest*"/>
