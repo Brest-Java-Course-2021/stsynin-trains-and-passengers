@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="../../resources/static/css/bootstrap.css">
-    <link rel="stylesheet" href="../../resources/static/css/style.css">
+    <link rel="stylesheet" href="../../resources/static/css/bootstrap.css"
+          th:href="@{/resources/static/css/bootstrap.css}">
+    <link rel="stylesheet" href="../../resources/static/css/style.css"
+          th:href="@{/resources/static/css/style.css}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <meta charset="UTF-8">
     <title>Trains</title>
@@ -18,14 +20,18 @@
             <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a href="index.html" class="navbar-brand"><img src="../../resources/static/img/train.svg" height="32" width="32" alt="TP"></a>
+            <a href="/" class="navbar-brand"><img src="../../resources/static/img/train.svg"
+                                                  th:src="@{/resources/static/img/train.svg}"
+                                                  height="32" width="32" alt="TP"></a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" href="trains.html">Trains</a>
+                        <a class="nav-link active" href="trains.html"
+                           th:href="@{/trains}">Trains</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="passengers.html">Passengers</a>
+                        <a class="nav-link" href="passengers.html"
+                           th:href="@{/passengers}">Passengers</a>
                     </li>
                 </ul>
             </div>
@@ -39,8 +45,8 @@
             <ul class="navbar-nav ">
                 <li class="nav-item" title="Add train">
                     <a href="train.html"
-                       class="btn btn-light"
-                       title="Add train">
+                       th:href="@{/train}"
+                       class="btn btn-light" title="Add train">
                         <i class="bi-plus"></i>&nbsp;<span class="d-none d-sm-inline">Add</span>
                     </a>
                 </li>
@@ -88,6 +94,7 @@
                         <td>1</td>
                         <td class="text-end">
                             <a href="train.html"
+                               th:href="@{/train}"
                                class="btn-sm btn-outline-secondary"
                                title="Edit train">
                                 <i class="bi-pen"></i><span class="d-none d-md-inline">&nbsp;Edit</span></a>
@@ -105,6 +112,7 @@
                         <td>2</td>
                         <td class="text-end">
                             <a href="train.html"
+                               th:href="@{/train}"
                                class="btn-sm btn-outline-secondary"
                                title="Edit train">
                                 <i class="bi-pen"></i><span class="d-none d-md-inline">&nbsp;Edit</span></a>
@@ -122,6 +130,7 @@
                         <td>42</td>
                         <td class="text-end">
                             <a href="train.html"
+                               th:href="@{/train}"
                                class="btn-sm btn-outline-secondary"
                                title="Edit train">
                                 <i class="bi-pen"></i><span class="d-none d-md-inline">&nbsp;Edit</span></a>
@@ -165,6 +174,7 @@
     </div>
 </div>
 
-<script src="js/bootstrap.bundle.min.js"></script>
+<script src="../../resources/static/js/bootstrap.bundle.min.js"
+        th:src="@{resources/static/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
