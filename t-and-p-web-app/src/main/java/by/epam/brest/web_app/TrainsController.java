@@ -26,6 +26,7 @@ public class TrainsController {
      */
     @GetMapping(value = "/train/{id}")
     public final String gotoEditTrainPage(@PathVariable Integer id, Model model) {
+        model.addAttribute("mode", "edit");
         return "train";
     }
 
@@ -36,6 +37,7 @@ public class TrainsController {
      */
     @GetMapping(value = "/train/add")
     public final String gotoAddTrainPage(Model model) {
+        model.addAttribute("mode", "add new");
         return "train";
     }
 }
