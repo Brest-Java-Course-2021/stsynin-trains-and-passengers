@@ -1,8 +1,8 @@
 package by.epam.brest.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PassengerTest {
 
@@ -17,15 +17,15 @@ public class PassengerTest {
         passenger.setPassengerName(newName);
         passenger.setTrain(newTrain);
 
-        assertEquals("wrong passenger Id", Id, passenger.getPassengerId());
-        assertEquals("wrong passenger name", newName, passenger.getPassengerName());
-        assertEquals("wrong train", newTrain, passenger.getTrain());
+        assertEquals(Id, passenger.getPassengerId(), "wrong passenger Id");
+        assertEquals(newName, passenger.getPassengerName(), "wrong passenger name");
+        assertEquals(newTrain, passenger.getTrain(), "wrong train");
     }
 
     @Test
     public void test_constructor() {
         String name = "smallFoot";
         Passenger passenger = new Passenger(name);
-        assertEquals("wrong train name", name, passenger.getPassengerName());
+        assertEquals(name, passenger.getPassengerName(), "wrong train name");
     }
 }

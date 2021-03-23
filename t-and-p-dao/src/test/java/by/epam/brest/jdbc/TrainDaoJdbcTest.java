@@ -2,18 +2,18 @@ package by.epam.brest.jdbc;
 
 import by.epam.brest.TrainDao;
 import by.epam.brest.model.Train;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath*:test-db.xml", "classpath*:test-dao.xml"})
 public class TrainDaoJdbcTest {
 
@@ -37,9 +37,10 @@ public class TrainDaoJdbcTest {
         assertEquals(expectedTrain, actualTrain);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_findTrainByNonExistId() {
-        System.out.println(trainDao.findById(999));
+    @Test
+    public void test_findTrainWithNonExistId() {
+        assertThrows(IllegalArgumentException.class, () ->
+                System.out.println(trainDao.findById(999)));
     }
 
     @Test
@@ -58,7 +59,7 @@ public class TrainDaoJdbcTest {
         renewableTrain.setTrainDepartureDate(newDepartureDate);
 
         Integer resultOfUpdate = trainDao.updateTrain(renewableTrain);
-        assertEquals("update failed", 1, (int) resultOfUpdate);
+        assertEquals(1, (int) resultOfUpdate, "update failed");
 
         Train actualTrain = trainDao.findById(renewableTrain.getTrainId()).orElse(null);
         assertEquals(renewableTrain, actualTrain);
@@ -67,12 +68,14 @@ public class TrainDaoJdbcTest {
         assertEquals(oldDbSize, trainsAfterUpdate.size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void test_updateTrainWithDuplicatedName() {
         List<Train> trains = trainDao.findAll();
         Train renewableTrain = trains.get(0);
         renewableTrain.setTrainName(trains.get(1).getTrainName());
-        trainDao.updateTrain(renewableTrain);
+        assertThrows(IllegalArgumentException.class, () ->
+                trainDao.updateTrain(renewableTrain)
+        );
     }
 
     @Test
@@ -83,7 +86,7 @@ public class TrainDaoJdbcTest {
         renewableTrain.setTrainId(renewableTrainId);
 
         Integer resultOfUpdate = trainDao.updateTrain(renewableTrain);
-        assertEquals("update nonexistent train", 0, (int) resultOfUpdate);
+        assertEquals(0, (int) resultOfUpdate, "update nonexistent train");
     }
 
     @Test
@@ -101,12 +104,10 @@ public class TrainDaoJdbcTest {
         assertEquals(newTrain, trainDao.findById(newTrainId).orElse(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void test_createTrainWithExistsName() {
-        List<Train> trains = trainDao.findAll();
-        Train newTrainWithDuplicatedName = new Train(trains.get(0).getTrainName());
-        trainDao.createTrain(newTrainWithDuplicatedName);
-        //TODO test for register
+        assertThrows(IllegalArgumentException.class, () ->
+                trainDao.createTrain(new Train(trainDao.findAll().get(0).getTrainName())));
     }
 
     @Test

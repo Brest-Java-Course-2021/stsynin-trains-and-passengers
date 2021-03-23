@@ -1,10 +1,10 @@
 package by.epam.brest.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TrainTest {
 
@@ -21,16 +21,16 @@ public class TrainTest {
         train.setTrainDestination(newDestination);
         train.setTrainDepartureDate(newDepartureDate);
 
-        assertEquals("wrong train Id", newId, train.getTrainId());
-        assertEquals("wrong train name", newName, train.getTrainName());
-        assertEquals("wrong train destination", newDestination, train.getTrainDestination());
-        assertEquals("wrong train departure time", newDepartureDate, train.getTrainDepartureDate());
+        assertEquals(newId, train.getTrainId(), "wrong train Id");
+        assertEquals(newName, train.getTrainName(), "wrong train name");
+        assertEquals(newDestination, train.getTrainDestination(), "wrong train destination");
+        assertEquals(newDepartureDate, train.getTrainDepartureDate(), "wrong train departure time");
     }
 
     @Test
     public void test_constructor() {
         String name = "boeing";
         Train train = new Train(name);
-        assertEquals("wrong train name", name, train.getTrainName());
+        assertEquals(name, train.getTrainName(), "wrong train name");
     }
 }
