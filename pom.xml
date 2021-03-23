@@ -23,6 +23,7 @@
         <logback.version>1.2.3</logback.version>
         <junit.version>5.7.1</junit.version>
         <maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.0.0-M4</maven-failsafe-plugin.version>
         <project.testResult.directory>${project.build.directory}/test-results</project.testResult.directory>
         <junit.utReportFolder>${project.testResult.directory}/test</junit.utReportFolder>
         <junit.itReportFolder>${project.testResult.directory}/integrationTest</junit.itReportFolder>
@@ -168,6 +169,33 @@
                     <excludes>
                         <exclude>**/*IntegrationTest*</exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- Due to spring-boot repackage, without adding this property test classes are not found
+                             See https://github.com/spring-projects/spring-boot/issues/6254 -->
+                    <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                    <!-- Force alphabetical order to have a reproducible build -->
+                    <runOrder>alphabetical</runOrder>
+                    <reportsDirectory>${junit.itReportFolder}</reportsDirectory>
+                    <argLine>
+                        --illegal-access=permit
+                    </argLine>
+                    <includes>
+                        <include>**/*IntegrationTest*</include>
+                    </includes>
                 </configuration>
             </plugin>
         </plugins>
