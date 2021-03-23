@@ -22,6 +22,10 @@
         <spring.version>5.3.4</spring.version>
         <logback.version>1.2.3</logback.version>
         <junit.version>5.7.1</junit.version>
+        <maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
+        <project.testResult.directory>${project.build.directory}/test-results</project.testResult.directory>
+        <junit.utReportFolder>${project.testResult.directory}/test</junit.utReportFolder>
+        <junit.itReportFolder>${project.testResult.directory}/integrationTest</junit.itReportFolder>
     </properties>
 
     <dependencyManagement>
@@ -150,6 +154,18 @@
                     <httpConnector>
                         <port>8081</port>
                     </httpConnector>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <runOrder>alphabetical</runOrder>
+                    <reportsDirectory>${junit.utReportFolder}</reportsDirectory>
+                    <excludes>
+                        <exclude>**/*IntegrationTest*</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
