@@ -26,6 +26,8 @@
         <project.testResult.directory>${project.build.directory}/test-results</project.testResult.directory>
         <junit.utReportFolder>${project.testResult.directory}/test</junit.utReportFolder>
         <junit.itReportFolder>${project.testResult.directory}/integrationTest</junit.itReportFolder>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <dependencyManagement>
