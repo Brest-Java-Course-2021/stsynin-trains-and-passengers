@@ -46,6 +46,10 @@ public class TrainDaoJdbc implements TrainDao {
     @Value("${TRN.sqlDeleteTrainById}")
     private String sqlDeleteTrainById;
 
+    @SuppressWarnings("unused")
+    @Value("${TRN.sqlGetPassengersCountForTrain}")
+    private String sqlGetPassengersCountForTrain;
+
     Logger logger = LoggerFactory.getLogger(TrainDaoJdbc.class);
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -114,10 +118,25 @@ public class TrainDaoJdbc implements TrainDao {
 
     @Override
     public Integer deleteTrain(Integer trainId) {
+        if (isTrainLoaded(trainId)) {
+            logger.error("Can't delete train id: {}: this train have a passenger(s)", trainId);
+            throw new IllegalArgumentException("Can't delete: this train have a passenger(s) Id: " + trainId);
+        }
         logger.debug("Delete train id: {}", trainId);
         return namedParameterJdbcTemplate.update(
                 sqlDeleteTrainById,
                 new MapSqlParameterSource(TRAIN_ID, trainId));
+    }
+
+    private boolean isTrainLoaded(Integer trainId) {
+        return getPassengerCountForTrain(trainId) > 0;
+    }
+
+    private Integer getPassengerCountForTrain(Integer trainId) {
+        return namedParameterJdbcTemplate.queryForObject(
+                sqlGetPassengersCountForTrain,
+                new MapSqlParameterSource(TRAIN_ID, trainId),
+                Integer.class);
     }
 
     private SqlParameterSource newFillParameterSource(Train train) {

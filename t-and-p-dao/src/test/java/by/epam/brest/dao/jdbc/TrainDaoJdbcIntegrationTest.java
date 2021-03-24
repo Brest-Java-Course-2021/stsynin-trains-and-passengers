@@ -112,12 +112,21 @@ public class TrainDaoJdbcIntegrationTest {
 
     @Test
     public void test_deleteTrain() {
+        int trainForDeleteId = trainDao.createTrain(new Train("nameless"));
         List<Train> trainsBeforeDelete = trainDao.findAll();
         int baseSizeBeforeDelete = trainsBeforeDelete.size();
-        assertEquals(1, (int) trainDao.deleteTrain(trainsBeforeDelete.get(0).getTrainId()));
+        assertEquals(1, (int) trainDao.deleteTrain(trainForDeleteId));
 
         int baseSizeAfterDelete = trainDao.findAll().size();
         assertEquals(baseSizeBeforeDelete - 1, baseSizeAfterDelete);
+    }
+
+    @Test
+    public void test_deleteTrainWithPassenger() {
+        List<Train> trainsBeforeDelete = trainDao.findAll();
+        //TODO need another exception
+        assertThrows(IllegalArgumentException.class, () ->
+                trainDao.deleteTrain(trainsBeforeDelete.get(0).getTrainId()));
     }
 
     @Test
