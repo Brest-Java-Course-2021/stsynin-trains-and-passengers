@@ -16,4 +16,6 @@ public interface PassengerDao {
     Integer updatePassenger(Passenger passenger);
 
     Integer deletePassenger(Integer passengerId);
+
+    Integer getPassengersCount();
 }
