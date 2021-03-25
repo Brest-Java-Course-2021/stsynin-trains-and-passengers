@@ -116,8 +116,7 @@ public class TrainDaoJdbcIntegrationTest {
         int baseSizeBeforeDelete = trainsBeforeDelete.size();
         assertEquals(1, (int) trainDao.deleteTrain(trainForDeleteId));
 
-        int baseSizeAfterDelete = trainDao.findAll().size();
-        assertEquals(baseSizeBeforeDelete - 1, baseSizeAfterDelete);
+        assertEquals(baseSizeBeforeDelete - 1, trainDao.getTrainsCount());
     }
 
     @Test
@@ -133,5 +132,10 @@ public class TrainDaoJdbcIntegrationTest {
         Integer testId = 999;
         Integer resultOfDelete = trainDao.deleteTrain(testId);
         assertEquals(0, (int) resultOfDelete);
+    }
+
+    @Test
+    public void test_getTrainsCount() {
+        assertEquals(trainDao.findAll().size(), trainDao.getTrainsCount());
     }
 }

@@ -16,4 +16,6 @@ public interface TrainDao {
     Integer updateTrain(Train train);
 
     Integer deleteTrain(Integer trainId);
+
+    Integer getTrainsCount();
 }

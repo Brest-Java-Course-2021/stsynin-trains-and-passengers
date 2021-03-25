@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -45,6 +46,10 @@ public class TrainDaoJdbc implements TrainDao {
     @SuppressWarnings("unused")
     @Value("${TRN.sqlDeleteTrainById}")
     private String sqlDeleteTrainById;
+
+    @SuppressWarnings("unused")
+    @Value("${TRN.sqlGetTrainsCount}")
+    private String sqlGetTrainsCount;
 
     @SuppressWarnings("unused")
     @Value("${TRN.sqlGetPassengersCountForTrain}")
@@ -126,6 +131,15 @@ public class TrainDaoJdbc implements TrainDao {
         return namedParameterJdbcTemplate.update(
                 sqlDeleteTrainById,
                 new MapSqlParameterSource(TRAIN_ID, trainId));
+    }
+
+    @Override
+    public Integer getTrainsCount() {
+        logger.debug("count()");
+        return namedParameterJdbcTemplate.queryForObject(
+                sqlGetTrainsCount,
+                new HashMap<>(),
+                Integer.class);
     }
 
     private boolean isTrainLoaded(Integer trainId) {
