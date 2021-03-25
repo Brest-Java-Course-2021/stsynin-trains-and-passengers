@@ -11,15 +11,15 @@ public class PassengerTest {
         Passenger passenger = new Passenger();
         Integer Id = 65535;
         String newName = "bigfoot";
-        Train newTrain = new Train();
+        Integer newTrainId = 32768;
 
         passenger.setPassengerId(Id);
         passenger.setPassengerName(newName);
-        passenger.setTrain(newTrain);
+        passenger.setTrainId(newTrainId);
 
         assertEquals(Id, passenger.getPassengerId(), "wrong passenger Id");
         assertEquals(newName, passenger.getPassengerName(), "wrong passenger name");
-        assertEquals(newTrain, passenger.getTrain(), "wrong train");
+        assertEquals(newTrainId, passenger.getTrainId(), "wrong train Id");
     }
 
     @Test
