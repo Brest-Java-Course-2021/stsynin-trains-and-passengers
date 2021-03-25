@@ -110,10 +110,10 @@ public class TrainDaoJdbc implements TrainDao {
                 sqlCreateTrain,
                 parameterSource,
                 keyHolder);
+        Integer newTrainId = Objects.requireNonNull(keyHolder.getKey()).intValue();
+        train.setTrainId(newTrainId);
         logger.debug("Create new {}", train);
-        logger.debug("... with new id: {}", keyHolder.getKey());
-//        train.setTrainId();
-        return Objects.requireNonNull(keyHolder.getKey()).intValue();
+        return newTrainId;
     }
 
     @Override

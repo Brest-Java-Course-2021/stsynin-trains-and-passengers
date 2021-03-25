@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath*:test-db.xml", "classpath*:test-dao.xml", "classpath*:test-dao.xml"})
+@ContextConfiguration(locations = {"classpath*:test-db.xml", "classpath*:test-dao.xml"})
 public class TrainDaoJdbcIntegrationTest {
 
     @SuppressWarnings("unused")
@@ -22,7 +22,6 @@ public class TrainDaoJdbcIntegrationTest {
     private TrainDao trainDao;
 
     @Test
-//    @Sql({"/create-test-db.sql", "/init-test-db.sql"})
     public void test_findAllTrains() {
         List<Train> trains = trainDao.findAll();
         assertNotNull(trains);
@@ -112,7 +111,7 @@ public class TrainDaoJdbcIntegrationTest {
 
     @Test
     public void test_deleteTrain() {
-        int trainForDeleteId = trainDao.createTrain(new Train("nameless"));
+        int trainForDeleteId = trainDao.createTrain(new Train("nameForDelete"));
         List<Train> trainsBeforeDelete = trainDao.findAll();
         int baseSizeBeforeDelete = trainsBeforeDelete.size();
         assertEquals(1, (int) trainDao.deleteTrain(trainForDeleteId));
