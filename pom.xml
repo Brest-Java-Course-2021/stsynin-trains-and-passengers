@@ -19,6 +19,7 @@
         <module>t-and-p-dao</module>
         <module>t-and-p-test-db</module>
         <module>t-and-p-web-app</module>
+        <module>t-and-p-service-api</module>
     </modules>
 
     <properties>
