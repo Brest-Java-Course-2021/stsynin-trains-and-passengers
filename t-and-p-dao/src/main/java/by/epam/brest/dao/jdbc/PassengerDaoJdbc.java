@@ -1,6 +1,6 @@
 package by.epam.brest.dao.jdbc;
 
-import by.epam.brest.PassengerDao;
+import by.epam.brest.dao.PassengerDao;
 import by.epam.brest.model.Passenger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

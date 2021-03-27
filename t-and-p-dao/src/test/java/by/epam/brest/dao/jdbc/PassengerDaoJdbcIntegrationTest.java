@@ -1,6 +1,6 @@
 package by.epam.brest.dao.jdbc;
 
-import by.epam.brest.PassengerDao;
+import by.epam.brest.dao.PassengerDao;
 import by.epam.brest.model.Passenger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

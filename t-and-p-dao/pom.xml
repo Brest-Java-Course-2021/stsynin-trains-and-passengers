@@ -21,6 +21,11 @@
 
         <dependency>
             <groupId>by.epam.brest</groupId>
+            <artifactId>t-and-p-dao-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>by.epam.brest</groupId>
             <artifactId>t-and-p-test-db</artifactId>
         </dependency>
 

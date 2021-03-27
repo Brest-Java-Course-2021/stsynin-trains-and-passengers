@@ -1,6 +1,6 @@
 package by.epam.brest.dao.jdbc;
 
-import by.epam.brest.TrainDao;
+import by.epam.brest.dao.TrainDao;
 import by.epam.brest.model.Train;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

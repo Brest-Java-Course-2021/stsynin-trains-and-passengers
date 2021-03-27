@@ -1,4 +1,4 @@
-package by.epam.brest;
+package by.epam.brest.dao;
 
 import by.epam.brest.model.Train;
 
