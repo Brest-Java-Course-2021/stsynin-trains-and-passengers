@@ -81,20 +81,22 @@
                 <table class="table table-striped">
                     <thead class="table-dark">
                     <tr>
-                        <th>Name</th>
+                        <th>Train name</th>
+                        <th>Destination name</th>
                         <th>Departure</th>
                         <th>Passengers</th>
                         <th></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>west</td>
-                        <td>11.11.2011</td>
-                        <td>1</td>
+                    <tr th:each="train : ${trains}">
+                        <td th:text="${train.trainName}">west</td>
+                        <td th:text="${train.trainDestination}">11.11.2011</td>
+                        <td th:text="${train.trainDepartureDate}">11.11.2011</td>
+                        <td th:text="${train.trainPassengerCount}">1</td>
                         <td class="text-end">
                             <a href="train.html"
-                               th:href="@{/train/1}"
+                               th:href="@{|/train/${train.trainId}|}"
                                class="btn-sm btn-outline-secondary"
                                title="Edit train">
                                 <i class="bi-pen"></i><span class="d-none d-md-inline">&nbsp;Edit</span></a>
@@ -106,8 +108,9 @@
                                 </span>
                         </td>
                     </tr>
-                    <tr>
+                    <tr th:remove="all">
                         <td>east</td>
+                        <td>08.08.2008</td>
                         <td>08.08.2008</td>
                         <td>2</td>
                         <td class="text-end">
@@ -124,8 +127,9 @@
                                 </span>
                         </td>
                     </tr>
-                    <tr>
+                    <tr th:remove="all">
                         <td>down</td>
+                        <td>01.01.1970</td>
                         <td>01.01.1970</td>
                         <td>42</td>
                         <td class="text-end">
