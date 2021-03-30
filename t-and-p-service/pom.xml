@@ -10,7 +10,6 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>by.epam.brest.service.impl</groupId>
     <artifactId>t-and-p-service</artifactId>
 
     <dependencies>

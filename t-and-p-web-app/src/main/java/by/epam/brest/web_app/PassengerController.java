@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
-public class PassengersController {
+public class PassengerController {
 
     /**
      * Goto passengers list page.

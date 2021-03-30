@@ -1,21 +1,32 @@
 package by.epam.brest.web_app;
 
+import by.epam.brest.service.TrainDtoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
-public class TrainsController {
+public class TrainController {
+
+    private final TrainDtoService trainDtoService;
+
+    @Autowired
+    public TrainController(TrainDtoService trainDtoService) {
+        this.trainDtoService = trainDtoService;
+    }
 
     /**
      * Goto trains list page.
      *
-     * @return
+     * @param model model.
+     * @return view.
      */
 
     @GetMapping(value = "/trains")
     public final String trains(Model model) {
+        model.addAttribute("trains", trainDtoService.findAllWithPassengersCount());
         return "trains";
     }
 

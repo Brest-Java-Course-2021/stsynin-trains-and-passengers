@@ -29,7 +29,9 @@
         <maven.compiler.target>11</maven.compiler.target>
         <spring.version>5.3.4</spring.version>
         <logback.version>1.2.3</logback.version>
+        <mockito.version>3.8.0</mockito.version>
         <junit.version>5.7.1</junit.version>
+        <hamcrest.version>1.3</hamcrest.version>
         <maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.0.0-M4</maven-failsafe-plugin.version>
         <project.testResult.directory>${project.build.directory}/test-results</project.testResult.directory>
@@ -49,13 +51,13 @@
 
             <dependency>
                 <groupId>by.epam.brest</groupId>
-                <artifactId>t-and-p-dao</artifactId>
+                <artifactId>t-and-p-dao-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>by.epam.brest</groupId>
-                <artifactId>t-and-p-dao-api</artifactId>
+                <artifactId>t-and-p-dao</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -127,10 +129,27 @@
             </dependency>
 
             <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.30</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>1.4.200</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
@@ -154,21 +173,24 @@
             </dependency>
 
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.7.30</version>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>${logback.version}</version>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${logback.version}</version>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>${hamcrest.version}</version>
+                <scope>test</scope>
             </dependency>
 
         </dependencies>
