@@ -12,8 +12,20 @@
         <constructor-arg ref="NamedParameterJdbcTemplate"/>
     </bean>
 
-    <bean id="passengerDao" class="by.epam.brest.dao.jdbc.PassengerDaoJdbc">
+    <bean id="trainDtoDao" class="by.epam.brest.dao.jdbc.TrainDtoDaoJdbc">
         <constructor-arg ref="NamedParameterJdbcTemplate"/>
     </bean>
+
+    <bean id="trainService" class="by.epam.brest.service.impl.TrainServiceImpl">
+        <constructor-arg name="trainDao" ref="trainDao"/>
+    </bean>
+
+    <bean id="trainDtoService" class="by.epam.brest.service.impl.TrainDtoServiceImpl">
+        <constructor-arg name="trainDtoDao" ref="trainDtoDao"/>
+    </bean>
+
+    <!--    <bean id="passengerDao" class="by.epam.brest.dao.jdbc.PassengerDaoJdbc">-->
+    <!--        <constructor-arg ref="NamedParameterJdbcTemplate"/>-->
+    <!--    </bean>-->
 
 </beans>
