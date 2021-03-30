@@ -24,8 +24,15 @@ class TrainDtoServiceImplIntegrationTest {
     @Test
     void findAllWithPassengersCount() {
         List<TrainDto> trains = trainDtoService.findAllWithPassengersCount();
+
+        for (TrainDto train : trains) {
+            System.out.println(train);
+        }
+
         assertNotNull(trains);
         assertTrue(trains.size() > 0);
-//        assertTrue(trains.get(0).getAvgSalary().intValue() > 0);
+        assertEquals(1, trains.get(0).getTrainPassengerCount());
+        assertEquals(2, trains.get(1).getTrainPassengerCount());
+        assertEquals(3, trains.get(2).getTrainPassengerCount());
     }
 }

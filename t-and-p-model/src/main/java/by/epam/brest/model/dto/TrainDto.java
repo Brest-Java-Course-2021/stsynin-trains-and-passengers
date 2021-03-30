@@ -1,5 +1,7 @@
 package by.epam.brest.model.dto;
 
+import java.time.LocalDate;
+
 /**
  * POJO Train for model.
  */
@@ -14,6 +16,16 @@ public class TrainDto {
      * Train name.
      */
     private String trainName;
+
+    /**
+     * Train destination.
+     */
+    private String trainDestination;
+
+    /**
+     * Train departure date
+     */
+    private LocalDate trainDepartureDate;
 
     /**
      * Count of passengers for this train.
@@ -38,7 +50,7 @@ public class TrainDto {
     /**
      * Returns <code>Integer</code> representation of this trainId.
      *
-     * @return Train Id.
+     * @return train Id.
      */
     public Integer getTrainId() {
         return trainId;
@@ -54,9 +66,9 @@ public class TrainDto {
     }
 
     /**
-     * Returns <code>String</code> representation of this trainName.
+     * Returns <code>String</code> representation of this train name.
      *
-     * @return Train name.
+     * @return train name.
      */
     public String getTrainName() {
         return trainName;
@@ -72,9 +84,45 @@ public class TrainDto {
     }
 
     /**
-     * Returns <code>Integer</code> representation of count of passengers this train.
+     * Returns <code>String</code> representation of this train destination.
      *
-     * @return Train's passenger count.
+     * @return train destination.
+     */
+    public String getTrainDestination() {
+        return trainDestination;
+    }
+
+    /**
+     * Sets train destination.
+     *
+     * @param trainDestination Train destination.
+     */
+    public void setTrainDestination(String trainDestination) {
+        this.trainDestination = trainDestination;
+    }
+
+    /**
+     * Returns <code>LocalDate</code> representation of this train departure date.
+     *
+     * @return train departure date.
+     */
+    public LocalDate getTrainDepartureDate() {
+        return trainDepartureDate;
+    }
+
+    /**
+     * Sets train departure date.
+     *
+     * @param trainDepartureDate train departure date.
+     */
+    public void setTrainDepartureDate(LocalDate trainDepartureDate) {
+        this.trainDepartureDate = trainDepartureDate;
+    }
+
+    /**
+     * Returns <code>Integer</code> representation of count of passengers for this train.
+     *
+     * @return train's passengers count.
      */
     public Integer getTrainPassengerCount() {
         return trainPassengerCount;
@@ -83,7 +131,7 @@ public class TrainDto {
     /**
      * Sets train's passenger count.
      *
-     * @param trainPassengerCount Train's passenger count.
+     * @param trainPassengerCount train's passengers count.
      */
     public void setTrainPassengerCount(Integer trainPassengerCount) {
         this.trainPassengerCount = trainPassengerCount;
@@ -94,6 +142,8 @@ public class TrainDto {
         return "TrainDto{" +
                 "trainId=" + trainId +
                 ", trainName='" + trainName + '\'' +
+                ", trainDestination='" + trainDestination + '\'' +
+                ", trainDepartureDate=" + trainDepartureDate +
                 ", trainPassengerCount=" + trainPassengerCount +
                 '}';
     }

@@ -7,5 +7,10 @@ import java.util.List;
 
 public interface TrainDtoService {
 
+    /**
+     * Get all trains from the database with count of passengers.
+     *
+     * @return trains list.
+     */
     List<TrainDto> findAllWithPassengersCount();
 }
