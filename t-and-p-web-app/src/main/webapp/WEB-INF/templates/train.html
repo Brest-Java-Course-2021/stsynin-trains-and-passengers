@@ -48,7 +48,7 @@
             </li>
         </ul>
         <span class="navbar-brand text-uppercase me-auto"
-              th:text="${mode} + ' train'"
+              th:text="${isNew} ? 'Add new train' : 'Edit train'"
         >Edit Train</span>
     </nav>
 </header>
@@ -59,27 +59,48 @@
             <div class="col">
                 <div class="card">
                     <div class="card-body">
-                        <form>
+                        <form id="trainForm"
+                              th:object="${train}"
+                              action="trains.html"
+                              th:action="@{${#httpServletRequest.servletPath}}"
+                              th:method="@{post}">
+                            <input id="field_trainId"
+                                   type="hidden"
+                                   th:field="*{trainId}">
                             <div class="mb-3">
                                 <label class="form-label"
                                        for="field_trainName">Train name:</label>
                                 <input class="form-control"
                                        id="field_trainName"
                                        type="text"
-                                       value="midnight"/>
+                                       value="midnight"
+                                       th:field="*{trainName}"/>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"
+                                       for="field_trainName">Train destination:</label>
+                                <input class="form-control"
+                                       id="field_trainDestination"
+                                       type="text"
+                                       value="midnight"
+                                       th:field="*{trainDestination}"/>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"
                                        for="field_trainDeparture">Departure date:</label>
                                 <input class="form-control"
                                        id="field_trainDeparture"
-                                       type="date"/>
+                                       type="text"
+                                       th:field="*{trainDepartureDate}"/>
                             </div>
                             <div class="mb-3">
                                 <a href="trains.html"
+                                   th:href="@{/trains}"
                                    class="btn btn-light me-1"
                                    title="Cancel">Cancel</a>
                                 <a href="trains.html"
+                                   th:href="@{/trains}"
+                                   th:onclick="@{document.forms['trainForm'].submit(); return false;}"
                                    class="btn btn-primary"
                                    title="Save train">Save</a>
                             </div>
