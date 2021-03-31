@@ -75,6 +75,18 @@ class PassengerDaoJdbcIntegrationTest {
     }
 
     @Test
+    public void test_updatePassengerWithSameName() {
+        Passenger passengerForUpdate = new Passenger("RabbitSameName");
+        passengerForUpdate.setTrainId(1);
+        Integer testId = passengerDao.createPassenger(passengerForUpdate);
+
+        passengerForUpdate.setTrainId(2);
+        Integer resultOfUpdate = passengerDao.updatePassenger(passengerForUpdate);
+        assertEquals(1, (int) resultOfUpdate, "update failed");
+        assertEquals(2, passengerDao.findById(testId).get().getTrainId(), "wrong save");
+    }
+
+    @Test
     public void test_updateNonexistentPassenger() {
         Integer renewablePassengerId = 999;
 

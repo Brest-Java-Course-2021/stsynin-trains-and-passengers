@@ -83,7 +83,7 @@ public class PassengerDaoJdbc implements PassengerDao {
 
     @Override
     public Integer createPassenger(Passenger passenger) {
-        if (isPassengerNameExists(passenger)) {
+        if (isSecondPassengerWithSameNameExists(passenger)) {
             logger.error("Passenger named {} is already exists", passenger.getPassengerName());
             throw new IllegalArgumentException("Duplicate passenger name: " + passenger.getPassengerName());
         }
@@ -102,7 +102,7 @@ public class PassengerDaoJdbc implements PassengerDao {
 
     @Override
     public Integer updatePassenger(Passenger passenger) {
-        if (isPassengerNameExists(passenger)) {
+        if (isSecondPassengerWithSameNameExists(passenger)) {
             logger.error("Passenger named {} is already exists", passenger.getPassengerName());
             throw new IllegalArgumentException("Duplicate passenger name: " + passenger.getPassengerName());
         }
@@ -139,11 +139,11 @@ public class PassengerDaoJdbc implements PassengerDao {
         return parameterSource;
     }
 
-    private boolean isPassengerNameExists(Passenger passenger) {
+    private boolean isSecondPassengerWithSameNameExists(Passenger passenger) {
         List<Passenger> passengers = namedParameterJdbcTemplate.query(
                 sqlGetPassengerByName,
                 new MapSqlParameterSource(PASSENGER_NAME, passenger.getPassengerName()),
                 rowMapper);
-        return passengers.size() > 0;
+        return passengers.size() > 0 && !passengers.get(0).getPassengerId().equals(passenger.getPassengerId());
     }
 }

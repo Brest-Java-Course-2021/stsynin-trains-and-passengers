@@ -77,6 +77,18 @@ public class TrainDaoJdbcIntegrationTest {
     }
 
     @Test
+    public void test_updateTrainWithSameName() {
+        Train trainForUpdate = new Train("RabbitSameName");
+        trainForUpdate.setTrainDestination("oldDirection");
+        Integer testId = trainDao.createTrain(trainForUpdate);
+
+        trainForUpdate.setTrainDestination("newDirection");
+        Integer resultOfUpdate = trainDao.updateTrain(trainForUpdate);
+        assertEquals(1, (int) resultOfUpdate, "update failed");
+        assertEquals("newDirection", trainDao.findById(testId).get().getTrainDestination(), "wrong save");
+    }
+
+    @Test
     public void test_updateNonexistentTrain() {
         Integer renewableTrainId = 999;
 

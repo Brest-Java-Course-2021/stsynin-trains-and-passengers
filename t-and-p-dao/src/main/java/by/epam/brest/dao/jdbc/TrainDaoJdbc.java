@@ -87,7 +87,7 @@ public class TrainDaoJdbc implements TrainDao {
 
     @Override
     public Integer updateTrain(Train train) {
-        if (isTrainNameExists(train)) {
+        if (isSecondTrainWithSameNameExists(train)) {
             logger.error("Train named {} is already exists", train.getTrainName());
             throw new IllegalArgumentException("Duplicate train name: " + train.getTrainName());
         }
@@ -100,7 +100,7 @@ public class TrainDaoJdbc implements TrainDao {
 
     @Override
     public Integer createTrain(Train train) {
-        if (isTrainNameExists(train)) {
+        if (isSecondTrainWithSameNameExists(train)) {
             logger.error("Train named {} is already exists", train.getTrainName());
             throw new IllegalArgumentException("Duplicate train name: " + train.getTrainName());
         }
@@ -159,11 +159,11 @@ public class TrainDaoJdbc implements TrainDao {
         return parameterSource;
     }
 
-    private boolean isTrainNameExists(Train train) {
+    private boolean isSecondTrainWithSameNameExists(Train train) {
         List<Train> trains = namedParameterJdbcTemplate.query(
                 sqlGetTrainByName,
                 new MapSqlParameterSource(TRAIN_NAME, train.getTrainName()),
                 rowMapper);
-        return trains.size() > 0;
+        return trains.size() > 0 && !trains.get(0).getTrainId().equals(train.getTrainId());
     }
 }
