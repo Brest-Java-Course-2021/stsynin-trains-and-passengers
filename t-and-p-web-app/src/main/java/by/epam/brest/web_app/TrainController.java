@@ -31,7 +31,6 @@ public class TrainController {
      * @param model model.
      * @return view trains.
      */
-
     @GetMapping(value = "/trains")
     public final String trains(Model model) {
         model.addAttribute("trains", trainDtoService.findAllWithPassengersCount());
