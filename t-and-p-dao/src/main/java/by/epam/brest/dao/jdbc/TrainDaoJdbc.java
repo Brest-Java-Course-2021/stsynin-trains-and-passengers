@@ -82,10 +82,6 @@ public class TrainDaoJdbc implements TrainDao {
                 sqlGetTrainById,
                 new MapSqlParameterSource(TRAIN_ID, trainId),
                 rowMapper);
-        if (trains.size() == 0) {
-            logger.error("Train id: {} not found", trainId);
-            throw new IllegalArgumentException("Unknown train id: " + trainId);
-        }
         return Optional.ofNullable(DataAccessUtils.uniqueResult(trains));
     }
 

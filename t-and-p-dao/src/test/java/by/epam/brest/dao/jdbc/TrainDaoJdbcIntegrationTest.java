@@ -38,8 +38,7 @@ public class TrainDaoJdbcIntegrationTest {
 
     @Test
     public void test_findTrainWithNonExistId() {
-        assertThrows(IllegalArgumentException.class, () ->
-                System.out.println(trainDao.findById(999)));
+        assertTrue(trainDao.findById(999).isEmpty());
     }
 
     @Test

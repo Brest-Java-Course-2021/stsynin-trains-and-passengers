@@ -37,8 +37,7 @@ class PassengerDaoJdbcIntegrationTest {
 
     @Test
     public void test_findPassengerWithNonExistId() {
-        assertThrows(IllegalArgumentException.class, () ->
-                System.out.println(passengerDao.findById(999)));
+        assertTrue(passengerDao.findById(999).isEmpty());
     }
 
     @Test

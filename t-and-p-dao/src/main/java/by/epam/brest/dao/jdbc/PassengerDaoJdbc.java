@@ -78,10 +78,6 @@ public class PassengerDaoJdbc implements PassengerDao {
                 sqlGetPassengerById,
                 new MapSqlParameterSource(PASSENGER_ID, passengerId),
                 rowMapper);
-        if (passengers.size() == 0) {
-            logger.error("Passenger id: {} not found", passengerId);
-            throw new IllegalArgumentException("Unknown passenger id: " + passengerId);
-        }
         return Optional.ofNullable(DataAccessUtils.uniqueResult(passengers));
     }
 
