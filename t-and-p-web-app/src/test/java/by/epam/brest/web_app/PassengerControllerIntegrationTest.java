@@ -159,4 +159,19 @@ public class PassengerControllerIntegrationTest {
         assertEquals(testName, optionalPassenger.get().getPassengerName());
         assertEquals(countBefore, passengerService.getPassengersCount());
     }
+
+    @Test
+    public void shouldDeletePassengerById() throws Exception {
+        Integer countBefore = passengerService.getPassengersCount();
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/passenger/3/delete")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("passengerId", "3")
+        ).andExpect(status().isFound())
+                .andExpect(view().name("redirect:/passengers"))
+                .andExpect(redirectedUrl("/passengers"));
+
+        assertEquals(countBefore - 1, passengerService.getPassengersCount());
+    }
 }
