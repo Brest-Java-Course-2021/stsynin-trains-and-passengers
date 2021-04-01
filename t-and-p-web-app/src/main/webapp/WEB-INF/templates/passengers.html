@@ -79,8 +79,10 @@
                                class="btn-sm btn-outline-secondary"
                                title="Edit passenger">
                                 <i class="bi-pen"></i><span class="d-none d-md-inline">&nbsp;Edit</span></a>
-                            <span data-bs-toggle="modal" data-bs-target="#deleteDialog">
-                                    <a href="#" class="btn-sm btn-outline-secondary"
+
+                            <span data-bs-toggle="modal" data-bs-target="#deleteDialog"
+                                  th:attr="data-id=${passenger.passengerId},data-name=${passenger.passengerName}">
+                                    <a class="btn-sm btn-outline-secondary"
                                        title="Delete passenger"><i class="bi-x"></i><span
                                             class="d-none d-md-inline">&nbsp;Delete</span>
                                     </a>
@@ -146,8 +148,8 @@
                 Please confirm delete
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger">Delete</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <a id="deleteUrl" href="#" class="btn btn-danger">Delete</a>
             </div>
         </div>
     </div>
@@ -155,5 +157,14 @@
 
 <script src="../../resources/static/js/bootstrap.bundle.min.js"
         th:src="@{/resources/static/js/bootstrap.bundle.min.js}"></script>
+<script src="../../resources/static/js/jquery-3.4.1.slim.min.js"
+        th:src="@{/resources/static/js/jquery-3.4.1.slim.min.js}"></script>
+<script>
+        $('#deleteDialog').on('show.bs.modal', function (event) {
+        var target = $(event.relatedTarget)
+        $(this).find('.modal-body').text('Are you really want to delete passenger: "' + target.data('name') + '" ?')
+        document.getElementById('deleteUrl').href = '/passenger/' + target.data('id') + '/delete';
+    })
+</script>
 </body>
 </html>
