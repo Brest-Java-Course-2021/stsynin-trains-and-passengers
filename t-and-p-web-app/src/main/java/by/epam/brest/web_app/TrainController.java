@@ -94,4 +94,17 @@ public class TrainController {
         this.trainService.updateTrain(train);
         return "redirect:/trains";
     }
+
+    /**
+     * Delete train information in storage.
+     *
+     * @param model model.
+     * @param id    train id.
+     * @return view trains.
+     */
+    @GetMapping(value = "/train/{id}/delete")
+    public String deleteTrain(@PathVariable Integer id, Model model) {
+        this.trainService.deleteTrain(id);
+        return "redirect:/trains";
+    }
 }

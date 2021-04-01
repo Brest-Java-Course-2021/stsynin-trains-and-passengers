@@ -2,7 +2,6 @@ package by.epam.brest.web_app;
 
 import by.epam.brest.model.Train;
 import by.epam.brest.service.TrainService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -154,4 +153,50 @@ class TrainControllerIntegrationTest {
         assertEquals(testName, optionalTrain.get().getTrainName());
         assertEquals(countBefore, trainService.getTrainsCount());
     }
+
+    @Test
+    public void shouldDeleteTrainById() throws Exception {
+        Integer countBefore = trainService.getTrainsCount();
+        Integer idForDelete = trainService.createTrain(new Train("FreeTrain"));
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/train/" + idForDelete + "/delete")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("trainId", String.valueOf(idForDelete))
+        ).andExpect(status().isFound())
+                .andExpect(view().name("redirect:/trains"))
+                .andExpect(redirectedUrl("/trains"));
+
+        assertEquals(countBefore, trainService.getTrainsCount());
+    }
+
+    @Test
+    public void shouldReturnErrorPageIfTryToDeleteNonexistentTrain() throws Exception {
+        Integer countBefore = trainService.getTrainsCount();
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/train/999/delete")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("trainId", "999")
+        ).andExpect(status().isFound())
+                .andExpect(view().name("redirect:/trains"))
+                .andExpect(redirectedUrl("/trains"));
+        //TODO fix redirect
+        assertEquals(countBefore, trainService.getTrainsCount());
+    }
+
+//    @Test
+//    public void shouldReturnErrorPageIfTryToDeleteLoadedTrain() throws Exception {
+//        Integer countBefore = trainService.getTrainsCount();
+//
+//        mockMvc.perform(
+//                MockMvcRequestBuilders.get("/train/1/delete")
+//                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+//                        .param("trainId", "999")
+//        ).andExpect(status().isFound())
+//                .andExpect(view().name("redirect:/trains"))
+//                .andExpect(redirectedUrl("/trains"));
+//        //TODO fix redirect
+//        assertEquals(countBefore, trainService.getTrainsCount());
+//    }
 }
