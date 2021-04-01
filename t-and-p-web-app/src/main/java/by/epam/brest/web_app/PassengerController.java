@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Optional;
 
@@ -74,5 +75,17 @@ public class PassengerController {
         model.addAttribute("passenger", new Passenger());
         model.addAttribute("trains", trainService.findAll());
         return "passenger";
+    }
+
+    /**
+     * Save new passenger information into storage.
+     *
+     * @param passenger filled new passenger data.
+     * @return view passengers.
+     */
+    @PostMapping(value = "/passenger")
+    public String addPassenger(Passenger passenger) {
+        this.passengerService.createPassenger(passenger);
+        return "redirect:/passengers";
     }
 }

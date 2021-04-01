@@ -49,7 +49,7 @@
             </li>
         </ul>
         <span class="navbar-brand text-uppercase me-auto"
-              th:text="${mode} + ' passenger'"
+              th:text="${isNew} ? 'Add new passenger' : 'Edit passenger'"
         >Edit Passenger</span>
     </nav>
 </header>
@@ -60,35 +60,48 @@
             <div class="col">
                 <div class="card">
                     <div class="card-body">
-                        <form>
+                        <form id="passengerForm"
+                              th:object="${passenger}"
+                              action="passengers.html"
+                              th:action="@{${#httpServletRequest.servletPath}}"
+                              th:method="@{post}">
+                            <input id="field_passengerId"
+                                   type="hidden"
+                                   th:field="*{passengerId}">
                             <div class="mb-3">
                                 <label class="form-label"
                                        for="field_passengerName">Passenger name:</label>
                                 <input class="form-control"
                                        id="field_passengerName"
                                        type="text"
-                                       value="John Doe"/>
+                                       value="John Doe"
+                                       th:field="*{passengerName}"/>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label"
-                                       for="field_passengerTrain1">Train</label>
-                                <select class="form-control"
-                                        id="field_passengerTrain1">
-                                    <option value="0"></option>
-                                    <option value="1">east</option>
-                                    <option value="2">west</option>
-                                    <option value="3">long</option>
-                                    <option value="4">test</option>
-                                    <option value="5">polarexpress</option>
+                                       for="field_passengerTrain">Train</label>
+
+                                <select class="form-control" id="field_passengerTrain" th:field="*{trainId}">
+                                    <option value=""></option>
+                                    <option th:each="train : ${trains}"
+                                            th:value="${train.trainId}"
+                                            th:text="${train.trainName}">polarexpress</option>
+                                    <option value="1" selected th:remove="all">east</option>
+                                    <option value="2" th:remove="all">west</option>
+                                    <option value="3" th:remove="all">long</option>
+                                    <option value="4" th:remove="all">test</option>
                                 </select>
                             </div>
 
                             <div class="mb-3">
                                 <a href="passengers.html"
+                                   th:href="@{/passengers}"
                                    class="btn btn-light me-1"
                                    title="Cancel">Cancel</a>
                                 <a href="passengers.html"
+                                   th:href="@{/passengers}"
+                                   th:onclick="@{document.forms['passengerForm'].submit(); return false;}"
                                    class="btn btn-primary"
                                    title="Save passenger">Save</a>
                             </div>

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -88,6 +90,21 @@ public class PassengerControllerIntegrationTest {
                         )
                 )))
         ;
+    }
+
+    @Test
+    public void shouldAddNewPassenger() throws Exception {
+        Integer countBefore = passengerService.getPassengersCount();
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/passenger")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("passengerName", "test")
+        ).andExpect(status().isFound())
+                .andExpect(view().name("redirect:/passengers"))
+                .andExpect(redirectedUrl("/passengers"));
+
+        assertEquals(countBefore + 1, passengerService.getPassengersCount());
     }
 
     @Test
