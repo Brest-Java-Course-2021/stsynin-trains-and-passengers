@@ -80,7 +80,14 @@ public class PassengerControllerIntegrationTest {
                 .andExpect(MockMvcResultMatchers.content().contentType("text/html;charset=UTF-8"))
                 .andExpect(view().name("passenger"))
                 .andExpect(model().attribute("isNew", is(true)))
-                .andExpect(model().attribute("passenger", isA(Passenger.class)));
+                .andExpect(model().attribute("passenger", isA(Passenger.class)))
+                .andExpect(model().attribute("trains", hasItem(
+                        allOf(
+                                hasProperty("trainId", is(1)),
+                                hasProperty("trainName", is("first"))
+                        )
+                )))
+        ;
     }
 
     @Test
@@ -94,6 +101,13 @@ public class PassengerControllerIntegrationTest {
                 .andExpect(model().attribute("isNew", is(false)))
                 .andExpect(model().attribute("passenger", hasProperty("passengerId", is(1))))
                 .andExpect(model().attribute("passenger", hasProperty("passengerName", is("Alfred"))))
-                .andExpect(model().attribute("passenger", hasProperty("trainId", is(2))));
+                .andExpect(model().attribute("passenger", hasProperty("trainId", is(2))))
+                .andExpect(model().attribute("trains", hasItem(
+                        allOf(
+                                hasProperty("trainId", is(1)),
+                                hasProperty("trainName", is("first"))
+                        )
+                )))
+        ;
     }
 }

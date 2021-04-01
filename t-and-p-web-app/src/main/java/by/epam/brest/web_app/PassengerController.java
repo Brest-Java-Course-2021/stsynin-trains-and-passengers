@@ -3,6 +3,7 @@ package by.epam.brest.web_app;
 import by.epam.brest.model.Passenger;
 import by.epam.brest.service.PassengerDtoService;
 import by.epam.brest.service.PassengerService;
+import by.epam.brest.service.TrainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,10 +19,13 @@ public class PassengerController {
 
     private final PassengerService passengerService;
 
+    private final TrainService trainService;
+
     @Autowired
-    public PassengerController(PassengerDtoService passengerDtoService, PassengerService passengerService) {
+    public PassengerController(PassengerDtoService passengerDtoService, PassengerService passengerService, TrainService trainService) {
         this.passengerDtoService = passengerDtoService;
         this.passengerService = passengerService;
+        this.trainService = trainService;
     }
 
     /**
@@ -49,6 +53,7 @@ public class PassengerController {
         if (optionalPassenger.isPresent()) {
             model.addAttribute("isNew", false);
             model.addAttribute("passenger", optionalPassenger.get());
+            model.addAttribute("trains", trainService.findAll());
             return "passenger";
         } else {
             // TODO Passenger not found - pass error message as parameter or handle not found error
@@ -67,6 +72,7 @@ public class PassengerController {
     public final String gotoAddPassengerPage(Model model) {
         model.addAttribute("isNew", true);
         model.addAttribute("passenger", new Passenger());
+        model.addAttribute("trains", trainService.findAll());
         return "passenger";
     }
 }
