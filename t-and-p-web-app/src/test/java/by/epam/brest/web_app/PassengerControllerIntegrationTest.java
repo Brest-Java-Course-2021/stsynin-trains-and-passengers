@@ -1,5 +1,6 @@
 package by.epam.brest.web_app;
 
+import by.epam.brest.model.Passenger;
 import by.epam.brest.service.PassengerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,5 +69,31 @@ public class PassengerControllerIntegrationTest {
                         )
                 )))
         ;
+    }
+
+    @Test
+    public void shouldOpenNewPassengerPage() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/passenger")
+        ).andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("text/html;charset=UTF-8"))
+                .andExpect(view().name("passenger"))
+                .andExpect(model().attribute("isNew", is(true)))
+                .andExpect(model().attribute("passenger", isA(Passenger.class)));
+    }
+
+    @Test
+    public void shouldOpenToEditPassengerPageById() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/passenger/1")
+        ).andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType("text/html;charset=UTF-8"))
+                .andExpect(view().name("passenger"))
+                .andExpect(model().attribute("isNew", is(false)))
+                .andExpect(model().attribute("passenger", hasProperty("passengerId", is(1))))
+                .andExpect(model().attribute("passenger", hasProperty("passengerName", is("Alfred"))))
+                .andExpect(model().attribute("passenger", hasProperty("trainId", is(2))));
     }
 }
