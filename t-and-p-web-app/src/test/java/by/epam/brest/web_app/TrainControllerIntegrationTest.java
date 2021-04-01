@@ -149,9 +149,9 @@ class TrainControllerIntegrationTest {
                 .andExpect(view().name("redirect:/trains"))
                 .andExpect(redirectedUrl("/trains"));
 
-        Optional<Train> optionalDepartment = trainService.findById(1);
-        assertTrue(optionalDepartment.isPresent());
-        assertEquals(testName, optionalDepartment.get().getTrainName());
+        Optional<Train> optionalTrain = trainService.findById(1);
+        assertTrue(optionalTrain.isPresent());
+        assertEquals(testName, optionalTrain.get().getTrainName());
         assertEquals(countBefore, trainService.getTrainsCount());
     }
 }
