@@ -5,6 +5,9 @@ import by.epam.brest.model.dto.TrainDto;
 
 import java.util.List;
 
+/**
+ * TrainDto Service Interface.
+ */
 public interface TrainDtoService {
 
     /**
