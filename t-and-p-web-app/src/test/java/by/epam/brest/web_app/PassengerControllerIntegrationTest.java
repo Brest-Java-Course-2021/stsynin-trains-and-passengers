@@ -18,8 +18,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.Optional;
+
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
@@ -135,5 +138,25 @@ public class PassengerControllerIntegrationTest {
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("passengers"));
+    }
+
+    @Test
+    public void shouldUpdatePassengerAfterEdit() throws Exception {
+        Integer countBefore = passengerService.getPassengersCount();
+//        String testName = RandomStringUtils.randomAlphabetic(DEPARTMENT_NAME_SIZE);
+        String testName = "TestNameForPassenger";
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/passenger/1")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("passengerId", "1")
+                        .param("passengerName", testName)
+        ).andExpect(status().isFound())
+                .andExpect(view().name("redirect:/passengers"))
+                .andExpect(redirectedUrl("/passengers"));
+
+        Optional<Passenger> optionalPassenger = passengerService.findById(1);
+        assertTrue(optionalPassenger.isPresent());
+        assertEquals(testName, optionalPassenger.get().getPassengerName());
+        assertEquals(countBefore, passengerService.getPassengersCount());
     }
 }

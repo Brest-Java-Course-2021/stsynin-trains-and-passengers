@@ -88,4 +88,16 @@ public class PassengerController {
         this.passengerService.createPassenger(passenger);
         return "redirect:/passengers";
     }
+
+    /**
+     * Update passenger information in storage.
+     *
+     * @param passenger updated passenger data.
+     * @return view passengers.
+     */
+    @PostMapping(value = "/passenger/{id}")
+    public String updatePassenger(Passenger passenger) {
+        this.passengerService.updatePassenger(passenger);
+        return "redirect:/passengers";
+    }
 }
