@@ -50,21 +50,21 @@ public class PassengerControllerIntegrationTest {
                         allOf(
                                 hasProperty("passengerId", is(1)),
                                 hasProperty("passengerName", is("Alfred")),
-                                hasProperty("trainId", is(2))
+                                hasProperty("passengerTrainName", is("second"))
                         )
                 )))
                 .andExpect(model().attribute("passengers", hasItem(
                         allOf(
                                 hasProperty("passengerId", is(2)),
                                 hasProperty("passengerName", is("Bob")),
-                                hasProperty("trainId", is(2))
+                                hasProperty("passengerTrainName", is("second"))
                         )
                 )))
                 .andExpect(model().attribute("passengers", hasItem(
                         allOf(
                                 hasProperty("passengerId", is(3)),
                                 hasProperty("passengerName", is("Chris")),
-                                hasProperty("trainId", is(3))
+                                hasProperty("passengerTrainName", is("third"))
                         )
                 )))
         ;

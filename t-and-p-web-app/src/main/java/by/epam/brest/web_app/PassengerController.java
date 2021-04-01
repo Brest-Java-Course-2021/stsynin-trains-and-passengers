@@ -1,5 +1,6 @@
 package by.epam.brest.web_app;
 
+import by.epam.brest.service.PassengerDtoService;
 import by.epam.brest.service.PassengerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,10 +11,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class PassengerController {
 
+    private final PassengerDtoService passengerDtoService;
+
     private final PassengerService passengerService;
 
     @Autowired
-    public PassengerController(PassengerService passengerService) {
+    public PassengerController(PassengerDtoService passengerDtoService, PassengerService passengerService) {
+        this.passengerDtoService = passengerDtoService;
         this.passengerService = passengerService;
     }
 
@@ -25,7 +29,7 @@ public class PassengerController {
      */
     @GetMapping(value = "/passengers")
     public final String passengers(Model model) {
-        model.addAttribute("passengers", passengerService.findAll());
+        model.addAttribute("passengers", passengerDtoService.findAllPassengersWithTrainName());
         return "passengers";
     }
 

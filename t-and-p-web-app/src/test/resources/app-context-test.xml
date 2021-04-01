@@ -22,17 +22,17 @@
 
     <import resource="classpath*:test-db.xml"/>
 
-<!--    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">-->
-<!--        <property name="locations">-->
-<!--            <list>-->
-<!--                <value>classpath:application.properties</value>-->
-<!--                <value>classpath:dao.properties</value>-->
-<!--            </list>-->
-<!--        </property>-->
-<!--    </bean>-->
+    <!--    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">-->
+    <!--        <property name="locations">-->
+    <!--            <list>-->
+    <!--                <value>classpath:application.properties</value>-->
+    <!--                <value>classpath:dao.properties</value>-->
+    <!--            </list>-->
+    <!--        </property>-->
+    <!--    </bean>-->
 
-<!--    <context:property-placeholder location="classpath:application.properties"/>-->
-<!--    <context:property-placeholder location="classpath:dao.properties"/>-->
+    <!--    <context:property-placeholder location="classpath:application.properties"/>-->
+    <!--    <context:property-placeholder location="classpath:dao.properties"/>-->
 
 
     <bean id="namedParameterJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
@@ -63,15 +63,23 @@
         <constructor-arg name="trainDtoDao" ref="trainDtoDao"/>
     </bean>
 
+    <bean id="passengerDtoDao" class="by.epam.brest.dao.jdbc.PassengerDtoDaoJdbc">
+        <constructor-arg ref="namedParameterJdbcTemplate"/>
+    </bean>
+
+    <bean id="passengerDtoService" class="by.epam.brest.service.impl.PassengerDtoServiceImpl">
+        <constructor-arg name="passengerDtoDao" ref="passengerDtoDao"/>
+    </bean>
+
     <!-- Thymeleaf Template Resolver -->
     <bean id="templateResolver"
           class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
-        <property name="prefix" value="/WEB-INF/templates/" />
-        <property name="suffix" value=".html" />
-        <property name="templateMode" value="HTML" />
+        <property name="prefix" value="/WEB-INF/templates/"/>
+        <property name="suffix" value=".html"/>
+        <property name="templateMode" value="HTML"/>
         <!-- Template cache is true by default. Set to false if you want             -->
         <!-- templates to be automatically updated when modified.                    -->
-        <property name="cacheable" value="false" />
+        <property name="cacheable" value="false"/>
     </bean>
 
     <!-- Thymeleaf Template Engine (Spring5-specific version) -->
@@ -79,15 +87,15 @@
           class="org.thymeleaf.spring5.SpringTemplateEngine">
         <property name="templateResolvers">
             <set>
-                <ref bean="templateResolver" />
+                <ref bean="templateResolver"/>
             </set>
         </property>
     </bean>
 
     <!-- Thymeleaf View Resolver - implementation of Spring's ViewResolver interface -->
     <bean id="viewResolver" class="org.thymeleaf.spring5.view.ThymeleafViewResolver">
-        <property name="templateEngine" ref="templateEngine" />
-        <property name="characterEncoding" value="UTF-8" />
+        <property name="templateEngine" ref="templateEngine"/>
+        <property name="characterEncoding" value="UTF-8"/>
     </bean>
 
 </beans>
