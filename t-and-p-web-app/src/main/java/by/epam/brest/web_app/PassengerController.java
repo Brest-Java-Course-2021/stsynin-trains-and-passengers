@@ -7,7 +7,6 @@ import by.epam.brest.service.TrainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -109,7 +108,7 @@ public class PassengerController {
      * @param id    passenger id.
      * @return view passengers.
      */
-    @DeleteMapping(value = "/passenger/{id}/delete")
+    @GetMapping(value = "/passenger/{id}/delete")
     public String deletePassenger(@PathVariable Integer id, Model model) {
         this.passengerService.deletePassenger(id);
         return "redirect:/passengers";

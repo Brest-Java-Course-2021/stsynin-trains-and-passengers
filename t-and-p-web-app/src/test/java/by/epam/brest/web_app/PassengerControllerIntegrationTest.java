@@ -165,7 +165,7 @@ public class PassengerControllerIntegrationTest {
         Integer countBefore = passengerService.getPassengersCount();
 
         mockMvc.perform(
-                MockMvcRequestBuilders.delete("/passenger/3/delete")
+                MockMvcRequestBuilders.get("/passenger/3/delete")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("passengerId", "3")
         ).andExpect(status().isFound())
@@ -180,7 +180,7 @@ public class PassengerControllerIntegrationTest {
         Integer countBefore = passengerService.getPassengersCount();
 
         mockMvc.perform(
-                MockMvcRequestBuilders.delete("/passenger/999/delete")
+                MockMvcRequestBuilders.get("/passenger/999/delete")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("passengerId", "999")
         ).andExpect(status().isFound())
