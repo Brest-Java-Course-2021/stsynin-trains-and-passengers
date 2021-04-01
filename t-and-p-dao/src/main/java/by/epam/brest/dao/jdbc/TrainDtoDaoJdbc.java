@@ -26,10 +26,8 @@ public class TrainDtoDaoJdbc implements TrainDtoDao {
     @Override
     public List<TrainDto> findAllWithPassengersCount() {
         logger.debug("findAllWithPassengersCount()");
-        List<TrainDto> trains = namedParameterJdbcTemplate.query(
+        return namedParameterJdbcTemplate.query(
                 sqlFindAllWithPassengersCount,
                 BeanPropertyRowMapper.newInstance(TrainDto.class));
-        System.out.println(trains);
-        return trains;
     }
 }
