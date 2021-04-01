@@ -127,4 +127,13 @@ public class PassengerControllerIntegrationTest {
                 )))
         ;
     }
+
+    @Test
+    public void shouldReturnToPassengersPageIfPassengerNotFoundById() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/passenger/999")
+        ).andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isFound())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("passengers"));
+    }
 }
