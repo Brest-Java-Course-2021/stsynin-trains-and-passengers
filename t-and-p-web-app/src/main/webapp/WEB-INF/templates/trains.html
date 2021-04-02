@@ -101,7 +101,8 @@
                                class="btn-sm btn-outline-secondary"
                                title="Edit train">
                                 <i class="bi-pen"></i><span class="d-none d-md-inline">&nbsp;Edit</span></a>
-                            <span data-bs-toggle="modal" data-bs-target="#deleteDialog">
+                            <span data-bs-toggle="modal" data-bs-target="#deleteDialog"
+                                  th:attr="data-id=${train.trainId},data-name=${train.trainName},data-count=${train.trainPassengerCount}">
                                     <a href="#" class="btn-sm btn-outline-secondary"
                                        title="Delete train"><i class="bi-x"></i><span
                                             class="d-none d-md-inline">&nbsp;Delete</span>
@@ -172,8 +173,8 @@
                 Please confirm delete
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger">Delete</button>
+                <a id="cancelBtn" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</a>
+                <a id="deleteBtn" class="btn btn-danger" href="#">Delete</a>
             </div>
         </div>
     </div>
@@ -181,5 +182,24 @@
 
 <script src="../../resources/static/js/bootstrap.bundle.min.js"
         th:src="@{/resources/static/js/bootstrap.bundle.min.js}"></script>
+<script src="../../resources/static/js/jquery-3.4.1.slim.min.js"
+        th:src="@{/resources/static/js/jquery-3.4.1.slim.min.js}"></script>
+<script>
+        $('#deleteDialog').on('show.bs.modal', function (event) {
+        var target = $(event.relatedTarget)
+
+        if (target.data('count')>0) {
+            $(this).find('.modal-body').text('Unfortunately you can not delete train "' + target.data('name') + '". You need to remove all passengers firstly.');
+            document.getElementById('deleteBtn').style.visibility="collapse";
+            document.getElementById('cancelBtn').textContent="Got it";
+        } else {
+            document.getElementById('deleteBtn').href = '/train/' + target.data('id') + '/delete';
+            $(this).find('.modal-body').text('Are you really want to delete train: "' + target.data('name') + '" ?')
+            document.getElementById('deleteBtn').style.visibility="visible";
+            document.getElementById('cancelBtn').textContent="Cancel";
+        }
+    })
+
+</script>
 </body>
 </html>
