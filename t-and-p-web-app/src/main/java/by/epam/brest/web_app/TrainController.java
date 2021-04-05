@@ -38,7 +38,7 @@ public class TrainController {
     }
 
     /**
-     * Goto edit train page.
+     * Goto edit train page. If train record not found - goto error page.
      *
      * @param model model.
      * @param id    train id.
@@ -52,9 +52,9 @@ public class TrainController {
             model.addAttribute("train", optionalTrain.get());
             return "train";
         } else {
-            // TODO train not found - pass error message as parameter or handle not found error
-            // polite form
-            return "redirect:trains";
+            model.addAttribute("errorMessage",
+                    "We're sorry, but we can't find record for this train.");
+            return "redirect:/error";
         }
     }
 

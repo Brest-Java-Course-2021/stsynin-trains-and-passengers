@@ -126,12 +126,15 @@ class TrainControllerIntegrationTest {
     }
 
     @Test
-    public void shouldReturnToTrainsPageIfTrainNotFoundById() throws Exception {
+    public void shouldRedirectToErrorPageIfTrainNotFoundById() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/train/999")
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("trains"));
+                .andExpect(view().name("redirect:/error"))
+                .andExpect(model().attribute("errorMessage",
+                        is("We're sorry, but we can't find record for this train.")))
+        ;
     }
 
     @Test
