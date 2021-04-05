@@ -64,16 +64,23 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
+                            <input id="hiddenDateStart"
+                                   type="hidden">
+                            <input id="hiddenDateEnd"
+                                   type="hidden">
                             <div class="col-auto">
                                 Start:<input type="date" id="dateStart"
-                                             name="dateStart" placeholder="Date">
+                                             name="dateStart" placeholder="Date"
+                                             onchange="setFilterBegin();">
                             </div>
-                            <div class="col-auto">
+                            <div class=" col-auto">
                                 end:<input type="date" id="dateEnd"
-                                           name="dateEnd" placeholder="Date">
+                                           name="dateEnd" placeholder="Date"
+                                           onchange="setFilterEnd();">
                             </div>
-                            <div class="col-auto">
-                                <a href="#" class="btn btn-primary">Apply</a>
+                            <div class=" col-auto">
+                                <a href="#" th:href="@{/trains}" class="btn btn-primary" id="filterSetButton"
+                                >Apply</a>
                             </div>
                         </div>
                     </div>
@@ -199,7 +206,39 @@
             document.getElementById('cancelBtn').textContent="Cancel";
         }
     })
-
 </script>
+
+<script>
+    function convertDateToBack(inputFieldName, outputFieldName) {
+        console.log(inputFieldName);
+        console.log(outputFieldName);
+        inDate = document.getElementById(inputFieldName).value;
+        console.log(inDate);
+        var outputDate = inDate.split("-").reverse().join("/");
+        console.log(outputDate);
+        document.getElementById(outputFieldName).value = outputDate;
+    }
+
+    function setFilterBegin() {
+        convertDateToBack('dateStart', 'hiddenDateStart')
+        document.getElementById('dateEnd').min = document.getElementById('dateStart').value;
+        setFilterUrl();
+    }
+
+    function setFilterEnd() {
+        convertDateToBack('dateEnd', 'hiddenDateEnd')
+        document.getElementById('dateStart').max = document.getElementById('dateEnd').value;
+        setFilterUrl();
+    }
+
+    function setFilterUrl() {
+        var currentUrl = new URL(document.getElementById('filterSetButton').href);
+        currentUrl.searchParams.set('dateStart',document.getElementById('hiddenDateStart').value);
+        currentUrl.searchParams.set('dateEnd',document.getElementById('hiddenDateEnd').value);
+        console.log(currentUrl);
+        document.getElementById('filterSetButton').href = currentUrl.href;
+    }
+</script>
+
 </body>
 </html>
