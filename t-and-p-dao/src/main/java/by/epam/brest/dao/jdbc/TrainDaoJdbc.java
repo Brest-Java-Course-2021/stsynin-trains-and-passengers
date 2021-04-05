@@ -159,7 +159,7 @@ public class TrainDaoJdbc implements TrainDao {
         return parameterSource;
     }
 
-    private boolean isSecondTrainWithSameNameExists(Train train) {
+    public boolean isSecondTrainWithSameNameExists(Train train) {
         List<Train> trains = namedParameterJdbcTemplate.query(
                 sqlGetTrainByName,
                 new MapSqlParameterSource(TRAIN_NAME, train.getTrainName()),

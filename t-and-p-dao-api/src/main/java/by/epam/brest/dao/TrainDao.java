@@ -52,4 +52,12 @@ public interface TrainDao {
      * @return number of trains in the database.
      */
     Integer getTrainsCount();
+
+    /**
+     * Check for another train with the same name.
+     *
+     * @param train object.
+     * @return train with the same name presence.
+     */
+    boolean isSecondTrainWithSameNameExists(Train train);
 }

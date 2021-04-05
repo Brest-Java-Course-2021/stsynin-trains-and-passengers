@@ -52,4 +52,9 @@ public class TrainServiceImpl implements TrainService {
     public Integer getTrainsCount() {
         return trainDao.getTrainsCount();
     }
+
+    @Override
+    public boolean isSecondTrainWithSameNameExists(Train train) {
+        return trainDao.isSecondTrainWithSameNameExists(train);
+    }
 }
