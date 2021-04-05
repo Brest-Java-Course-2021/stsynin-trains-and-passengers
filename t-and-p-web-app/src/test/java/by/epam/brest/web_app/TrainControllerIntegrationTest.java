@@ -179,6 +179,21 @@ class TrainControllerIntegrationTest {
     }
 
     @Test
+    public void shouldNotUpdateTrainIfNewNameAlreadyExists() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/train/1")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("trainId", "1")
+                        .param("trainName", "second")
+        ).andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/error"))
+                .andExpect(model().attribute("errorMessage",
+                        is("Unfortunately a train name \"second\" already exists.")))
+        ;
+    }
+
+    @Test
     public void shouldDeleteTrainById() throws Exception {
         Integer countBefore = trainService.getTrainsCount();
         Integer idForDelete = trainService.createTrain(new Train("FreeTrain"));
