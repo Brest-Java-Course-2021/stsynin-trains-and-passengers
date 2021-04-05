@@ -138,7 +138,8 @@ public class TrainDaoJdbc implements TrainDao {
                 Integer.class);
     }
 
-    private boolean isTrainLoaded(Integer trainId) {
+    @Override
+    public boolean isTrainLoaded(Integer trainId) {
         return getPassengerCountForTrain(trainId) > 0;
     }
 

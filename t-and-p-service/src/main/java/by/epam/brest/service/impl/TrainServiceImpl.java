@@ -57,4 +57,9 @@ public class TrainServiceImpl implements TrainService {
     public boolean isSecondTrainWithSameNameExists(Train train) {
         return trainDao.isSecondTrainWithSameNameExists(train);
     }
+
+    @Override
+    public boolean isTrainLoaded(Integer trainId) {
+        return trainDao.isTrainLoaded(trainId);
+    }
 }

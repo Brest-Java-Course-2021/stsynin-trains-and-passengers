@@ -60,4 +60,12 @@ public interface TrainDao {
      * @return train with the same name presence.
      */
     boolean isSecondTrainWithSameNameExists(Train train);
+
+    /**
+     * Check if train have passengers.
+     *
+     * @param trainId train Id.
+     * @return the presence of passengers on this train.
+     */
+    boolean isTrainLoaded(Integer trainId);
 }
