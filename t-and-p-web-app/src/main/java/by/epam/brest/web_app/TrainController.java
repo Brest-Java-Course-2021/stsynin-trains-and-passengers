@@ -120,10 +120,17 @@ public class TrainController {
     public String deleteTrain(@PathVariable Integer id, Model model) {
         Optional<Train> optionalTrain = trainService.findById(id);
         if (optionalTrain.isPresent()) {
+            if (trainService.isTrainLoaded(id)) {
+                model.addAttribute(
+                        "errorMessage",
+                        "We're sorry, but we can't delete loaded train. You should remove passenger(s) first.");
+                return "redirect:/error";
+            }
             this.trainService.deleteTrain(id);
             return "redirect:/trains";
         } else {
-            model.addAttribute("errorMessage",
+            model.addAttribute(
+                    "errorMessage",
                     "We're sorry, but we can't find record for delete this train.");
             return "redirect:/error";
         }

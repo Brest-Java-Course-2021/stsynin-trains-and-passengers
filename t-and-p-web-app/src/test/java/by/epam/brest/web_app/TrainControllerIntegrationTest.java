@@ -223,18 +223,17 @@ class TrainControllerIntegrationTest {
         ;
     }
 
-//    @Test
-//    public void shouldReturnErrorPageIfTryToDeleteLoadedTrain() throws Exception {
-//        Integer countBefore = trainService.getTrainsCount();
-//
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.get("/train/1/delete")
-//                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//                        .param("trainId", "999")
-//        ).andExpect(status().isFound())
-//                .andExpect(view().name("redirect:/trains"))
-//                .andExpect(redirectedUrl("/trains"));
-//        //TODO fix redirect
-//        assertEquals(countBefore, trainService.getTrainsCount());
-//    }
+    @Test
+    public void shouldReturnErrorPageIfTryToDeleteLoadedTrain() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/train/1/delete")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("trainId", "999")
+        ).andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/error"))
+                .andExpect(model().attribute("errorMessage",
+                        is("We're sorry, but we can't delete loaded train. You should remove passenger(s) first.")))
+        ;
+    }
 }
