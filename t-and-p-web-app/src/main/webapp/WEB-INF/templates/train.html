@@ -89,10 +89,21 @@
                             <div class="mb-3">
                                 <label class="form-label"
                                        for="field_trainDeparture">Departure date:</label>
-                                <input class="form-control"
-                                       id="field_trainDeparture"
-                                       type="text"
-                                       th:field="*{trainDepartureDate}"/>
+                                <div class="input-group date">
+                                    <input id="hiddenDate"
+                                           type="hidden"
+                                           value="2014-04-03"
+                                           th:field="*{trainDepartureDate}">
+                                    <input id="field_trainDeparture"
+                                           type="date"
+                                           class="form-control"
+                                           onchange="convertDateToBack('field_trainDeparture');">
+                                    <script>
+                                        document.getElementById('field_trainDeparture').value =
+                                            document.getElementById('hiddenDate').value
+                                            .split("/").reverse().join("-");
+                                    </script>
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <a href="trains.html"
@@ -122,4 +133,14 @@
 <script src="../../resources/static/js/bootstrap.bundle.min.js"
         th:src="@{/resources/static/js/bootstrap.bundle.min.js}"></script>
 </body>
+
+<script>
+    function convertDateToBack(fieldName) {
+        inDate = document.getElementById(fieldName).value;
+        console.log(inDate);
+        var outputDate = inDate.split("-").reverse().join("/");
+        console.log(outputDate);
+        document.getElementById('hiddenDate').value = outputDate;
+    }
+</script>
 </html>
