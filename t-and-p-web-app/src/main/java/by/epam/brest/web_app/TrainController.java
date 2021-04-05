@@ -96,7 +96,7 @@ public class TrainController {
     }
 
     /**
-     * Delete train information in storage.
+     * Delete train information in storage. If train isn't exist - goto error page.
      *
      * @param model model.
      * @param id    train id.
@@ -104,7 +104,14 @@ public class TrainController {
      */
     @GetMapping(value = "/train/{id}/delete")
     public String deleteTrain(@PathVariable Integer id, Model model) {
-        this.trainService.deleteTrain(id);
-        return "redirect:/trains";
+        Optional<Train> optionalTrain = trainService.findById(id);
+        if (optionalTrain.isPresent()) {
+            this.trainService.deleteTrain(id);
+            return "redirect:/trains";
+        } else {
+            model.addAttribute("errorMessage",
+                    "We're sorry, but we can't find record for delete this train.");
+            return "redirect:/error";
+        }
     }
 }

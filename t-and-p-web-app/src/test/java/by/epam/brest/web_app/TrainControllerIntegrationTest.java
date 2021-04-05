@@ -172,17 +172,16 @@ class TrainControllerIntegrationTest {
 
     @Test
     public void shouldReturnErrorPageIfTryToDeleteNonexistentTrain() throws Exception {
-        Integer countBefore = trainService.getTrainsCount();
-
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/train/999/delete")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("trainId", "999")
-        ).andExpect(status().isFound())
-                .andExpect(view().name("redirect:/trains"))
-                .andExpect(redirectedUrl("/trains"));
-        //TODO fix redirect
-        assertEquals(countBefore, trainService.getTrainsCount());
+        ).andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/error"))
+                .andExpect(model().attribute("errorMessage",
+                        is("We're sorry, but we can't find record for delete this train.")))
+        ;
     }
 
 //    @Test
