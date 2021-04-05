@@ -114,7 +114,7 @@ public class TrainController {
      *
      * @param model model.
      * @param id    train id.
-     * @return view trains.
+     * @return view trains or view error.
      */
     @GetMapping(value = "/train/{id}/delete")
     public String deleteTrain(@PathVariable Integer id, Model model) {

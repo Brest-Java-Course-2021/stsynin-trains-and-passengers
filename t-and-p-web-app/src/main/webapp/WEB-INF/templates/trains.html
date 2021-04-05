@@ -189,7 +189,7 @@
         var target = $(event.relatedTarget)
 
         if (target.data('count')>0) {
-            $(this).find('.modal-body').text('Unfortunately you can not delete train "' + target.data('name') + '". You need to remove all passengers firstly.');
+            $(this).find('.modal-body').text('Unfortunately, you cannot delete the "' + target.data('name') + '" train. First you need to remove all passengers.');
             document.getElementById('deleteBtn').style.visibility="collapse";
             document.getElementById('cancelBtn').textContent="Got it";
         } else {
