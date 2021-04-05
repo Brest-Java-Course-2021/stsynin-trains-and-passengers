@@ -72,15 +72,22 @@ public class TrainController {
     }
 
     /**
-     * Save new train information into storage.
+     * Save new train information into storage. If train name already exist - goto error page.
      *
      * @param train filled new train data.
-     * @return view trains.
+     * @param model model.
+     * @return view trains or view error.
      */
     @PostMapping(value = "/train")
-    public String addTrain(Train train) {
-        this.trainService.createTrain(train);
-        return "redirect:/trains";
+    public String addTrain(Train train, Model model) {
+        if (!this.trainService.isSecondTrainWithSameNameExists(train)) {
+            this.trainService.createTrain(train);
+            return "redirect:/trains";
+        } else {
+            model.addAttribute("errorMessage",
+                    "Unfortunately a train with name \"" + train.getTrainName() + "\" already exists.");
+            return "redirect:/error";
+        }
     }
 
     /**

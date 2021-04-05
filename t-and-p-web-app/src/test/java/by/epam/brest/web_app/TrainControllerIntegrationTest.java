@@ -111,6 +111,27 @@ class TrainControllerIntegrationTest {
     }
 
     @Test
+    public void shouldNotAddTrainIfTrainNameExistInBase() throws Exception {
+        String testName = "test";
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/train")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("trainName", "test")
+        ).andDo(MockMvcResultHandlers.print());
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/train")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("trainName", testName)
+        ).andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/error"))
+                .andExpect(model().attribute("errorMessage",
+                        is("Unfortunately a train with name \"" + testName + "\" already exists.")))
+        ;
+    }
+
+    @Test
     public void shouldOpenToEditTrainPageById() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/train/1")
