@@ -65,8 +65,10 @@
                     <div class="card-body">
                         <div class="row">
                             <input id="hiddenDateStart"
+                                   th:value="${dateStart}"
                                    type="hidden">
                             <input id="hiddenDateEnd"
+                                   th:value="${dateEnd}"
                                    type="hidden">
                             <div class="col-auto">
                                 Start:<input type="date" id="dateStart"
@@ -78,8 +80,16 @@
                                            name="dateEnd" placeholder="Date"
                                            onchange="setFilterEnd();">
                             </div>
+                            <script>
+                                var minD = document.getElementById('hiddenDateStart').value.split("/").reverse().join("-");
+                                   document.getElementById('dateStart').value = minD;
+                                   document.getElementById('dateEnd').min = minD;
+                                var maxD = document.getElementById('hiddenDateEnd').value.split("/").reverse().join("-");
+                                   document.getElementById('dateEnd').value = maxD;
+                                   document.getElementById('dateStart').max = maxD;
+                                    </script>
                             <div class=" col-auto">
-                                <a href="#" th:href="@{/trains}" class="btn btn-primary" id="filterSetButton"
+                                <a href="#" th:href="@{/filteredTrains}" class="btn btn-primary" id="filterSetButton"
                                 >Apply</a>
                             </div>
                         </div>
