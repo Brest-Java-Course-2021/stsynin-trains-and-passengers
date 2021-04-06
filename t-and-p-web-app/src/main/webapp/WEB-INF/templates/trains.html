@@ -210,13 +210,7 @@
 
 <script>
     function convertDateToBack(inputFieldName, outputFieldName) {
-        console.log(inputFieldName);
-        console.log(outputFieldName);
-        inDate = document.getElementById(inputFieldName).value;
-        console.log(inDate);
-        var outputDate = inDate.split("-").reverse().join("/");
-        console.log(outputDate);
-        document.getElementById(outputFieldName).value = outputDate;
+        document.getElementById(outputFieldName).value = document.getElementById(inputFieldName).value;
     }
 
     function setFilterBegin() {
