@@ -4,12 +4,12 @@ import by.epam.brest.model.Train;
 import by.epam.brest.service.TrainDtoService;
 import by.epam.brest.service.TrainService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Controller
@@ -34,6 +34,29 @@ public class TrainController {
     @GetMapping(value = "/trains")
     public final String trains(Model model) {
         model.addAttribute("trains", trainDtoService.findAllWithPassengersCount());
+        return "trains";
+    }
+
+    /**
+     * Goto trains list page.
+     *
+     * @param dateStart start of period of time.
+     * @param dateEnd end of period of time.
+     * @param model model.
+     * @return view trains or view error.
+     */
+    @GetMapping(value = "/filteredTrains")
+    public final String trainsWithFilter(@RequestParam(required = false)
+                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateStart,
+                                         @RequestParam(required = false)
+                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEnd,
+                                         Model model) {
+        model.addAttribute("trains", trainDtoService.getFilteredByDateTrainListWithPassengersCount(dateStart, dateEnd));
+        //findAllWithPassengersCount
+        model.addAttribute("dateStart", dateStart);
+        model.addAttribute("dateEnd", dateEnd);
+        System.out.println(dateStart);
+        System.out.println(dateEnd);
         return "trains";
     }
 

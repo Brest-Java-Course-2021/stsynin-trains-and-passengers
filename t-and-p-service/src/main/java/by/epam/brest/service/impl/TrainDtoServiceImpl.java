@@ -6,6 +6,7 @@ import by.epam.brest.service.TrainDtoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -21,5 +22,10 @@ public class TrainDtoServiceImpl implements TrainDtoService {
     @Override
     public List<TrainDto> findAllWithPassengersCount() {
         return trainDtoDao.findAllWithPassengersCount();
+    }
+
+    @Override
+    public List<TrainDto> getFilteredByDateTrainListWithPassengersCount(LocalDate dateStart, LocalDate dateEnd) {
+        return trainDtoDao.getFilteredByDateTrainListWithPassengersCount(dateStart, dateEnd);
     }
 }
