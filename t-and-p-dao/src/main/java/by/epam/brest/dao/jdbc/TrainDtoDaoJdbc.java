@@ -20,6 +20,12 @@ public class TrainDtoDaoJdbc implements TrainDtoDao {
     @Value("${TRN.sqlGetFilteredByDateTrainListWithPassengersCount}")
     private String sqlGetFilteredByDateTrainListWithPassengersCount;
 
+    @Value("${TRN.sqlGetFilteredByStartDateTrainListWithPassengersCount}")
+    private String sqlGetFilteredByStartDateTrainListWithPassengersCount;
+
+    @Value("${TRN.sqlGetFilteredByEndDateTrainListWithPassengersCount}")
+    private String sqlGetFilteredByEndDateTrainListWithPassengersCount;
+
     Logger logger = LoggerFactory.getLogger(TrainDtoDaoJdbc.class);
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -44,10 +50,30 @@ public class TrainDtoDaoJdbc implements TrainDtoDao {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue("START_DATE", dateStart);
         parameterSource.addValue("END_DATE", dateEnd);
-        System.out.println(parameterSource);
         return namedParameterJdbcTemplate.query(
-                sqlGetFilteredByDateTrainListWithPassengersCount,
+                getSqlRequestForFilteringTrainsByDate(dateStart, dateEnd),
                 parameterSource,
                 BeanPropertyRowMapper.newInstance(TrainDto.class));
+    }
+
+    private String getSqlRequestForFilteringTrainsByDate(LocalDate dateStart, LocalDate dateEnd) {
+        if (dateStart == null && dateEnd == null) {
+            logger.debug("Don't use a filter");
+            return sqlFindAllWithPassengersCount;
+        }
+        if (dateStart == null) {
+            logger.debug("Filtering only by end date");
+            return sqlGetFilteredByEndDateTrainListWithPassengersCount;
+        }
+        if (dateEnd == null) {
+            logger.debug("Filtering only by start date");
+            return sqlGetFilteredByStartDateTrainListWithPassengersCount;
+        }
+        logger.debug("Filtering by period");
+        if (dateEnd.isBefore(dateStart)) {
+            logger.error("Wrong date order for filtering");
+            throw new IllegalArgumentException("Wrong date order for filtering");
+        }
+        return sqlGetFilteredByDateTrainListWithPassengersCount;
     }
 }

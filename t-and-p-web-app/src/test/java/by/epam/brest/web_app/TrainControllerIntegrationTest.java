@@ -237,28 +237,55 @@ class TrainControllerIntegrationTest {
         ;
     }
 
-//    @Test
-//    public void shouldReturnTrainsPageWithStartFilter() throws Exception {
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.get("/filteredTrains")
-//                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//                        .param("dateStart", "2020-01-01")
-//        ).andDo(MockMvcResultHandlers.print())
-//                .andExpect(status().isOk())
-//        ;
-//    }
-//
-//    @Test
-//    public void shouldReturnTrainsPageWithEndFilter() throws Exception {
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.get("/filteredTrains")
-//                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//                        .param("dateEnd", "2020-02-25")
-//        ).andDo(MockMvcResultHandlers.print())
-//                .andExpect(status().isOk())
-//        ;
-//
-//    }
+    @Test
+    public void shouldReturnTrainsPageWithStartFilter() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/filteredTrains")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("dateStart", "2020-01-01")
+        ).andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("trains"))
+                .andExpect(model().attribute("trains", hasSize(2)))
+                .andExpect(model().attribute("trains", hasItem(
+                        allOf(
+                                hasProperty("trainId", is(2)),
+                                hasProperty("trainName", is("second"))
+                        )
+                )))
+                .andExpect(model().attribute("trains", hasItem(
+                        allOf(
+                                hasProperty("trainId", is(3)),
+                                hasProperty("trainName", is("third"))
+                        )
+                )))
+        ;
+    }
+
+    @Test
+    public void shouldReturnTrainsPageWithEndFilter() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/filteredTrains")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("dateEnd", "2020-02-25")
+        ).andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("trains"))
+                .andExpect(model().attribute("trains", hasSize(2)))
+                .andExpect(model().attribute("trains", hasItem(
+                        allOf(
+                                hasProperty("trainId", is(1)),
+                                hasProperty("trainName", is("first"))
+                        )
+                )))
+                .andExpect(model().attribute("trains", hasItem(
+                        allOf(
+                                hasProperty("trainId", is(2)),
+                                hasProperty("trainName", is("second"))
+                        )
+                )))
+        ;
+    }
 
     @Test
     public void shouldReturnTrainsPageWithBothFilters() throws Exception {
@@ -278,30 +305,32 @@ class TrainControllerIntegrationTest {
                         )
                 )))
         ;
-
     }
 
-//    @Test
-//    public void shouldReturnTrainsPageWithNeitherFilters() throws Exception {
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.get("/filteredTrains")
-//                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//        ).andDo(MockMvcResultHandlers.print())
-//                .andExpect(status().isOk())
-//        ;
-//
-//    }
-//
-//    @Test
-//    public void shouldReturnErrorPageWithWrongFiltersOrder() throws Exception {
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.get("/filteredTrains")
-//                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//                        .param("dateStart", "2020-02-25")
-//                        .param("dateEnd", "2020-01-01")
-//        ).andDo(MockMvcResultHandlers.print())
-//                .andExpect(status().isOk())
-//        ;
-//
-//    }
+    @Test
+    public void shouldReturnTrainsPageWithNeitherFilters() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/filteredTrains")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        ).andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("trains"))
+                .andExpect(model().attribute("trains", hasSize(3)))
+        ;
+    }
+
+    @Test
+    public void shouldReturnErrorPageWithWrongFiltersOrder() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/filteredTrains")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("dateStart", "2020-02-25")
+                        .param("dateEnd", "2020-01-01")
+        ).andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/error"))
+                .andExpect(model().attribute("errorMessage",
+                        is("We're sorry, but we use wrong search parameters.")))
+        ;
+    }
 }

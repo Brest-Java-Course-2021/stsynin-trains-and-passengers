@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -41,8 +44,8 @@ public class TrainController {
      * Goto trains list page.
      *
      * @param dateStart start of period of time.
-     * @param dateEnd end of period of time.
-     * @param model model.
+     * @param dateEnd   end of period of time.
+     * @param model     model.
      * @return view trains or view error.
      */
     @GetMapping(value = "/filteredTrains")
@@ -51,13 +54,16 @@ public class TrainController {
                                          @RequestParam(required = false)
                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEnd,
                                          Model model) {
-        model.addAttribute("trains", trainDtoService.getFilteredByDateTrainListWithPassengersCount(dateStart, dateEnd));
-        //findAllWithPassengersCount
-        model.addAttribute("dateStart", dateStart);
-        model.addAttribute("dateEnd", dateEnd);
-        System.out.println(dateStart);
-        System.out.println(dateEnd);
-        return "trains";
+        if (!(dateStart == null) && !(dateEnd == null) && dateEnd.isBefore(dateStart)) {
+            model.addAttribute("errorMessage",
+                    "We're sorry, but we use wrong search parameters.");
+            return "redirect:/error";
+        } else {
+            model.addAttribute("trains", trainDtoService.getFilteredByDateTrainListWithPassengersCount(dateStart, dateEnd));
+            model.addAttribute("dateStart", dateStart);
+            model.addAttribute("dateEnd", dateEnd);
+            return "trains";
+        }
     }
 
     /**
