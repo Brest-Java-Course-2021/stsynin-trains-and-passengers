@@ -46,7 +46,7 @@ public class PassengerController {
      *
      * @param model model.
      * @param id    passenger id.
-     * @return view passenger.
+     * @return view passenger or view error.
      */
     @GetMapping(value = "/passenger/{id}")
     public final String gotoEditPassengerPage(@PathVariable Integer id, Model model) {
@@ -57,9 +57,9 @@ public class PassengerController {
             model.addAttribute("trains", trainService.findAll());
             return "passenger";
         } else {
-            // TODO Passenger not found - pass error message as parameter or handle not found error
-            // polite form
-            return "redirect:passengers";
+            model.addAttribute("errorMessage",
+                    "We're sorry, but we can't find record for this passenger.");
+            return "redirect:/error";
         }
     }
 
@@ -102,7 +102,7 @@ public class PassengerController {
     }
 
     /**
-     * Delete passenger information in storage.
+     * Delete passenger information in storage. If passenger isn't exist - goto error page.
      *
      * @param model model.
      * @param id    passenger id.
@@ -110,7 +110,15 @@ public class PassengerController {
      */
     @GetMapping(value = "/passenger/{id}/delete")
     public String deletePassenger(@PathVariable Integer id, Model model) {
-        this.passengerService.deletePassenger(id);
-        return "redirect:/passengers";
+        Optional<Passenger> optionalPassenger = passengerService.findById(id);
+        if (optionalPassenger.isPresent()) {
+            this.passengerService.deletePassenger(id);
+            return "redirect:/passengers";
+        } else {
+            model.addAttribute(
+                    "errorMessage",
+                    "We're sorry, but we can't find record for delete this passenger.");
+            return "redirect:/error";
+        }
     }
 }

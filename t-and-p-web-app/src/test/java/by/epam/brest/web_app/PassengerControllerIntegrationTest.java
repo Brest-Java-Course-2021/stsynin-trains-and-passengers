@@ -132,12 +132,15 @@ public class PassengerControllerIntegrationTest {
     }
 
     @Test
-    public void shouldReturnToPassengersPageIfPassengerNotFoundById() throws Exception {
+    public void shouldRedirectToErrorPageIfPassengerNotFoundById() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/passenger/999")
         ).andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("passengers"));
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/error"))
+                .andExpect(model().attribute("errorMessage",
+                        is("We're sorry, but we can't find record for this passenger.")))
+        ;
     }
 
     @Test
@@ -183,10 +186,12 @@ public class PassengerControllerIntegrationTest {
                 MockMvcRequestBuilders.get("/passenger/999/delete")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("passengerId", "999")
-        ).andExpect(status().isFound())
-                .andExpect(view().name("redirect:/passengers"))
-                .andExpect(redirectedUrl("/passengers"));
-        //TODO fix redirect
+        ).andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/error"))
+                .andExpect(model().attribute("errorMessage",
+                        is("We're sorry, but we can't find record for delete this passenger.")))
+        ;
         assertEquals(countBefore, passengerService.getPassengersCount());
     }
 }
