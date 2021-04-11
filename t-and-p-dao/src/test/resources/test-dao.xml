@@ -19,4 +19,8 @@
     <bean id="passengerDtoDao" class="by.epam.brest.dao.jdbc.PassengerDtoDaoJdbc">
         <constructor-arg ref="NamedParameterJdbcTemplate"/>
     </bean>
+
+    <bean id="trainDtoDao" class="by.epam.brest.dao.jdbc.TrainDtoDaoJdbc">
+        <constructor-arg ref="NamedParameterJdbcTemplate"/>
+    </bean>
 </beans>
