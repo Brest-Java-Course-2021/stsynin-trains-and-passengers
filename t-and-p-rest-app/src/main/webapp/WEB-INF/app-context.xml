@@ -1,0 +1,74 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Use spring servlet for all requests, including static resources -->
+    <mvc:default-servlet-handler/>
+
+    <!-- Use @MVC annotations -->
+    <mvc:annotation-driven/>
+
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
+
+    <!-- Component scan for @Controller, @Service... annotations -->
+    <context:component-scan base-package="by.epam.brest*"/>
+
+    <import resource="classpath*:test-db.xml"/>
+
+    <!--    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">-->
+    <!--        <property name="locations">-->
+    <!--            <list>-->
+    <!--                <value>classpath:dao.properties</value>-->
+
+    <!--            </list>-->
+    <!--        </property>-->
+    <!--    </bean>-->
+
+    <!--    <context:property-placeholder location="classpath:application.properties"/>-->
+    <!--    <context:property-placeholder location="classpath:dao.properties"/>-->
+
+
+    <bean id="namedParameterJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg ref="dataSource"/>
+    </bean>
+
+    <bean id="passengerDao" class="by.epam.brest.dao.jdbc.PassengerDaoJdbc">
+        <constructor-arg ref="namedParameterJdbcTemplate"/>
+    </bean>
+
+    <bean id="trainDao" class="by.epam.brest.dao.jdbc.TrainDaoJdbc">
+        <constructor-arg ref="namedParameterJdbcTemplate"/>
+    </bean>
+
+    <bean id="passengerService" class="by.epam.brest.service.impl.PassengerServiceImpl">
+        <constructor-arg name="passengerDao" ref="passengerDao"/>
+    </bean>
+
+    <bean id="trainService" class="by.epam.brest.service.impl.TrainServiceImpl">
+        <constructor-arg name="trainDao" ref="trainDao"/>
+    </bean>
+
+    <bean id="trainDtoDao" class="by.epam.brest.dao.jdbc.TrainDtoDaoJdbc">
+        <constructor-arg ref="namedParameterJdbcTemplate"/>
+    </bean>
+
+    <bean id="trainDtoService" class="by.epam.brest.service.impl.TrainDtoServiceImpl">
+        <constructor-arg name="trainDtoDao" ref="trainDtoDao"/>
+    </bean>
+
+    <bean id="passengerDtoDao" class="by.epam.brest.dao.jdbc.PassengerDtoDaoJdbc">
+        <constructor-arg ref="namedParameterJdbcTemplate"/>
+    </bean>
+
+    <bean id="passengerDtoService" class="by.epam.brest.service.impl.PassengerDtoServiceImpl">
+        <constructor-arg name="passengerDtoDao" ref="passengerDtoDao"/>
+    </bean>
+
+</beans>
