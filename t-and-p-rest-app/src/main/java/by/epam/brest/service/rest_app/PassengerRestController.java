@@ -8,10 +8,7 @@ import by.epam.brest.service.TrainService;
 import by.epam.brest.service.rest_app.exception.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -90,5 +87,23 @@ public class PassengerRestController {
     @GetMapping(value = "/passengers/count")
     public final ResponseEntity<Integer> count() {
         return new ResponseEntity<>(passengerService.getPassengersCount(), HttpStatus.OK);
+    }
+
+    /**
+     * Create new passenger record.
+     *
+     * @param passenger passenger
+     * @return new record id.
+     */
+    @PostMapping(value = "/passengers")
+    public final ResponseEntity<Integer> create(@RequestBody Passenger passenger) {
+        if (passengerService.isSecondPassengerWithSameNameExists(passenger)) {
+            return new ResponseEntity(new ErrorResponse(
+                    "PASSENGER_DUPLICATED_NAME",
+                    "Create fail. This name already exists: \'" + passenger.getPassengerName() + "\'"
+            ), HttpStatus.UNPROCESSABLE_ENTITY);
+        } else {
+            return new ResponseEntity<>(passengerService.createPassenger(passenger), HttpStatus.CREATED);
+        }
     }
 }

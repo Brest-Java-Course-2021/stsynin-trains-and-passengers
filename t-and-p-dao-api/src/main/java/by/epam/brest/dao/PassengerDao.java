@@ -52,4 +52,9 @@ public interface PassengerDao {
      * @return number of passengers in the database.
      */
     Integer getPassengersCount();
+
+    /**
+     * Check if this name of passenger is exist in the database.
+     */
+    boolean isSecondPassengerWithSameNameExists(Passenger passenger);
 }

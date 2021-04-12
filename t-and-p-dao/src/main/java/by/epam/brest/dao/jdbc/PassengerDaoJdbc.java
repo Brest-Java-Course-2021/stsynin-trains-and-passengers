@@ -139,7 +139,8 @@ public class PassengerDaoJdbc implements PassengerDao {
         return parameterSource;
     }
 
-    private boolean isSecondPassengerWithSameNameExists(Passenger passenger) {
+    @Override
+    public boolean isSecondPassengerWithSameNameExists(Passenger passenger) {
         List<Passenger> passengers = namedParameterJdbcTemplate.query(
                 sqlGetPassengerByName,
                 new MapSqlParameterSource(PASSENGER_NAME, passenger.getPassengerName()),

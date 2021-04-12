@@ -52,4 +52,9 @@ public class PassengerServiceImpl implements PassengerService {
     public Integer getPassengersCount() {
         return passengerDao.getPassengersCount();
     }
+
+    @Override
+    public boolean isSecondPassengerWithSameNameExists(Passenger passenger) {
+        return passengerDao.isSecondPassengerWithSameNameExists(passenger);
+    }
 }

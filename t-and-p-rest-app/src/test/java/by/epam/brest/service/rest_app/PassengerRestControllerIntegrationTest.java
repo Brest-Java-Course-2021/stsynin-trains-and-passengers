@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -131,6 +132,52 @@ class PassengerRestControllerIntegrationTest {
         assertEquals(6, errorResponse);
     }
 
+    @Test
+    public void shouldCreatePassenger() throws Exception {
+        Passenger newPassenger = new Passenger("Zombie");
+        newPassenger.setTrainId(1);
+
+        Integer newId = passengerService.create(newPassenger);
+
+        assertNotNull(newId);
+        Optional<Passenger> optionalPassenger = passengerService.findById(newId);
+        assertTrue(optionalPassenger.isPresent());
+
+        Passenger actualPassenger = optionalPassenger.get();
+        assertEquals(newId, actualPassenger.getPassengerId());
+        assertEquals("Zombie", actualPassenger.getPassengerName());
+        assertEquals(1, actualPassenger.getTrainId());
+
+    }
+
+    @Test
+    public void shouldReturnErrorWithDuplicatedNameForCreate() throws Exception {
+        Passenger newPassenger = new Passenger("Alfred");
+
+        String json = objectMapper.writeValueAsString(newPassenger);
+        MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_PASSENGERS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("PASSENGER_DUPLICATED_NAME", errorResponse.getMessage());
+    }
+
+//    @Test
+//    public void shouldReturnErrorWithOverlongNameForCreate() throws Exception {
+//
+//    }
+//
+//        @Test
+//    public void shouldUpdatePassenger() throws Exception {
+//
+//    }
+
     class MockMvcPassengerService {
 
         public List<PassengerDto> findAll() throws Exception {
@@ -156,6 +203,18 @@ class PassengerRestControllerIntegrationTest {
                     response.getContentAsString(),
                     Passenger.class
             ));
+        }
+
+        public Integer create(Passenger passenger) throws Exception {
+            String json = objectMapper.writeValueAsString(passenger);
+            MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_PASSENGERS)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json)
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isCreated())
+                    .andReturn().getResponse();
+
+            return objectMapper.readValue(response.getContentAsString(), Integer.class);
         }
     }
 }
