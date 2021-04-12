@@ -81,4 +81,14 @@ public class PassengerRestController {
             ), HttpStatus.NOT_FOUND);
         }
     }
+
+    /**
+     * Endpoint "/passengers/count". Passenger count.
+     *
+     * @return passengers count.
+     */
+    @GetMapping(value = "/passengers/count")
+    public final ResponseEntity<Integer> count() {
+        return new ResponseEntity<>(passengerService.getPassengersCount(), HttpStatus.OK);
+    }
 }

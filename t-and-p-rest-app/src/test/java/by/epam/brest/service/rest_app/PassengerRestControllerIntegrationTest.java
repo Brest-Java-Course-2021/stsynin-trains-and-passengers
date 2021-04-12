@@ -117,6 +117,20 @@ class PassengerRestControllerIntegrationTest {
         assertEquals("PASSENGER_NOT_FOUND", errorResponse.getMessage());
     }
 
+    @Test
+    public void shouldReturnPassengersCount() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_PASSENGERS + "/count")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        assertNotNull(response);
+        Integer errorResponse = objectMapper.readValue(
+                response.getContentAsString(),
+                Integer.class);
+        assertNotNull(errorResponse);
+        assertEquals(6, errorResponse);
+    }
+
     class MockMvcPassengerService {
 
         public List<PassengerDto> findAll() throws Exception {
