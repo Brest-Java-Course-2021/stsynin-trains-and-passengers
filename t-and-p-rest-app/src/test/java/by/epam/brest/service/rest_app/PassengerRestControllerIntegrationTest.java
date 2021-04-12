@@ -16,6 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,6 +80,33 @@ class PassengerRestControllerIntegrationTest {
     public void shouldReturnPassengerNotFound() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_PASSENGERS + "/999")
                 .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andReturn().getResponse();
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(
+                response.getContentAsString(),
+                ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("PASSENGER_NOT_FOUND", errorResponse.getMessage());
+    }
+
+    @Test
+    public void shouldDeletePassengerById() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(
+                MockMvcRequestBuilders.delete(ENDPOINT_PASSENGERS + "/1"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        assertNotNull(response);
+        Integer errorResponse = objectMapper.readValue(
+                response.getContentAsString(),
+                Integer.class);
+        assertEquals(1, errorResponse);
+    }
+
+    @Test
+    public void shouldReturnPassengerNotFoundForDeletePassengerByWrongId() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(
+                MockMvcRequestBuilders.delete(ENDPOINT_PASSENGERS + "/999"))
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse();
         assertNotNull(response);
