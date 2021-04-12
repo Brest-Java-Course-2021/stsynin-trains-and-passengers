@@ -1,6 +1,8 @@
 package by.epam.brest.service.rest_app;
 
+import by.epam.brest.model.Passenger;
 import by.epam.brest.model.dto.PassengerDto;
+import by.epam.brest.service.rest_app.exception.ErrorResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,9 +21,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,6 +55,7 @@ class PassengerRestControllerIntegrationTest {
     public void setup() {
         mockMvc = MockMvcBuilders.standaloneSetup(passengerRestController)
                 .setMessageConverters(new MappingJackson2HttpMessageConverter())
+//        .setControllerAdvice(customExceptionHandler)
                 .alwaysDo(MockMvcResultHandlers.print())
                 .build();
     }
@@ -62,6 +65,28 @@ class PassengerRestControllerIntegrationTest {
         List<PassengerDto> passengers = passengerService.findAll();
         assertNotNull(passengers);
         assertTrue(passengers.size() > 0);
+    }
+
+    @Test
+    public void shouldReturnPassengerById() throws Exception {
+        Optional<Passenger> optionalPassenger = passengerService.findById(1);
+        assertTrue(optionalPassenger.isPresent());
+        assertEquals("Alfred", optionalPassenger.get().getPassengerName());
+        assertEquals(2, optionalPassenger.get().getTrainId());
+    }
+
+    @Test
+    public void shouldReturnPassengerNotFound() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_PASSENGERS + "/999")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andReturn().getResponse();
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(
+                response.getContentAsString(),
+                ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("PASSENGER_NOT_FOUND", errorResponse.getMessage());
     }
 
     class MockMvcPassengerService {
@@ -77,6 +102,18 @@ class PassengerRestControllerIntegrationTest {
                     response.getContentAsString(),
                     new TypeReference<>() {
                     });
+        }
+
+        public Optional<Passenger> findById(Integer id) throws Exception {
+            MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_PASSENGERS + "/" + id)
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse();
+
+            return Optional.of(objectMapper.readValue(
+                    response.getContentAsString(),
+                    Passenger.class
+            ));
         }
     }
 }
