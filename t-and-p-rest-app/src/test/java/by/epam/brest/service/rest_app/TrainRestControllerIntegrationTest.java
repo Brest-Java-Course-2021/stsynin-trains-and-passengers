@@ -100,20 +100,20 @@ class TrainRestControllerIntegrationTest {
         assertEquals("TRAIN_NOT_FOUND", errorResponse.getMessage());
     }
 
-//    @Test
-//    public void shouldDeleteTrainById() throws Exception {
-//        Train train = new Train("zombie");
-//        Integer freeTrainId = trainService.create(train);
-//        MockHttpServletResponse response = mockMvc.perform(
-//                MockMvcRequestBuilders.delete(ENDPOINT_TRAINS + "/1"))
-//                .andExpect(status().isOk())
-//                .andReturn().getResponse();
-//        assertNotNull(response);
-//        Integer errorResponse = objectMapper.readValue(
-//                response.getContentAsString(),
-//                Integer.class);
-//        assertEquals(1, errorResponse);
-//    }
+    @Test
+    public void shouldDeleteTrainById() throws Exception {
+        Train train = new Train("zombie");
+        Integer freeTrainId = trainService.create(train);
+        MockHttpServletResponse response = mockMvc.perform(
+                MockMvcRequestBuilders.delete(ENDPOINT_TRAINS + "/" + freeTrainId))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        assertNotNull(response);
+        Integer errorResponse = objectMapper.readValue(
+                response.getContentAsString(),
+                Integer.class);
+        assertEquals(1, errorResponse);
+    }
 
     @Test
     public void shouldReturnErrorForDeleteTrainByWrongId() throws Exception {
