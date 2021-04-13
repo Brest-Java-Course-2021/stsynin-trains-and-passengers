@@ -83,4 +83,14 @@ public class TrainRestController {
             ), HttpStatus.NOT_FOUND);
         }
     }
+
+    /**
+     * Trains count.
+     *
+     * @return trains count.
+     */
+    @GetMapping(value = "/trains/count")
+    public final ResponseEntity<Integer> count() {
+        return new ResponseEntity<>(trainService.getTrainsCount(), HttpStatus.OK);
+    }
 }

@@ -139,6 +139,22 @@ class TrainRestControllerIntegrationTest {
         assertEquals("TRAIN_LOADED", errorResponse.getMessage());
     }
 
+    @Test
+    public void shouldReturnTrainsCount() throws Exception {
+        int expectedCount = trainService.findAll().size();
+
+        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS + "/count")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        assertNotNull(response);
+        Integer errorResponse = objectMapper.readValue(
+                response.getContentAsString(),
+                Integer.class);
+        assertNotNull(errorResponse);
+        assertEquals(expectedCount, errorResponse);
+    }
+
     class MockMvcTrainService {
 
         public List<TrainDto> findAll() throws Exception {
