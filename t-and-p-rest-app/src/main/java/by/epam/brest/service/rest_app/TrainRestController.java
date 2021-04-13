@@ -130,6 +130,42 @@ public class TrainRestController {
         }
     }
 
+    /**
+     * Update train record.
+     *
+     * @param train train
+     * @return number of updated trains.
+     */
+    @PutMapping(value = "/trains/{id}")
+    public final ResponseEntity<Integer> update(@RequestBody Train train) {
+        if (train.getTrainName() == null) {
+            return new ResponseEntity(new ErrorResponse(
+                    "TRAIN_EMPTY_NAME",
+                    "Update fail. Train name can't be empty"
+            ), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        if (isTrainNameOverlong(train)) {
+            return new ResponseEntity(new ErrorResponse(
+                    "TRAIN_OVERLONG_NAME",
+                    "Update fail. This name is too long : '" + train.getTrainName() + "'"
+            ), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        if (isTrainDestinationNameOverlong(train)) {
+            return new ResponseEntity(new ErrorResponse(
+                    "TRAIN_OVERLONG_DESTINATION_NAME",
+                    "Update fail. This name of destination is too long : '" + train.getTrainDestination() + "'"
+            ), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        if (trainService.isSecondTrainWithSameNameExists(train)) {
+            return new ResponseEntity(new ErrorResponse(
+                    "TRAIN_DUPLICATED_NAME",
+                    "Update fail. This name already exists: '" + train.getTrainName() + "'"
+            ), HttpStatus.UNPROCESSABLE_ENTITY);
+        } else {
+            return new ResponseEntity<>(trainService.updateTrain(train), HttpStatus.OK);
+        }
+    }
+
     private boolean isTrainDestinationNameOverlong(Train train) {
         return train.getTrainDestination() != null && train.getTrainDestination().length() > MAX_TRAIN_DESTINATION_NAME_LENGTH;
     }

@@ -30,8 +30,7 @@ import java.util.Optional;
 import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_DESTINATION_NAME_LENGTH;
 import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -238,6 +237,115 @@ class TrainRestControllerIntegrationTest {
 
         String json = objectMapper.writeValueAsString(newTrain);
         MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("TRAIN_OVERLONG_DESTINATION_NAME", errorResponse.getMessage());
+    }
+
+    @Test
+    public void shouldUpdateTrain() throws Exception {
+        Optional<Train> optionalGuineaPig = trainService.findById(1);
+        assertTrue(optionalGuineaPig.isPresent());
+
+        Train guineaPig = optionalGuineaPig.get();
+        guineaPig.setTrainName("firstNew");
+
+        String json = objectMapper.writeValueAsString(guineaPig);
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        Integer UpdateResponse = objectMapper.readValue(response.getContentAsString(), Integer.class);
+        assertEquals(1, UpdateResponse);
+    }
+
+    @Test
+    public void shouldReturnErrorWithDuplicatedNameForUpdate() throws Exception {
+        Optional<Train> optionalGuineaPig = trainService.findById(1);
+        assertTrue(optionalGuineaPig.isPresent());
+
+        Train guineaPig = optionalGuineaPig.get();
+        guineaPig.setTrainName("second");
+
+        String json = objectMapper.writeValueAsString(guineaPig);
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("TRAIN_DUPLICATED_NAME", errorResponse.getMessage());
+    }
+
+    @Test
+    public void shouldReturnErrorWithEmptyNameForUpdate() throws Exception {
+        Optional<Train> optionalGuineaPig = trainService.findById(1);
+        assertTrue(optionalGuineaPig.isPresent());
+
+        Train guineaPig = optionalGuineaPig.get();
+        guineaPig.setTrainName(null);
+
+        String json = objectMapper.writeValueAsString(guineaPig);
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("TRAIN_EMPTY_NAME", errorResponse.getMessage());
+    }
+
+    @Test
+    public void shouldReturnErrorWithOverlongNameForUpdate() throws Exception {
+        Optional<Train> optionalGuineaPig = trainService.findById(1);
+        assertTrue(optionalGuineaPig.isPresent());
+
+        Train guineaPig = optionalGuineaPig.get();
+        guineaPig.setTrainName(getOverlongName());
+
+        String json = objectMapper.writeValueAsString(guineaPig);
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("TRAIN_OVERLONG_NAME", errorResponse.getMessage());
+    }
+
+    @Test
+    public void shouldReturnErrorWithOverlongDestinationNameForUpdate() throws Exception {
+        Optional<Train> optionalGuineaPig = trainService.findById(1);
+        assertTrue(optionalGuineaPig.isPresent());
+
+        Train guineaPig = optionalGuineaPig.get();
+        guineaPig.setTrainDestination(getOverlongDestinationName());
+
+        String json = objectMapper.writeValueAsString(guineaPig);
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS + "/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON))
