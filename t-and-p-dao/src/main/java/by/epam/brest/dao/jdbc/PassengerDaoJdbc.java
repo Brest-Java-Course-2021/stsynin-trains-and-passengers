@@ -86,19 +86,7 @@ public class PassengerDaoJdbc implements PassengerDao {
 
     @Override
     public Integer createPassenger(Passenger passenger) {
-        if (passenger.getPassengerName() == null) {
-            throw new PassengerEmptyNameException("Create fail. Passenger name can't be empty");
-        }
-        if (isPassengerNameOverlong(passenger)) {
-            logger.error("Passenger name {} is too long", passenger.getPassengerName());
-            throw new PassengerOverlongNameException(
-                    "Create fail. This name is too long : '" + passenger.getPassengerName() + "'");
-        }
-        if (isSecondPassengerWithSameNameExists(passenger)) {
-            logger.error("Passenger named {} is already exists", passenger.getPassengerName());
-            throw new PassengerDuplicatedNameException(
-                    "Create fail. This name already exists: '" + passenger.getPassengerName() + "'");
-        }
+        checkPassengerName(passenger, "Create");
         SqlParameterSource parameterSource = newFillParameterSource(passenger);
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -114,19 +102,7 @@ public class PassengerDaoJdbc implements PassengerDao {
 
     @Override
     public Integer updatePassenger(Passenger passenger) {
-        if (passenger.getPassengerName() == null) {
-            throw new PassengerEmptyNameException("Update fail. Passenger name can't be empty");
-        }
-        if (isPassengerNameOverlong(passenger)) {
-            logger.error("Passenger name {} is too long", passenger.getPassengerName());
-            throw new PassengerOverlongNameException(
-                    "Update fail. This name is too long : '" + passenger.getPassengerName() + "'");
-        }
-        if (isSecondPassengerWithSameNameExists(passenger)) {
-            logger.error("Passenger named {} is already exists", passenger.getPassengerName());
-            throw new PassengerDuplicatedNameException(
-                    "Update fail. This name already exists: '" + passenger.getPassengerName() + "'");
-        }
+        checkPassengerName(passenger, "Update");
         logger.debug("Update {}", passenger);
         SqlParameterSource parameterSource = newFillParameterSource(passenger);
         return namedParameterJdbcTemplate.update(
@@ -169,7 +145,21 @@ public class PassengerDaoJdbc implements PassengerDao {
         return passengers.size() > 0 && !passengers.get(0).getPassengerId().equals(passenger.getPassengerId());
     }
 
-    private boolean isPassengerNameOverlong(Passenger passenger) {
-        return passenger.getPassengerName() != null && passenger.getPassengerName().length() > MAX_PASSENGER_NAME_LENGTH;
+    private void checkPassengerName(Passenger passenger, String stage) {
+        String passengerName = passenger.getPassengerName();
+        if (passengerName == null) {
+            logger.error(stage + " fail. Passenger name is null");
+            throw new PassengerEmptyNameException("Update fail. Passenger name can't be empty");
+        }
+        if (passengerName.length() > MAX_PASSENGER_NAME_LENGTH) {
+            logger.error("Passenger name {} is too long", passengerName);
+            throw new PassengerOverlongNameException(
+                    stage + " fail. This name is too long : '" + passengerName + "'");
+        }
+        if (isSecondPassengerWithSameNameExists(passenger)) {
+            logger.error("Passenger named {} is already exists", passengerName);
+            throw new PassengerDuplicatedNameException(
+                    stage + " fail. This name already exists: '" + passengerName + "'");
+        }
     }
 }
