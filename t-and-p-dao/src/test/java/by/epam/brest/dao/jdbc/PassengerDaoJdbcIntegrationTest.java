@@ -1,6 +1,7 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.PassengerDao;
+import by.epam.brest.dao.jdbc.exception.PassengerDuplicatedNameException;
 import by.epam.brest.model.Passenger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,7 +70,7 @@ class PassengerDaoJdbcIntegrationTest {
         List<Passenger> passengers = passengerDao.findAll();
         Passenger renewablePassenger = passengers.get(0);
         renewablePassenger.setPassengerName(passengers.get(1).getPassengerName());
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(PassengerDuplicatedNameException.class, () ->
                 passengerDao.updatePassenger(renewablePassenger)
         );
     }
@@ -111,7 +112,7 @@ class PassengerDaoJdbcIntegrationTest {
 
     @Test
     public void test_createPassengerWithExistsName() {
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(PassengerDuplicatedNameException.class, () ->
                 passengerDao.createPassenger(new Passenger(passengerDao.findAll().get(0).getPassengerName())));
     }
 

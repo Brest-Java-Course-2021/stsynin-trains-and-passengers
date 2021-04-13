@@ -1,6 +1,8 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.TrainDao;
+import by.epam.brest.dao.jdbc.exception.TrainDuplicatedNameException;
+import by.epam.brest.dao.jdbc.exception.TrainLoadedException;
 import by.epam.brest.model.Train;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -71,7 +73,7 @@ public class TrainDaoJdbcIntegrationTest {
         List<Train> trains = trainDao.findAll();
         Train renewableTrain = trains.get(0);
         renewableTrain.setTrainName(trains.get(1).getTrainName());
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(TrainDuplicatedNameException.class, () ->
                 trainDao.updateTrain(renewableTrain)
         );
     }
@@ -116,7 +118,7 @@ public class TrainDaoJdbcIntegrationTest {
 
     @Test
     public void test_createTrainWithExistsName() {
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(TrainDuplicatedNameException.class, () ->
                 trainDao.createTrain(new Train(trainDao.findAll().get(0).getTrainName())));
     }
 
@@ -133,8 +135,7 @@ public class TrainDaoJdbcIntegrationTest {
     @Test
     public void test_deleteTrainWithPassenger() {
         List<Train> trainsBeforeDelete = trainDao.findAll();
-        //TODO need another exception
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(TrainLoadedException.class, () ->
                 trainDao.deleteTrain(trainsBeforeDelete.get(0).getTrainId()));
     }
 
