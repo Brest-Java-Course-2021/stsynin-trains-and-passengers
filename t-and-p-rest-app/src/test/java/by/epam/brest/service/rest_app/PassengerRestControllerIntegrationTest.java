@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -167,14 +166,58 @@ class PassengerRestControllerIntegrationTest {
         assertNotNull(errorResponse);
         assertEquals("PASSENGER_DUPLICATED_NAME", errorResponse.getMessage());
     }
-
+//    TODO need check name length
 //    @Test
 //    public void shouldReturnErrorWithOverlongNameForCreate() throws Exception {
 //
 //    }
-//
-//        @Test
-//    public void shouldUpdatePassenger() throws Exception {
+
+    @Test
+    public void shouldUpdatePassenger() throws Exception {
+        Optional<Passenger> optionalGuineaPig = passengerService.findById(1);
+        assertTrue(optionalGuineaPig.isPresent());
+
+        Passenger guineaPig = optionalGuineaPig.get();
+        guineaPig.setPassengerName("AlfredNew");
+
+        String json = objectMapper.writeValueAsString(guineaPig);
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_PASSENGERS + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        Integer UpdateResponse = objectMapper.readValue(response.getContentAsString(), Integer.class);
+        assertEquals(1, UpdateResponse);
+    }
+
+    @Test
+    public void shouldReturnErrorWithDuplicatedNameForUpdate() throws Exception {
+        Optional<Passenger> optionalGuineaPig = passengerService.findById(1);
+        assertTrue(optionalGuineaPig.isPresent());
+
+        Passenger guineaPig = optionalGuineaPig.get();
+        guineaPig.setPassengerName("Bob");
+
+        String json = objectMapper.writeValueAsString(guineaPig);
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_PASSENGERS + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("PASSENGER_DUPLICATED_NAME", errorResponse.getMessage());
+    }
+
+//    TODO need check name length
+//    @Test
+//    public void shouldReturnErrorWithOverlongNameForUpdate() throws Exception {
 //
 //    }
 

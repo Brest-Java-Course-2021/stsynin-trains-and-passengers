@@ -106,4 +106,22 @@ public class PassengerRestController {
             return new ResponseEntity<>(passengerService.createPassenger(passenger), HttpStatus.CREATED);
         }
     }
+
+    /**
+     * Update passenger record.
+     *
+     * @param passenger passenger
+     * @return number of updated passengers.
+     */
+    @PutMapping(value = "/passengers/{id}")
+    public final ResponseEntity<Integer> update(@RequestBody Passenger passenger) {
+        if (passengerService.isSecondPassengerWithSameNameExists(passenger)) {
+            return new ResponseEntity(new ErrorResponse(
+                    "PASSENGER_DUPLICATED_NAME",
+                    "Update fail. This name already exists: \'" + passenger.getPassengerName() + "\'"
+            ), HttpStatus.UNPROCESSABLE_ENTITY);
+        } else {
+            return new ResponseEntity<>(passengerService.updatePassenger(passenger), HttpStatus.OK);
+        }
+    }
 }
