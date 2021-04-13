@@ -5,6 +5,7 @@ import by.epam.brest.model.dto.PassengerDto;
 import by.epam.brest.service.rest_app.exception.ErrorResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -166,11 +168,25 @@ class PassengerRestControllerIntegrationTest {
         assertNotNull(errorResponse);
         assertEquals("PASSENGER_DUPLICATED_NAME", errorResponse.getMessage());
     }
-//    TODO need check name length
-//    @Test
-//    public void shouldReturnErrorWithOverlongNameForCreate() throws Exception {
-//
-//    }
+
+    @Test
+    public void shouldReturnErrorWithOverlongNameForCreate() throws Exception {
+        String overlongName = RandomStringUtils.randomAlphabetic(MAX_TRAIN_NAME_LENGTH + 1);
+        Passenger newPassenger = new Passenger(overlongName);
+
+        String json = objectMapper.writeValueAsString(newPassenger);
+        MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_PASSENGERS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("PASSENGER_OVERLONG_NAME", errorResponse.getMessage());
+    }
 
     @Test
     public void shouldUpdatePassenger() throws Exception {
@@ -215,11 +231,28 @@ class PassengerRestControllerIntegrationTest {
         assertEquals("PASSENGER_DUPLICATED_NAME", errorResponse.getMessage());
     }
 
-//    TODO need check name length
-//    @Test
-//    public void shouldReturnErrorWithOverlongNameForUpdate() throws Exception {
-//
-//    }
+    @Test
+    public void shouldReturnErrorWithOverlongNameForUpdate() throws Exception {
+        String overlongName = RandomStringUtils.randomAlphabetic(MAX_TRAIN_NAME_LENGTH + 1);
+        Optional<Passenger> optionalGuineaPig = passengerService.findById(1);
+        assertTrue(optionalGuineaPig.isPresent());
+
+        Passenger guineaPig = optionalGuineaPig.get();
+        guineaPig.setPassengerName(overlongName);
+
+        String json = objectMapper.writeValueAsString(guineaPig);
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_PASSENGERS + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("PASSENGER_OVERLONG_NAME", errorResponse.getMessage());
+    }
 
     class MockMvcPassengerService {
 

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
+
 /**
  * @author Sergey Tsynin
  */
@@ -97,6 +99,12 @@ public class PassengerRestController {
      */
     @PostMapping(value = "/passengers")
     public final ResponseEntity<Integer> create(@RequestBody Passenger passenger) {
+        if (isPassengerNameOverlong(passenger)) {
+            return new ResponseEntity(new ErrorResponse(
+                    "PASSENGER_OVERLONG_NAME",
+                    "Create fail. This name is too long : \'" + passenger.getPassengerName() + "\'"
+            ), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
         if (passengerService.isSecondPassengerWithSameNameExists(passenger)) {
             return new ResponseEntity(new ErrorResponse(
                     "PASSENGER_DUPLICATED_NAME",
@@ -115,6 +123,12 @@ public class PassengerRestController {
      */
     @PutMapping(value = "/passengers/{id}")
     public final ResponseEntity<Integer> update(@RequestBody Passenger passenger) {
+        if (isPassengerNameOverlong(passenger)) {
+            return new ResponseEntity(new ErrorResponse(
+                    "PASSENGER_OVERLONG_NAME",
+                    "Update fail. This name is too long : \'" + passenger.getPassengerName() + "\'"
+            ), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
         if (passengerService.isSecondPassengerWithSameNameExists(passenger)) {
             return new ResponseEntity(new ErrorResponse(
                     "PASSENGER_DUPLICATED_NAME",
@@ -123,5 +137,9 @@ public class PassengerRestController {
         } else {
             return new ResponseEntity<>(passengerService.updatePassenger(passenger), HttpStatus.OK);
         }
+    }
+
+    private boolean isPassengerNameOverlong(Passenger passenger) {
+        return passenger.getPassengerName().length() > MAX_TRAIN_NAME_LENGTH;
     }
 }
