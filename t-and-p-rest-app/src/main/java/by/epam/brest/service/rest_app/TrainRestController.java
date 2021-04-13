@@ -102,6 +102,12 @@ public class TrainRestController {
      */
     @PostMapping(value = "/trains")
     public final ResponseEntity<Integer> create(@RequestBody Train train) {
+        if (train.getTrainName() == null) {
+            return new ResponseEntity(new ErrorResponse(
+                    "TRAIN_EMPTY_NAME",
+                    "Create fail. Train name can't be empty"
+            ), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
         if (isTrainNameOverlong(train)) {
             return new ResponseEntity(new ErrorResponse(
                     "TRAIN_OVERLONG_NAME",

@@ -196,6 +196,24 @@ class TrainRestControllerIntegrationTest {
     }
 
     @Test
+    public void shouldReturnErrorWithEmptyNameForCreate() throws Exception {
+        Train newTrain = new Train();
+
+        String json = objectMapper.writeValueAsString(newTrain);
+        MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("TRAIN_EMPTY_NAME", errorResponse.getMessage());
+    }
+
+    @Test
     public void shouldReturnErrorWithOverlongNameForCreate() throws Exception {
         Train newTrain = new Train(getOverlongName());
 
