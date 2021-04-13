@@ -4,7 +4,6 @@ import by.epam.brest.model.Passenger;
 import by.epam.brest.model.dto.PassengerDto;
 import by.epam.brest.service.PassengerDtoService;
 import by.epam.brest.service.PassengerService;
-import by.epam.brest.service.TrainService;
 import by.epam.brest.service.rest_app.exception.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +24,9 @@ public class PassengerRestController {
 
     private final PassengerService passengerService;
 
-    private final TrainService trainService;
-
-    public PassengerRestController(PassengerDtoService passengerDtoService, PassengerService passengerService, TrainService trainService) {
+    public PassengerRestController(PassengerDtoService passengerDtoService, PassengerService passengerService) {
         this.passengerDtoService = passengerDtoService;
         this.passengerService = passengerService;
-        this.trainService = trainService;
     }
 
     /**
