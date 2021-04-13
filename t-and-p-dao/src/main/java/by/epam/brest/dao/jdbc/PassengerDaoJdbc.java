@@ -1,6 +1,7 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.PassengerDao;
+import by.epam.brest.dao.jdbc.exception.PassengerDuplicatedNameException;
 import by.epam.brest.dao.jdbc.exception.PassengerEmptyNameException;
 import by.epam.brest.model.Passenger;
 import org.slf4j.Logger;
@@ -89,7 +90,8 @@ public class PassengerDaoJdbc implements PassengerDao {
         }
         if (isSecondPassengerWithSameNameExists(passenger)) {
             logger.error("Passenger named {} is already exists", passenger.getPassengerName());
-            throw new IllegalArgumentException("Duplicate passenger name: " + passenger.getPassengerName());
+            throw new PassengerDuplicatedNameException(
+                    "Create fail. This name already exists: '" + passenger.getPassengerName() + "'");
         }
         SqlParameterSource parameterSource = newFillParameterSource(passenger);
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -111,7 +113,8 @@ public class PassengerDaoJdbc implements PassengerDao {
         }
         if (isSecondPassengerWithSameNameExists(passenger)) {
             logger.error("Passenger named {} is already exists", passenger.getPassengerName());
-            throw new IllegalArgumentException("Duplicate passenger name: " + passenger.getPassengerName());
+            throw new PassengerDuplicatedNameException(
+                    "Update fail. This name already exists: '" + passenger.getPassengerName() + "'");
         }
         logger.debug("Update {}", passenger);
         SqlParameterSource parameterSource = newFillParameterSource(passenger);

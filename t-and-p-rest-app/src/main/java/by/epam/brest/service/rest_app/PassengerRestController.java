@@ -94,14 +94,7 @@ public class PassengerRestController {
                     "Create fail. This name is too long : '" + passenger.getPassengerName() + "'"
             ), HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        if (passengerService.isSecondPassengerWithSameNameExists(passenger)) {
-            return new ResponseEntity(new ErrorResponse(
-                    "PASSENGER_DUPLICATED_NAME",
-                    "Create fail. This name already exists: '" + passenger.getPassengerName() + "'"
-            ), HttpStatus.UNPROCESSABLE_ENTITY);
-        } else {
             return new ResponseEntity<>(passengerService.createPassenger(passenger), HttpStatus.CREATED);
-        }
     }
 
     /**
@@ -118,14 +111,7 @@ public class PassengerRestController {
                     "Update fail. This name is too long : '" + passenger.getPassengerName() + "'"
             ), HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        if (passengerService.isSecondPassengerWithSameNameExists(passenger)) {
-            return new ResponseEntity(new ErrorResponse(
-                    "PASSENGER_DUPLICATED_NAME",
-                    "Update fail. This name already exists: '" + passenger.getPassengerName() + "'"
-            ), HttpStatus.UNPROCESSABLE_ENTITY);
-        } else {
             return new ResponseEntity<>(passengerService.updatePassenger(passenger), HttpStatus.OK);
-        }
     }
 
     private boolean isPassengerNameOverlong(Passenger passenger) {

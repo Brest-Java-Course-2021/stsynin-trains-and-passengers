@@ -1,5 +1,6 @@
 package by.epam.brest.service.rest_app.exception;
 
+import by.epam.brest.dao.jdbc.exception.PassengerDuplicatedNameException;
 import by.epam.brest.dao.jdbc.exception.PassengerEmptyNameException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,16 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(PassengerEmptyNameException.class)
-    public ResponseEntity<ErrorResponse> handlePassengerNotFound(PassengerEmptyNameException e) {
+    public ResponseEntity<ErrorResponse> handlePassengerEmptyName(PassengerEmptyNameException e) {
         return new ResponseEntity<>(
                 new ErrorResponse("PASSENGER_EMPTY_NAME", e),
+                HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(PassengerDuplicatedNameException.class)
+    public ResponseEntity<ErrorResponse> handlePassengerDuplicatedName(PassengerDuplicatedNameException e) {
+        return new ResponseEntity<>(
+                new ErrorResponse("PASSENGER_DUPLICATED_NAME", e),
                 HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }
