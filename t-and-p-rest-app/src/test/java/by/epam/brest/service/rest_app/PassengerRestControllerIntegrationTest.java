@@ -2,6 +2,7 @@ package by.epam.brest.service.rest_app;
 
 import by.epam.brest.model.Passenger;
 import by.epam.brest.model.dto.PassengerDto;
+import by.epam.brest.service.rest_app.exception.CustomExceptionHandler;
 import by.epam.brest.service.rest_app.exception.ErrorResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,6 +51,9 @@ class PassengerRestControllerIntegrationTest {
     private final PassengerRestController passengerRestController;
 
     @Autowired
+    private CustomExceptionHandler customExceptionHandler;
+
+    @Autowired
     PassengerRestControllerIntegrationTest(PassengerRestController passengerRestController) {
         this.passengerRestController = passengerRestController;
     }
@@ -58,7 +62,7 @@ class PassengerRestControllerIntegrationTest {
     public void setup() {
         mockMvc = MockMvcBuilders.standaloneSetup(passengerRestController)
                 .setMessageConverters(new MappingJackson2HttpMessageConverter())
-//        .setControllerAdvice(customExceptionHandler)
+                .setControllerAdvice(customExceptionHandler)
                 .alwaysDo(MockMvcResultHandlers.print())
                 .build();
     }

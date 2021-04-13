@@ -17,6 +17,11 @@ public class ErrorResponse {
         this.descriptions = descriptions;
     }
 
+    public ErrorResponse(String message, Exception e) {
+        this.message = message;
+        this.descriptions = e.getMessage();
+    }
+
     public String getMessage() {
         return message;
     }

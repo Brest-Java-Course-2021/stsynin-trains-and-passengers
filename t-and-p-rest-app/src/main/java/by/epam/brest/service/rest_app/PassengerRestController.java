@@ -5,6 +5,7 @@ import by.epam.brest.model.dto.PassengerDto;
 import by.epam.brest.service.PassengerDtoService;
 import by.epam.brest.service.PassengerService;
 import by.epam.brest.service.rest_app.exception.ErrorResponse;
+import by.epam.brest.service.rest_app.exception.PassengerNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,14 +49,10 @@ public class PassengerRestController {
     @GetMapping(value = "/passengers/{id}")
     public final ResponseEntity<Passenger> getById(@PathVariable Integer id) {
         Optional<Passenger> optionalPassenger = passengerService.findById(id);
-        if (optionalPassenger.isPresent()) {
-            return new ResponseEntity<>(optionalPassenger.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity(new ErrorResponse(
-                    "PASSENGER_NOT_FOUND",
-                    "Passenger not found id:" + id
-            ), HttpStatus.NOT_FOUND);
+        if (optionalPassenger.isEmpty()) {
+            throw new PassengerNotFoundException("Passenger not found for id:" + id);
         }
+        return new ResponseEntity<>(optionalPassenger.get(), HttpStatus.OK);
     }
 
     /**
@@ -67,14 +64,10 @@ public class PassengerRestController {
     @DeleteMapping(value = "/passengers/{id}")
     public final ResponseEntity<Integer> delete(@PathVariable Integer id) {
         Integer deleteResult = passengerService.deletePassenger(id);
-        if (deleteResult > 0) {
-            return new ResponseEntity<>(deleteResult, HttpStatus.OK);
-        } else {
-            return new ResponseEntity(new ErrorResponse(
-                    "PASSENGER_NOT_FOUND",
-                    "Delete fail. Passenger not found id:" + id
-            ), HttpStatus.NOT_FOUND);
+        if (deleteResult < 1) {
+            throw new PassengerNotFoundException("Delete fail. Passenger not found id:" + id);
         }
+        return new ResponseEntity<>(deleteResult, HttpStatus.OK);
     }
 
     /**
