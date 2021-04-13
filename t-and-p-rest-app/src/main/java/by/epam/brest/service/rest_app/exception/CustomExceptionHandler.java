@@ -1,5 +1,6 @@
 package by.epam.brest.service.rest_app.exception;
 
+import by.epam.brest.dao.jdbc.exception.PassengerEmptyNameException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,5 +18,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(
                 new ErrorResponse("PASSENGER_NOT_FOUND", e),
                 HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(PassengerEmptyNameException.class)
+    public ResponseEntity<ErrorResponse> handlePassengerNotFound(PassengerEmptyNameException e) {
+        return new ResponseEntity<>(
+                new ErrorResponse("PASSENGER_EMPTY_NAME", e),
+                HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }

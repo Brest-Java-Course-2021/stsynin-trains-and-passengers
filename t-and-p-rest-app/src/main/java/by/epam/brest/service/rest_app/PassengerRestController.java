@@ -88,12 +88,6 @@ public class PassengerRestController {
      */
     @PostMapping(value = "/passengers")
     public final ResponseEntity<Integer> create(@RequestBody Passenger passenger) {
-        if (passenger.getPassengerName() == null) {
-            return new ResponseEntity(new ErrorResponse(
-                    "PASSENGER_EMPTY_NAME",
-                    "Create fail. Passenger name can't be empty"
-            ), HttpStatus.UNPROCESSABLE_ENTITY);
-        }
         if (isPassengerNameOverlong(passenger)) {
             return new ResponseEntity(new ErrorResponse(
                     "PASSENGER_OVERLONG_NAME",
@@ -118,12 +112,6 @@ public class PassengerRestController {
      */
     @PutMapping(value = "/passengers/{id}")
     public final ResponseEntity<Integer> update(@RequestBody Passenger passenger) {
-        if (passenger.getPassengerName() == null) {
-            return new ResponseEntity(new ErrorResponse(
-                    "PASSENGER_EMPTY_NAME",
-                    "Update fail. Passenger name can't be empty"
-            ), HttpStatus.UNPROCESSABLE_ENTITY);
-        }
         if (isPassengerNameOverlong(passenger)) {
             return new ResponseEntity(new ErrorResponse(
                     "PASSENGER_OVERLONG_NAME",
@@ -141,6 +129,6 @@ public class PassengerRestController {
     }
 
     private boolean isPassengerNameOverlong(Passenger passenger) {
-        return passenger.getPassengerName().length() > MAX_PASSENGER_NAME_LENGTH;
+        return passenger.getPassengerName() != null && passenger.getPassengerName().length() > MAX_PASSENGER_NAME_LENGTH;
     }
 }

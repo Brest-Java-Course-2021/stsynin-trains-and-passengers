@@ -1,6 +1,7 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.PassengerDao;
+import by.epam.brest.dao.jdbc.exception.PassengerEmptyNameException;
 import by.epam.brest.model.Passenger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +84,9 @@ public class PassengerDaoJdbc implements PassengerDao {
 
     @Override
     public Integer createPassenger(Passenger passenger) {
+        if (passenger.getPassengerName() == null) {
+            throw new PassengerEmptyNameException("Create fail. Passenger name can't be empty");
+        }
         if (isSecondPassengerWithSameNameExists(passenger)) {
             logger.error("Passenger named {} is already exists", passenger.getPassengerName());
             throw new IllegalArgumentException("Duplicate passenger name: " + passenger.getPassengerName());
@@ -102,6 +106,9 @@ public class PassengerDaoJdbc implements PassengerDao {
 
     @Override
     public Integer updatePassenger(Passenger passenger) {
+        if (passenger.getPassengerName() == null) {
+            throw new PassengerEmptyNameException("Update fail. Passenger name can't be empty");
+        }
         if (isSecondPassengerWithSameNameExists(passenger)) {
             logger.error("Passenger named {} is already exists", passenger.getPassengerName());
             throw new IllegalArgumentException("Duplicate passenger name: " + passenger.getPassengerName());
