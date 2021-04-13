@@ -7,6 +7,7 @@ import by.epam.brest.service.TrainService;
 import by.epam.brest.service.rest_app.exception.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,4 +59,28 @@ public class TrainRestController {
         }
     }
 
+    /**
+     * Delete train information from storage.
+     *
+     * @param id train id.
+     * @return number of deleted trains.
+     */
+    @DeleteMapping(value = "/trains/{id}")
+    public final ResponseEntity<Integer> delete(@PathVariable Integer id) {
+        if (trainService.isTrainLoaded(id)) {
+            return new ResponseEntity(new ErrorResponse(
+                    "TRAIN_LOADED",
+                    "Delete fail. There are registered passengers. Train id:" + id
+            ), HttpStatus.LOCKED);
+        }
+        Integer deleteResult = trainService.deleteTrain(id);
+        if (deleteResult > 0) {
+            return new ResponseEntity<>(deleteResult, HttpStatus.OK);
+        } else {
+            return new ResponseEntity(new ErrorResponse(
+                    "TRAIN_NOT_FOUND",
+                    "Delete fail. Train not found id:" + id
+            ), HttpStatus.NOT_FOUND);
+        }
+    }
 }
