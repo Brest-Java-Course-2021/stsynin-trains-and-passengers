@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
+import static by.epam.brest.model.constants.PassengerConstants.MAX_PASSENGER_NAME_LENGTH;
 
 /**
  * @author Sergey Tsynin
@@ -136,6 +136,6 @@ public class PassengerRestController {
     }
 
     private boolean isPassengerNameOverlong(Passenger passenger) {
-        return passenger.getPassengerName().length() > MAX_TRAIN_NAME_LENGTH;
+        return passenger.getPassengerName().length() > MAX_PASSENGER_NAME_LENGTH;
     }
 }
