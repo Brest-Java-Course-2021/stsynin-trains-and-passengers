@@ -95,16 +95,22 @@ public class PassengerRestController {
      */
     @PostMapping(value = "/passengers")
     public final ResponseEntity<Integer> create(@RequestBody Passenger passenger) {
+        if (passenger.getPassengerName() == null) {
+            return new ResponseEntity(new ErrorResponse(
+                    "PASSENGER_EMPTY_NAME",
+                    "Create fail. Passenger name can't be empty"
+            ), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
         if (isPassengerNameOverlong(passenger)) {
             return new ResponseEntity(new ErrorResponse(
                     "PASSENGER_OVERLONG_NAME",
-                    "Create fail. This name is too long : \'" + passenger.getPassengerName() + "\'"
+                    "Create fail. This name is too long : '" + passenger.getPassengerName() + "'"
             ), HttpStatus.UNPROCESSABLE_ENTITY);
         }
         if (passengerService.isSecondPassengerWithSameNameExists(passenger)) {
             return new ResponseEntity(new ErrorResponse(
                     "PASSENGER_DUPLICATED_NAME",
-                    "Create fail. This name already exists: \'" + passenger.getPassengerName() + "\'"
+                    "Create fail. This name already exists: '" + passenger.getPassengerName() + "'"
             ), HttpStatus.UNPROCESSABLE_ENTITY);
         } else {
             return new ResponseEntity<>(passengerService.createPassenger(passenger), HttpStatus.CREATED);
@@ -119,16 +125,22 @@ public class PassengerRestController {
      */
     @PutMapping(value = "/passengers/{id}")
     public final ResponseEntity<Integer> update(@RequestBody Passenger passenger) {
+        if (passenger.getPassengerName() == null) {
+            return new ResponseEntity(new ErrorResponse(
+                    "PASSENGER_EMPTY_NAME",
+                    "Update fail. Passenger name can't be empty"
+            ), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
         if (isPassengerNameOverlong(passenger)) {
             return new ResponseEntity(new ErrorResponse(
                     "PASSENGER_OVERLONG_NAME",
-                    "Update fail. This name is too long : \'" + passenger.getPassengerName() + "\'"
+                    "Update fail. This name is too long : '" + passenger.getPassengerName() + "'"
             ), HttpStatus.UNPROCESSABLE_ENTITY);
         }
         if (passengerService.isSecondPassengerWithSameNameExists(passenger)) {
             return new ResponseEntity(new ErrorResponse(
                     "PASSENGER_DUPLICATED_NAME",
-                    "Update fail. This name already exists: \'" + passenger.getPassengerName() + "\'"
+                    "Update fail. This name already exists: '" + passenger.getPassengerName() + "'"
             ), HttpStatus.UNPROCESSABLE_ENTITY);
         } else {
             return new ResponseEntity<>(passengerService.updatePassenger(passenger), HttpStatus.OK);

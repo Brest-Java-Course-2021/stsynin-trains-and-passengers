@@ -170,6 +170,24 @@ class PassengerRestControllerIntegrationTest {
     }
 
     @Test
+    public void shouldReturnErrorWithEmptyNameForCreate() throws Exception {
+        Passenger newPassenger = new Passenger();
+
+        String json = objectMapper.writeValueAsString(newPassenger);
+        MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_PASSENGERS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("PASSENGER_EMPTY_NAME", errorResponse.getMessage());
+    }
+
+    @Test
     public void shouldReturnErrorWithOverlongNameForCreate() throws Exception {
         Passenger newPassenger = new Passenger(getOverlongName());
 
@@ -228,6 +246,28 @@ class PassengerRestControllerIntegrationTest {
         ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
         assertNotNull(errorResponse);
         assertEquals("PASSENGER_DUPLICATED_NAME", errorResponse.getMessage());
+    }
+
+    @Test
+    public void shouldReturnErrorWithEmptyNameForUpdate() throws Exception {
+        Optional<Passenger> optionalGuineaPig = passengerService.findById(1);
+        assertTrue(optionalGuineaPig.isPresent());
+
+        Passenger guineaPig = optionalGuineaPig.get();
+        guineaPig.setPassengerName(null);
+
+        String json = objectMapper.writeValueAsString(guineaPig);
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_PASSENGERS + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("PASSENGER_EMPTY_NAME", errorResponse.getMessage());
     }
 
     @Test
