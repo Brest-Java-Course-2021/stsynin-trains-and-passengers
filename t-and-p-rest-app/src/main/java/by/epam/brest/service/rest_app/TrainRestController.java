@@ -7,13 +7,13 @@ import by.epam.brest.service.TrainService;
 import by.epam.brest.service.rest_app.exception.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_DESTINATION_NAME_LENGTH;
+import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
 
 /**
  * @author Sergey Tsynin
@@ -92,5 +92,43 @@ public class TrainRestController {
     @GetMapping(value = "/trains/count")
     public final ResponseEntity<Integer> count() {
         return new ResponseEntity<>(trainService.getTrainsCount(), HttpStatus.OK);
+    }
+
+    /**
+     * Create new train record.
+     *
+     * @param train train
+     * @return new train id.
+     */
+    @PostMapping(value = "/trains")
+    public final ResponseEntity<Integer> create(@RequestBody Train train) {
+        if (isTrainNameOverlong(train)) {
+            return new ResponseEntity(new ErrorResponse(
+                    "TRAIN_OVERLONG_NAME",
+                    "Create fail. This name is too long : '" + train.getTrainName() + "'"
+            ), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        if (isTrainDestinationNameOverlong(train)) {
+            return new ResponseEntity(new ErrorResponse(
+                    "TRAIN_OVERLONG_DESTINATION_NAME",
+                    "Create fail. This name of destination is too long : '" + train.getTrainDestination() + "'"
+            ), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        if (trainService.isSecondTrainWithSameNameExists(train)) {
+            return new ResponseEntity(new ErrorResponse(
+                    "TRAIN_DUPLICATED_NAME",
+                    "Create fail. This name already exists: '" + train.getTrainName() + "'"
+            ), HttpStatus.UNPROCESSABLE_ENTITY);
+        } else {
+            return new ResponseEntity<>(trainService.createTrain(train), HttpStatus.CREATED);
+        }
+    }
+
+    private boolean isTrainDestinationNameOverlong(Train train) {
+        return train.getTrainDestination() != null && train.getTrainDestination().length() > MAX_TRAIN_DESTINATION_NAME_LENGTH;
+    }
+
+    private boolean isTrainNameOverlong(Train train) {
+        return train.getTrainName().length() > MAX_TRAIN_NAME_LENGTH;
     }
 }

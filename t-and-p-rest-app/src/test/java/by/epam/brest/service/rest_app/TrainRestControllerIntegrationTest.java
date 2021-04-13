@@ -6,6 +6,7 @@ import by.epam.brest.service.rest_app.exception.ErrorResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,8 +27,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_DESTINATION_NAME_LENGTH;
+import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -155,6 +159,87 @@ class TrainRestControllerIntegrationTest {
         assertEquals(expectedCount, errorResponse);
     }
 
+    @Test
+    public void shouldCreateTrain() throws Exception {
+        Train newTrain = new Train("Zombie");
+        newTrain.setTrainDestination("west");
+        newTrain.setTrainDepartureDate(LocalDate.now());
+
+        Integer newId = trainService.create(newTrain);
+        newTrain.setTrainId(newId);
+
+        assertNotNull(newId);
+        Optional<Train> optionalTrain = trainService.findById(newId);
+        assertTrue(optionalTrain.isPresent());
+
+        Train actualTrain = optionalTrain.get();
+        assertEquals(newTrain, actualTrain);
+
+    }
+
+    @Test
+    public void shouldReturnErrorWithDuplicatedNameForCreate() throws Exception {
+        Train newTrain = new Train("first");
+
+        String json = objectMapper.writeValueAsString(newTrain);
+        MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("TRAIN_DUPLICATED_NAME", errorResponse.getMessage());
+    }
+
+    @Test
+    public void shouldReturnErrorWithOverlongNameForCreate() throws Exception {
+        Train newTrain = new Train(getOverlongName());
+
+        String json = objectMapper.writeValueAsString(newTrain);
+        MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("TRAIN_OVERLONG_NAME", errorResponse.getMessage());
+    }
+
+    @Test
+    public void shouldReturnErrorWithOverlongDestinationNameForCreate() throws Exception {
+        Train newTrain = new Train("zombie");
+        newTrain.setTrainDestination(getOverlongDestinationName());
+
+        String json = objectMapper.writeValueAsString(newTrain);
+        MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("TRAIN_OVERLONG_DESTINATION_NAME", errorResponse.getMessage());
+    }
+
+    private String getOverlongName() {
+        return RandomStringUtils.randomAlphabetic(MAX_TRAIN_NAME_LENGTH + 1);
+    }
+
+    private String getOverlongDestinationName() {
+        return RandomStringUtils.randomAlphabetic(MAX_TRAIN_DESTINATION_NAME_LENGTH + 1);
+    }
+
     class MockMvcTrainService {
 
         public List<TrainDto> findAll() throws Exception {
@@ -180,6 +265,18 @@ class TrainRestControllerIntegrationTest {
                     response.getContentAsString(),
                     Train.class
             ));
+        }
+
+        public Integer create(Train train) throws Exception {
+            String json = objectMapper.writeValueAsString(train);
+            MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json)
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isCreated())
+                    .andReturn().getResponse();
+
+            return objectMapper.readValue(response.getContentAsString(), Integer.class);
         }
     }
 }
