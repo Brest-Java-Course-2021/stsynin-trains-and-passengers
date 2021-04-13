@@ -8,4 +8,5 @@ public class TrainConstants {
     public static final String TRAIN_DEPARTURE_DATE = "TRAIN_DEPARTURE_DATE";
 
     public static final int MAX_TRAIN_NAME_LENGTH = 128;
+    public static final int MAX_TRAIN_TRAIN_DESTINATION_LENGTH = 128;
 }
