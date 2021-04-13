@@ -3,6 +3,7 @@ package by.epam.brest.dao.jdbc;
 import by.epam.brest.dao.PassengerDao;
 import by.epam.brest.dao.jdbc.exception.PassengerDuplicatedNameException;
 import by.epam.brest.dao.jdbc.exception.PassengerEmptyNameException;
+import by.epam.brest.dao.jdbc.exception.PassengerOverlongNameException;
 import by.epam.brest.model.Passenger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +89,11 @@ public class PassengerDaoJdbc implements PassengerDao {
         if (passenger.getPassengerName() == null) {
             throw new PassengerEmptyNameException("Create fail. Passenger name can't be empty");
         }
+        if (isPassengerNameOverlong(passenger)) {
+            logger.error("Passenger name {} is too long", passenger.getPassengerName());
+            throw new PassengerOverlongNameException(
+                    "Create fail. This name is too long : '" + passenger.getPassengerName() + "'");
+        }
         if (isSecondPassengerWithSameNameExists(passenger)) {
             logger.error("Passenger named {} is already exists", passenger.getPassengerName());
             throw new PassengerDuplicatedNameException(
@@ -110,6 +116,11 @@ public class PassengerDaoJdbc implements PassengerDao {
     public Integer updatePassenger(Passenger passenger) {
         if (passenger.getPassengerName() == null) {
             throw new PassengerEmptyNameException("Update fail. Passenger name can't be empty");
+        }
+        if (isPassengerNameOverlong(passenger)) {
+            logger.error("Passenger name {} is too long", passenger.getPassengerName());
+            throw new PassengerOverlongNameException(
+                    "Update fail. This name is too long : '" + passenger.getPassengerName() + "'");
         }
         if (isSecondPassengerWithSameNameExists(passenger)) {
             logger.error("Passenger named {} is already exists", passenger.getPassengerName());
@@ -156,5 +167,9 @@ public class PassengerDaoJdbc implements PassengerDao {
                 new MapSqlParameterSource(PASSENGER_NAME, passenger.getPassengerName()),
                 rowMapper);
         return passengers.size() > 0 && !passengers.get(0).getPassengerId().equals(passenger.getPassengerId());
+    }
+
+    private boolean isPassengerNameOverlong(Passenger passenger) {
+        return passenger.getPassengerName() != null && passenger.getPassengerName().length() > MAX_PASSENGER_NAME_LENGTH;
     }
 }

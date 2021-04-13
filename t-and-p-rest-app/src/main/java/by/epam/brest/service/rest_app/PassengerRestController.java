@@ -4,7 +4,6 @@ import by.epam.brest.model.Passenger;
 import by.epam.brest.model.dto.PassengerDto;
 import by.epam.brest.service.PassengerDtoService;
 import by.epam.brest.service.PassengerService;
-import by.epam.brest.service.rest_app.exception.ErrorResponse;
 import by.epam.brest.service.rest_app.exception.PassengerNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
-import static by.epam.brest.model.constants.PassengerConstants.MAX_PASSENGER_NAME_LENGTH;
 
 /**
  * @author Sergey Tsynin
@@ -88,13 +85,7 @@ public class PassengerRestController {
      */
     @PostMapping(value = "/passengers")
     public final ResponseEntity<Integer> create(@RequestBody Passenger passenger) {
-        if (isPassengerNameOverlong(passenger)) {
-            return new ResponseEntity(new ErrorResponse(
-                    "PASSENGER_OVERLONG_NAME",
-                    "Create fail. This name is too long : '" + passenger.getPassengerName() + "'"
-            ), HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-            return new ResponseEntity<>(passengerService.createPassenger(passenger), HttpStatus.CREATED);
+        return new ResponseEntity<>(passengerService.createPassenger(passenger), HttpStatus.CREATED);
     }
 
     /**
@@ -105,16 +96,6 @@ public class PassengerRestController {
      */
     @PutMapping(value = "/passengers/{id}")
     public final ResponseEntity<Integer> update(@RequestBody Passenger passenger) {
-        if (isPassengerNameOverlong(passenger)) {
-            return new ResponseEntity(new ErrorResponse(
-                    "PASSENGER_OVERLONG_NAME",
-                    "Update fail. This name is too long : '" + passenger.getPassengerName() + "'"
-            ), HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-            return new ResponseEntity<>(passengerService.updatePassenger(passenger), HttpStatus.OK);
-    }
-
-    private boolean isPassengerNameOverlong(Passenger passenger) {
-        return passenger.getPassengerName() != null && passenger.getPassengerName().length() > MAX_PASSENGER_NAME_LENGTH;
+        return new ResponseEntity<>(passengerService.updatePassenger(passenger), HttpStatus.OK);
     }
 }

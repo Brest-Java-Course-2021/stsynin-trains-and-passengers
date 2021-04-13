@@ -2,6 +2,7 @@ package by.epam.brest.service.rest_app.exception;
 
 import by.epam.brest.dao.jdbc.exception.PassengerDuplicatedNameException;
 import by.epam.brest.dao.jdbc.exception.PassengerEmptyNameException;
+import by.epam.brest.dao.jdbc.exception.PassengerOverlongNameException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -32,6 +33,13 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> handlePassengerDuplicatedName(PassengerDuplicatedNameException e) {
         return new ResponseEntity<>(
                 new ErrorResponse("PASSENGER_DUPLICATED_NAME", e),
+                HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(PassengerOverlongNameException.class)
+    public ResponseEntity<ErrorResponse> handlePassengerOverlongName(PassengerOverlongNameException e) {
+        return new ResponseEntity<>(
+                new ErrorResponse("PASSENGER_OVERLONG_NAME", e),
                 HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }
