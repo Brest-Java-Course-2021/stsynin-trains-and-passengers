@@ -14,48 +14,48 @@ import org.springframework.web.context.WebApplicationContext;
 /**
  * @author Sergey Tsynin
  */
-@ExtendWith(SpringExtension.class)
-@WebAppConfiguration
-@ContextConfiguration(locations = {"classpath:app-context-test.xml"})
-@Transactional
+//@ExtendWith(SpringExtension.class)
+//@WebAppConfiguration
+//@ContextConfiguration(locations = {"classpath:app-context-test.xml"})
+//@Transactional
 class ErrorControllerIntegrationTest {
 
-    @Autowired
-    private WebApplicationContext wac;
-
 //    @Autowired
-//    private TrainService trainService;
-
-    private MockMvc mockMvc;
-
-    @BeforeEach
-    public void setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
-    }
-//TODO FIX ALL
-//    @Test
-//    void shouldTranslateErrorMessageIntoErrorPage() throws Exception {
-//        TrainService trainService =mock(TrainService.class);
-//        doThrow(IllegalStateException.class)
-//                .when(trainService.findAll());
+//    private WebApplicationContext wac;
 //
-//        trainService.findAll();
-
-//        String exceptionParam = "not_found";
-//        when(trainService.findAll()).thenThrow(new IllegalArgumentException("FOO!"));
+////    @Autowired
+////    private TrainService trainService;
 //
-//        mockMvc.perform(
-//                MockMvcRequestBuilders.get("/trains")
+//    private MockMvc mockMvc;
 //
-//        ).andDo(MockMvcResultHandlers.print())
-//
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-
-//                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//                        .param("errorMessage", "testErrorMessage")
-//                .andExpect(MockMvcResultMatchers.status())
-//                .andExpect(MockMvcResultMatchers.content().contentType("text/html;charset=UTF-8"))
-//                .andExpect(view().name("errors"))
-//        ;
+//    @BeforeEach
+//    public void setup() {
+//        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 //    }
+////TODO FIX ALL
+////    @Test
+////    void shouldTranslateErrorMessageIntoErrorPage() throws Exception {
+////        TrainService trainService =mock(TrainService.class);
+////        doThrow(IllegalStateException.class)
+////                .when(trainService.findAll());
+////
+////        trainService.findAll();
+//
+////        String exceptionParam = "not_found";
+////        when(trainService.findAll()).thenThrow(new IllegalArgumentException("FOO!"));
+////
+////        mockMvc.perform(
+////                MockMvcRequestBuilders.get("/trains")
+////
+////        ).andDo(MockMvcResultHandlers.print())
+////
+////                .andExpect(MockMvcResultMatchers.status().isOk())
+//
+////                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+////                        .param("errorMessage", "testErrorMessage")
+////                .andExpect(MockMvcResultMatchers.status())
+////                .andExpect(MockMvcResultMatchers.content().contentType("text/html;charset=UTF-8"))
+////                .andExpect(view().name("errors"))
+////        ;
+////    }
 }
