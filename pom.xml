@@ -10,6 +10,12 @@
         This pom is a maven aggregator for all application modules
     </description>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.4.2</version>
+    </parent>
+
     <groupId>by.epam.brest</groupId>
     <artifactId>t-and-p</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -41,12 +47,20 @@
         <junit.itReportFolder>${project.testResult.directory}/integrationTest</junit.itReportFolder>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jackson-databind.version>2.12.2</jackson-databind.version>
-        <jackson-datatype-jsr310.version>2.9.7</jackson-datatype-jsr310.version>
+        <jackson.version>2.12.3</jackson.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+
+<!--            <dependency>-->
+<!--                <groupId>org.springframework</groupId>-->
+<!--                <artifactId>spring-framework-bom</artifactId>-->
+<!--                <version>5.3.5</version>-->
+<!--                <type>pom</type>-->
+<!--                <scope>import</scope>-->
+<!--            </dependency>-->
+
             <dependency>
                 <groupId>by.epam.brest</groupId>
                 <artifactId>t-and-p-model</artifactId>
@@ -83,40 +97,57 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <!--            <dependency>-->
+            <!--                <groupId>org.springframework</groupId>-->
+            <!--                <artifactId>spring-context</artifactId>-->
+            <!--                <version>${spring.version}</version>-->
+            <!--            </dependency>-->
+
+            <!--            <dependency>-->
+            <!--                <groupId>org.springframework</groupId>-->
+            <!--                <artifactId>spring-beans</artifactId>-->
+            <!--                <version>${spring.version}</version>-->
+            <!--            </dependency>-->
+
+            <!--            <dependency>-->
+            <!--                <groupId>org.springframework</groupId>-->
+            <!--                <artifactId>spring-jdbc</artifactId>-->
+            <!--                <version>${spring.version}</version>-->
+            <!--            </dependency>-->
+
+            <!--            <dependency>-->
+            <!--                <groupId>org.springframework</groupId>-->
+            <!--                <artifactId>spring-tx</artifactId>-->
+            <!--                <version>${spring.version}</version>-->
+            <!--            </dependency>-->
+
+            <!--            <dependency>-->
+            <!--                <groupId>org.springframework</groupId>-->
+            <!--                <artifactId>spring-web</artifactId>-->
+            <!--                <version>${spring.version}</version>-->
+            <!--            </dependency>-->
+
+            <!--            <dependency>-->
+            <!--                <groupId>org.springframework</groupId>-->
+            <!--                <artifactId>spring-webmvc</artifactId>-->
+            <!--                <version>${spring.version}</version>-->
+            <!--            </dependency>-->
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${spring.version}</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>2.4.4</version>
             </dependency>
 
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${spring.version}</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-thymeleaf</artifactId>
+                <version>2.4.2</version>
             </dependency>
 
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-tx</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-                <version>${spring.version}</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-tomcat</artifactId>
+                <version>2.4.2</version>
             </dependency>
 
             <dependency>
@@ -158,14 +189,26 @@
 
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson-databind.version}</version>
+                <version>${jackson.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-jsr310</artifactId>
-                <version>${jackson-datatype-jsr310.version}</version>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
 
             <dependency>
@@ -222,26 +265,25 @@
     <build>
         <plugins>
             <!-- JaCoCo -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.6</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.jacoco</groupId>-->
+<!--                <artifactId>jacoco-maven-plugin</artifactId>-->
+<!--                <version>0.8.6</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>prepare-agent</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                    <execution>-->
+<!--                        <id>report</id>-->
+<!--                        <phase>prepare-package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>report</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <!-- Embedded Jetty HTTP Server for testing war application -->
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
