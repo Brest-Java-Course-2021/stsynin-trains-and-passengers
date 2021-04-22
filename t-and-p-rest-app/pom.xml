@@ -15,8 +15,7 @@
 
     <properties>
         <commons-lang3.version>3.8</commons-lang3.version>
-        <spring-boot.version>2.4.2</spring-boot.version>
-        <spring-boot.ver>2.4.4</spring-boot.ver>
+        <spring-boot.version>2.4.4</spring-boot.version>
     </properties>
 
     <dependencies>
@@ -88,7 +87,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.ver}</version>
+                <version>${spring-boot.version}</version>
                 <executions>
                     <execution>
                         <id>repackage</id>
