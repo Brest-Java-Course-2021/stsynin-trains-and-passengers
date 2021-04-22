@@ -1,7 +1,7 @@
 package by.epam.brest.model.dto;
 
 /**
- * POJO Train for model.
+ * POJO Passenger for model.
  */
 public class PassengerDto {
 
