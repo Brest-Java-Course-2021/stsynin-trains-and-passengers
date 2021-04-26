@@ -4,19 +4,25 @@ import by.epam.brest.dao.TrainDao;
 import by.epam.brest.dao.jdbc.exception.TrainDuplicatedNameException;
 import by.epam.brest.dao.jdbc.exception.TrainLoadedException;
 import by.epam.brest.model.Train;
+import by.epam.brest.testDb.SpringJdbcConfig;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath*:test-db.xml", "classpath*:test-dao.xml"})
+@DataJdbcTest
+@Import(TrainDaoJdbc.class)
+@PropertySource({"classpath:sql-requests.properties"})
+@ContextConfiguration(classes = SpringJdbcConfig.class)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class TrainDaoJdbcIntegrationTest {
 
     @SuppressWarnings("unused")

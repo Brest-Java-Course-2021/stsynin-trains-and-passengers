@@ -3,18 +3,24 @@ package by.epam.brest.dao.jdbc;
 import by.epam.brest.dao.PassengerDao;
 import by.epam.brest.dao.jdbc.exception.PassengerDuplicatedNameException;
 import by.epam.brest.model.Passenger;
+import by.epam.brest.testDb.SpringJdbcConfig;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath*:test-db.xml", "classpath*:test-dao.xml"})
+@DataJdbcTest
+@Import(PassengerDaoJdbc.class)
+@PropertySource({"classpath:sql-requests.properties"})
+@ContextConfiguration(classes = SpringJdbcConfig.class)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class PassengerDaoJdbcIntegrationTest {
 
     @SuppressWarnings("unused")
@@ -47,7 +53,6 @@ class PassengerDaoJdbcIntegrationTest {
         int baseSizeBeforeUpdate = passengers.size();
 
         Integer renewablePassengerId = passengers.get(0).getPassengerId();
-        System.out.println(passengers.get(0));
         String newPassengerSName = "newName";
         Integer newPassengerSTrainId = 1;
 
@@ -59,7 +64,6 @@ class PassengerDaoJdbcIntegrationTest {
         assertEquals(1, (int) resultOfUpdate, "update failed");
 
         Passenger actualPassenger = passengerDao.findById(renewablePassenger.getPassengerId()).orElse(null);
-        System.out.println(actualPassenger);
         assertEquals(renewablePassenger, actualPassenger);
 
         assertEquals(baseSizeBeforeUpdate, passengerDao.getPassengersCount());
