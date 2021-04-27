@@ -12,6 +12,7 @@
 
     <artifactId>t-and-p-rest-app</artifactId>
     <description>Spring MVC Rest application</description>
+    <packaging>jar</packaging>
 
     <properties>
         <commons-lang3.version>3.8</commons-lang3.version>
