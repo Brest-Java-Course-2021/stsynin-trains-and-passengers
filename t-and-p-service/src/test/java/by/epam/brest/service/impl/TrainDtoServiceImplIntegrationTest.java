@@ -1,20 +1,27 @@
 package by.epam.brest.service.impl;
 
+import by.epam.brest.dao.jdbc.TrainDtoDaoJdbc;
 import by.epam.brest.model.dto.TrainDto;
 import by.epam.brest.service.TrainDtoService;
+import by.epam.brest.testDb.SpringJdbcConfig;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath*:test-db.xml", "classpath*:test-service-context.xml"})
+@SpringBootTest
+@Import({TrainDtoServiceImpl.class, TrainDtoDaoJdbc.class})
+@PropertySource({"classpath:sql-requests.properties"})
+@ContextConfiguration(classes = SpringJdbcConfig.class)
+@ComponentScan(basePackages = {"by.epam.brest.t-and-p-dao", "com.epam.brest.t-and-p-test-db"})
 @Transactional
 class TrainDtoServiceImplIntegrationTest {
 
@@ -24,10 +31,6 @@ class TrainDtoServiceImplIntegrationTest {
     @Test
     void findAllWithPassengersCount() {
         List<TrainDto> trains = trainDtoService.findAllWithPassengersCount();
-
-        for (TrainDto train : trains) {
-            System.out.println(train);
-        }
 
         assertNotNull(trains);
         assertTrue(trains.size() > 0);

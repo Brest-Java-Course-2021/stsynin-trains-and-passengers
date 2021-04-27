@@ -14,8 +14,6 @@ import java.util.Optional;
 @Transactional
 public class PassengerServiceImpl implements PassengerService {
 
-//    Logger logger = LoggerFactory.getLogger(PassengerServiceImpl.class);
-
     private final PassengerDao passengerDao;
 
     @Autowired

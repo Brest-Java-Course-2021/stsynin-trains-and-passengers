@@ -14,8 +14,6 @@ import java.util.Optional;
 @Transactional
 public class TrainServiceImpl implements TrainService {
 
-//    Logger logger = LoggerFactory.getLogger(PassengerServiceImpl.class);
-
     private final TrainDao trainDao;
 
     @Autowired
