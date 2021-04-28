@@ -4,6 +4,7 @@ import by.epam.brest.model.Train;
 import by.epam.brest.model.dto.TrainDto;
 import by.epam.brest.service.rest_app.exception.CustomExceptionHandler;
 import by.epam.brest.service.rest_app.exception.ErrorResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -21,7 +22,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,6 +74,83 @@ class TrainRestControllerIntegrationTest {
         System.out.println(trains);
         assertNotNull(trains);
         assertTrue(trains.size() > 0);
+    }
+
+    @Test
+    public void shouldReturnTrainBetweenTwoDates() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS)
+                .param("dateStart", "2020-01-01")
+                .param("dateEnd", "2020-02-25")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        assertNotNull(response);
+
+        List<TrainDto> trains = getRemappedTrains(response);
+        assertEquals(1, trains.size());
+        assertEquals(2, trains.get(0).getTrainId());
+    }
+
+    @Test
+    public void shouldReturnTrainsFromStartDate() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS)
+                .param("dateStart", "2020-01-01")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        assertNotNull(response);
+
+        List<TrainDto> trains = getRemappedTrains(response);
+        assertEquals(2, trains.size());
+        assertFalse(getAllTrainsIds(trains).contains(1));
+    }
+
+    @Test
+    public void shouldReturnTrainsBeforeEndDate() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS)
+                .param("dateEnd", "2020-02-25")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        assertNotNull(response);
+
+        List<TrainDto> trains = getRemappedTrains(response);
+        assertEquals(2, trains.size());
+        assertFalse(getAllTrainsIds(trains).contains(3));
+    }
+
+    @Test
+    public void shouldReturnErrorWithWrongFiltersOrder() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS)
+                .param("dateStart", "2020-02-25")
+                .param("dateEnd", "2020-01-01")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        assertNotNull(errorResponse);
+        assertEquals("TRAINS_WRONG_FILTER", errorResponse.getMessage());
+    }
+
+    private List<Integer> getAllTrainsIds(List<TrainDto> trains) {
+        List<Integer> result = new ArrayList<>();
+        for (TrainDto train : trains) {
+            result.add(train.getTrainId());
+        }
+        return result;
+    }
+
+    private List<TrainDto> getRemappedTrains(MockHttpServletResponse response)
+            throws JsonProcessingException, UnsupportedEncodingException {
+        return objectMapper.readValue(response.getContentAsString(),
+                new TypeReference<>() {
+                });
     }
 
     @Test
@@ -366,6 +446,10 @@ class TrainRestControllerIntegrationTest {
         return RandomStringUtils.randomAlphabetic(MAX_TRAIN_DESTINATION_NAME_LENGTH + 1);
     }
 
+    private <T> T getRemappedObject(MockHttpServletResponse response, Class<T> valueType) throws Exception {
+        return objectMapper.readValue(response.getContentAsString(), valueType);
+    }
+
     class MockMvcTrainService {
 
         public List<TrainDto> findAll() throws Exception {
@@ -375,10 +459,7 @@ class TrainRestControllerIntegrationTest {
                     .andReturn().getResponse();
             assertNotNull(response);
 
-            return objectMapper.readValue(
-                    response.getContentAsString(),
-                    new TypeReference<>() {
-                    });
+            return getRemappedTrains(response);
         }
 
         public Optional<Train> findById(Integer id) throws Exception {
