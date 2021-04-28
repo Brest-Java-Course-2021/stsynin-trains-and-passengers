@@ -82,4 +82,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                 new ErrorResponse("TRAIN_OVERLONG_DESTINATION_NAME", e),
                 HttpStatus.UNPROCESSABLE_ENTITY);
     }
+
+    @ExceptionHandler(TrainWrongFiltersOrder.class)
+    public ResponseEntity<ErrorResponse> handleTrainWrongFiltersOrder(TrainWrongFiltersOrder e) {
+        return new ResponseEntity<>(
+                new ErrorResponse("TRAINS_WRONG_FILTER", e),
+                HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 }
