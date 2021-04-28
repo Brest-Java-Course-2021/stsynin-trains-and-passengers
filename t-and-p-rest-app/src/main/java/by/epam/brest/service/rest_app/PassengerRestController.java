@@ -32,7 +32,7 @@ public class PassengerRestController {
      *
      * @return ResponseEntity of PassengerDto list.
      */
-    @GetMapping(value = "/passengers")
+    @GetMapping(value = "/passengers", produces = {"application/json"})
     public final ResponseEntity<List<PassengerDto>> getAll() {
         return new ResponseEntity<>(passengerDtoService.findAllPassengersWithTrainName(), HttpStatus.OK);
     }
@@ -43,7 +43,7 @@ public class PassengerRestController {
      * @param id passenger id.
      * @return ResponseEntity of passenger data.
      */
-    @GetMapping(value = "/passengers/{id}")
+    @GetMapping(value = "/passengers/{id}", produces = {"application/json"})
     public final ResponseEntity<Passenger> getById(@PathVariable Integer id) {
         Optional<Passenger> optionalPassenger = passengerService.findById(id);
         if (optionalPassenger.isEmpty()) {
@@ -58,7 +58,7 @@ public class PassengerRestController {
      * @param id passenger id.
      * @return number of deleted passengers.
      */
-    @DeleteMapping(value = "/passengers/{id}")
+    @DeleteMapping(value = "/passengers/{id}", produces = {"application/json"})
     public final ResponseEntity<Integer> delete(@PathVariable Integer id) {
         Integer deleteResult = passengerService.deletePassenger(id);
         if (deleteResult < 1) {
@@ -72,7 +72,7 @@ public class PassengerRestController {
      *
      * @return passengers count.
      */
-    @GetMapping(value = "/passengers/count")
+    @GetMapping(value = "/passengers/count", produces = {"application/json"})
     public final ResponseEntity<Integer> count() {
         return new ResponseEntity<>(passengerService.getPassengersCount(), HttpStatus.OK);
     }
@@ -83,7 +83,7 @@ public class PassengerRestController {
      * @param passenger passenger
      * @return new record id.
      */
-    @PostMapping(value = "/passengers")
+    @PostMapping(value = "/passengers", consumes = {"application/json"}, produces = {"application/json"})
     public final ResponseEntity<Integer> create(@RequestBody Passenger passenger) {
         return new ResponseEntity<>(passengerService.createPassenger(passenger), HttpStatus.CREATED);
     }
@@ -94,7 +94,7 @@ public class PassengerRestController {
      * @param passenger passenger
      * @return number of updated passengers.
      */
-    @PutMapping(value = "/passengers")
+    @PutMapping(value = "/passengers", consumes = {"application/json"}, produces = {"application/json"})
     public final ResponseEntity<Integer> update(@RequestBody Passenger passenger) {
         return new ResponseEntity<>(passengerService.updatePassenger(passenger), HttpStatus.OK);
     }
