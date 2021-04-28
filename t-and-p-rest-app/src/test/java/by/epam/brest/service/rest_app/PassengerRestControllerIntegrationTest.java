@@ -213,7 +213,7 @@ class PassengerRestControllerIntegrationTest {
         guineaPig.setPassengerName("AlfredNew");
 
         String json = objectMapper.writeValueAsString(guineaPig);
-        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_PASSENGERS + "/1")
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_PASSENGERS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON))
@@ -234,7 +234,7 @@ class PassengerRestControllerIntegrationTest {
         guineaPig.setPassengerName("Bob");
 
         String json = objectMapper.writeValueAsString(guineaPig);
-        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_PASSENGERS + "/1")
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_PASSENGERS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON))
@@ -256,7 +256,7 @@ class PassengerRestControllerIntegrationTest {
         guineaPig.setPassengerName(null);
 
         String json = objectMapper.writeValueAsString(guineaPig);
-        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_PASSENGERS + "/1")
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_PASSENGERS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON))
@@ -278,7 +278,7 @@ class PassengerRestControllerIntegrationTest {
         guineaPig.setPassengerName(getOverlongName());
 
         String json = objectMapper.writeValueAsString(guineaPig);
-        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_PASSENGERS + "/1")
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_PASSENGERS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON))

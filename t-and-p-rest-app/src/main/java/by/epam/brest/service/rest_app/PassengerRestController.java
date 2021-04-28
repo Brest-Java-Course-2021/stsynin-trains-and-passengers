@@ -94,7 +94,7 @@ public class PassengerRestController {
      * @param passenger passenger
      * @return number of updated passengers.
      */
-    @PutMapping(value = "/passengers/{id}")
+    @PutMapping(value = "/passengers")
     public final ResponseEntity<Integer> update(@RequestBody Passenger passenger) {
         return new ResponseEntity<>(passengerService.updatePassenger(passenger), HttpStatus.OK);
     }

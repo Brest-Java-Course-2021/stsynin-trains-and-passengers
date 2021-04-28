@@ -94,7 +94,7 @@ public class TrainRestController {
      * @param train train
      * @return number of updated trains.
      */
-    @PutMapping(value = "/trains/{id}")
+    @PutMapping(value = "/trains")
     public final ResponseEntity<Integer> update(@RequestBody Train train) {
         return new ResponseEntity<>(trainService.updateTrain(train), HttpStatus.OK);
     }

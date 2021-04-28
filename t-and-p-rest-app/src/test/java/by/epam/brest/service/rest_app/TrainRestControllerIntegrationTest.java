@@ -258,7 +258,7 @@ class TrainRestControllerIntegrationTest {
         guineaPig.setTrainName("firstNew");
 
         String json = objectMapper.writeValueAsString(guineaPig);
-        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS + "/1")
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON))
@@ -279,7 +279,7 @@ class TrainRestControllerIntegrationTest {
         guineaPig.setTrainName("second");
 
         String json = objectMapper.writeValueAsString(guineaPig);
-        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS + "/1")
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON))
@@ -301,7 +301,7 @@ class TrainRestControllerIntegrationTest {
         guineaPig.setTrainName(null);
 
         String json = objectMapper.writeValueAsString(guineaPig);
-        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS + "/1")
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON))
@@ -323,7 +323,7 @@ class TrainRestControllerIntegrationTest {
         guineaPig.setTrainName(getOverlongName());
 
         String json = objectMapper.writeValueAsString(guineaPig);
-        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS + "/1")
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON))
@@ -345,7 +345,7 @@ class TrainRestControllerIntegrationTest {
         guineaPig.setTrainDestination(getOverlongDestinationName());
 
         String json = objectMapper.writeValueAsString(guineaPig);
-        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS + "/1")
+        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .accept(MediaType.APPLICATION_JSON))
