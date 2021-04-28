@@ -42,6 +42,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TrainRestControllerIntegrationTest {
 
     public static final String ENDPOINT_TRAINS = "/trains";
+    public static final String PERIOD_START = "2020-01-01";
+    public static final String PERIOD_END = "2020-02-25";
 
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
@@ -71,7 +73,6 @@ class TrainRestControllerIntegrationTest {
     @Test
     public void shouldReturnTrainsList() throws Exception {
         List<TrainDto> trains = trainService.findAll();
-        System.out.println(trains);
         assertNotNull(trains);
         assertTrue(trains.size() > 0);
     }
@@ -79,8 +80,8 @@ class TrainRestControllerIntegrationTest {
     @Test
     public void shouldReturnTrainBetweenTwoDates() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS)
-                .param("dateStart", "2020-01-01")
-                .param("dateEnd", "2020-02-25")
+                .param("dateStart", PERIOD_START)
+                .param("dateEnd", PERIOD_END)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -95,7 +96,7 @@ class TrainRestControllerIntegrationTest {
     @Test
     public void shouldReturnTrainsFromStartDate() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS)
-                .param("dateStart", "2020-01-01")
+                .param("dateStart", PERIOD_START)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -110,7 +111,7 @@ class TrainRestControllerIntegrationTest {
     @Test
     public void shouldReturnTrainsBeforeEndDate() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS)
-                .param("dateEnd", "2020-02-25")
+                .param("dateEnd", PERIOD_END)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -125,15 +126,15 @@ class TrainRestControllerIntegrationTest {
     @Test
     public void shouldReturnErrorWithWrongFiltersOrder() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS)
-                .param("dateStart", "2020-02-25")
-                .param("dateEnd", "2020-01-01")
+                .param("dateStart", PERIOD_END)
+                .param("dateEnd", PERIOD_START)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        ErrorResponse errorResponse = getRemappedError(response);
         assertNotNull(errorResponse);
         assertEquals("TRAINS_WRONG_FILTER", errorResponse.getMessage());
     }
@@ -157,7 +158,6 @@ class TrainRestControllerIntegrationTest {
     public void shouldReturnTrainById() throws Exception {
         Optional<Train> optionalTrain = trainService.findById(1);
         assertTrue(optionalTrain.isPresent());
-        System.out.println(optionalTrain.get());
         assertEquals(1, optionalTrain.get().getTrainId());
         assertEquals("first", optionalTrain.get().getTrainName());
         assertEquals("first direction", optionalTrain.get().getTrainDestination());
@@ -172,9 +172,7 @@ class TrainRestControllerIntegrationTest {
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse();
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(
-                response.getContentAsString(),
-                ErrorResponse.class);
+        ErrorResponse errorResponse = getRemappedError(response);
         assertNotNull(errorResponse);
         assertEquals("TRAIN_NOT_FOUND", errorResponse.getMessage());
     }
@@ -188,9 +186,7 @@ class TrainRestControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
         assertNotNull(response);
-        Integer errorResponse = objectMapper.readValue(
-                response.getContentAsString(),
-                Integer.class);
+        Integer errorResponse = getRemappedInteger(response);
         assertEquals(1, errorResponse);
     }
 
@@ -201,9 +197,7 @@ class TrainRestControllerIntegrationTest {
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse();
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(
-                response.getContentAsString(),
-                ErrorResponse.class);
+        ErrorResponse errorResponse = getRemappedError(response);
         assertNotNull(errorResponse);
         assertEquals("TRAIN_NOT_FOUND", errorResponse.getMessage());
     }
@@ -215,9 +209,7 @@ class TrainRestControllerIntegrationTest {
                 .andExpect(status().isLocked())
                 .andReturn().getResponse();
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(
-                response.getContentAsString(),
-                ErrorResponse.class);
+        ErrorResponse errorResponse = getRemappedError(response);
         assertNotNull(errorResponse);
         assertEquals("TRAIN_LOADED", errorResponse.getMessage());
     }
@@ -231,9 +223,7 @@ class TrainRestControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
         assertNotNull(response);
-        Integer errorResponse = objectMapper.readValue(
-                response.getContentAsString(),
-                Integer.class);
+        Integer errorResponse = getRemappedInteger(response);
         assertNotNull(errorResponse);
         assertEquals(expectedCount, errorResponse);
     }
@@ -269,7 +259,7 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        ErrorResponse errorResponse = getRemappedError(response);
         assertNotNull(errorResponse);
         assertEquals("TRAIN_DUPLICATED_NAME", errorResponse.getMessage());
     }
@@ -287,7 +277,7 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        ErrorResponse errorResponse = getRemappedError(response);
         assertNotNull(errorResponse);
         assertEquals("TRAIN_EMPTY_NAME", errorResponse.getMessage());
     }
@@ -305,7 +295,7 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        ErrorResponse errorResponse = getRemappedError(response);
         assertNotNull(errorResponse);
         assertEquals("TRAIN_OVERLONG_NAME", errorResponse.getMessage());
     }
@@ -324,7 +314,7 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        ErrorResponse errorResponse = getRemappedError(response);
         assertNotNull(errorResponse);
         assertEquals("TRAIN_OVERLONG_DESTINATION_NAME", errorResponse.getMessage());
     }
@@ -346,7 +336,7 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        Integer UpdateResponse = objectMapper.readValue(response.getContentAsString(), Integer.class);
+        Integer UpdateResponse = getRemappedInteger(response);
         assertEquals(1, UpdateResponse);
     }
 
@@ -367,7 +357,7 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        ErrorResponse errorResponse = getRemappedError(response);
         assertNotNull(errorResponse);
         assertEquals("TRAIN_DUPLICATED_NAME", errorResponse.getMessage());
     }
@@ -389,7 +379,7 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        ErrorResponse errorResponse = getRemappedError(response);
         assertNotNull(errorResponse);
         assertEquals("TRAIN_EMPTY_NAME", errorResponse.getMessage());
     }
@@ -411,7 +401,7 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        ErrorResponse errorResponse = getRemappedError(response);
         assertNotNull(errorResponse);
         assertEquals("TRAIN_OVERLONG_NAME", errorResponse.getMessage());
     }
@@ -433,7 +423,7 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        ErrorResponse errorResponse = getRemappedError(response);
         assertNotNull(errorResponse);
         assertEquals("TRAIN_OVERLONG_DESTINATION_NAME", errorResponse.getMessage());
     }
@@ -444,6 +434,14 @@ class TrainRestControllerIntegrationTest {
 
     private String getOverlongDestinationName() {
         return RandomStringUtils.randomAlphabetic(MAX_TRAIN_DESTINATION_NAME_LENGTH + 1);
+    }
+
+    private Integer getRemappedInteger(MockHttpServletResponse response) throws Exception {
+        return getRemappedObject(response, Integer.class);
+    }
+
+    private ErrorResponse getRemappedError(MockHttpServletResponse response) throws Exception {
+        return getRemappedObject(response, ErrorResponse.class);
     }
 
     private <T> T getRemappedObject(MockHttpServletResponse response, Class<T> valueType) throws Exception {
