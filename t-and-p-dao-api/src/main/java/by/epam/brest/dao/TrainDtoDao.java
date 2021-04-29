@@ -11,13 +11,6 @@ import java.util.List;
 public interface TrainDtoDao {
 
     /**
-     * Get all trains with passengers counts.
-     *
-     * @return trains list.
-     */
-    List<TrainDto> findAllWithPassengersCount();
-
-    /**
      * Get trains from the database with counts of passengers from a period of time.
      *
      * @return trains list.

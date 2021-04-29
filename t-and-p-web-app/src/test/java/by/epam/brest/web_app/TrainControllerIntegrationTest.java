@@ -235,7 +235,7 @@ class TrainControllerIntegrationTest {
     @Test
     public void shouldReturnTrainsPageWithStartFilter() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/filteredTrains")
+                MockMvcRequestBuilders.get("/trains")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("dateStart", "2020-01-01")
         ).andDo(MockMvcResultHandlers.print())
@@ -260,7 +260,7 @@ class TrainControllerIntegrationTest {
     @Test
     public void shouldReturnTrainsPageWithEndFilter() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/filteredTrains")
+                MockMvcRequestBuilders.get("/trains")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("dateEnd", "2020-02-25")
         ).andDo(MockMvcResultHandlers.print())
@@ -285,7 +285,7 @@ class TrainControllerIntegrationTest {
     @Test
     public void shouldReturnTrainsPageWithBothFilters() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/filteredTrains")
+                MockMvcRequestBuilders.get("/trains")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("dateStart", "2020-01-01")
                         .param("dateEnd", "2020-02-25")
@@ -305,7 +305,7 @@ class TrainControllerIntegrationTest {
     @Test
     public void shouldReturnTrainsPageWithNeitherFilters() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/filteredTrains")
+                MockMvcRequestBuilders.get("/trains")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
         ).andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
@@ -317,7 +317,7 @@ class TrainControllerIntegrationTest {
     @Test
     public void shouldReturnErrorPageWithWrongFiltersOrder() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/filteredTrains")
+                MockMvcRequestBuilders.get("/trains")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("dateStart", "2020-02-25")
                         .param("dateEnd", "2020-01-01")

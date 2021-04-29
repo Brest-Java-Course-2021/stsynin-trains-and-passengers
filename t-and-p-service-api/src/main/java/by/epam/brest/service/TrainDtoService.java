@@ -12,16 +12,9 @@ import java.util.List;
 public interface TrainDtoService {
 
     /**
-     * Get all trains from the database with counts of passengers.
-     *
-     * @return trains list.
-     */
-    List<TrainDto> findAllWithPassengersCount();
-
-    /**
      * Get trains from the database with counts of passengers from a period of time.
      *
      * @return trains list.
      */
-    List<TrainDto> getFilteredByDateTrainListWithPassengersCount(LocalDate dateStart,LocalDate dateEnd);
+    List<TrainDto> getFilteredByDateTrainListWithPassengersCount(LocalDate dateStart, LocalDate dateEnd);
 }

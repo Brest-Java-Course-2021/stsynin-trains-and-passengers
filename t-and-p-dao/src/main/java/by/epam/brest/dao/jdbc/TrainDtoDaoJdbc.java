@@ -39,14 +39,6 @@ public class TrainDtoDaoJdbc implements TrainDtoDao {
     }
 
     @Override
-    public List<TrainDto> findAllWithPassengersCount() {
-        logger.debug("findAllWithPassengersCount()");
-        return namedParameterJdbcTemplate.query(
-                sqlFindAllWithPassengersCount,
-                BeanPropertyRowMapper.newInstance(TrainDto.class));
-    }
-
-    @Override
     public List<TrainDto> getFilteredByDateTrainListWithPassengersCount(LocalDate dateStart, LocalDate dateEnd) {
         logger.debug("getFilteredByDateTrainListWithPassengersCount()");
         logger.debug("Start of period: " + dateStart);

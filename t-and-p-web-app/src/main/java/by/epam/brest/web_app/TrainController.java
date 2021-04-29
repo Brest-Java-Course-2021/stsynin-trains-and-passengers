@@ -32,24 +32,12 @@ public class TrainController {
     /**
      * Goto trains list page.
      *
-     * @param model model.
-     * @return view trains.
-     */
-    @GetMapping(value = "/trains")
-    public final String trains(Model model) {
-        model.addAttribute("trains", trainDtoService.findAllWithPassengersCount());
-        return "trains";
-    }
-
-    /**
-     * Goto trains list page.
-     *
      * @param dateStart start of period of time.
      * @param dateEnd   end of period of time.
      * @param model     model.
      * @return view trains or view error.
      */
-    @GetMapping(value = "/filteredTrains")
+    @GetMapping(value = "/trains")
     public final String trainsWithFilter(@RequestParam(required = false)
                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateStart,
                                          @RequestParam(required = false)

@@ -20,11 +20,6 @@ public class TrainDtoServiceImpl implements TrainDtoService {
     }
 
     @Override
-    public List<TrainDto> findAllWithPassengersCount() {
-        return trainDtoDao.findAllWithPassengersCount();
-    }
-
-    @Override
     public List<TrainDto> getFilteredByDateTrainListWithPassengersCount(LocalDate dateStart, LocalDate dateEnd) {
         return trainDtoDao.getFilteredByDateTrainListWithPassengersCount(dateStart, dateEnd);
     }
