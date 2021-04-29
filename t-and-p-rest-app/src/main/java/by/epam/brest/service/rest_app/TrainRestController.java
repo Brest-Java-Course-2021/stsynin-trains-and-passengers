@@ -5,10 +5,14 @@ import by.epam.brest.model.dto.TrainDto;
 import by.epam.brest.service.TrainDtoService;
 import by.epam.brest.service.TrainService;
 import by.epam.brest.service.rest_app.exception.TrainNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +21,8 @@ import java.util.Optional;
  */
 @RestController
 public class TrainRestController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainRestController.class);
 
     private final TrainDtoService trainDtoService;
 
@@ -28,13 +34,24 @@ public class TrainRestController {
     }
 
     /**
-     * Trains list.
+     * Trains list, filtered by date.
      *
+     * @param dateStart start of period of time.
+     * @param dateEnd   end of period of time.
      * @return TrainDto list.
      */
-    @GetMapping(value = "/trains")
-    public final ResponseEntity<List<TrainDto>> trains() {
-        return new ResponseEntity<>(trainDtoService.findAllWithPassengersCount(), HttpStatus.OK);
+    @GetMapping(value = "/trains", produces = {"application/json"})
+    public final ResponseEntity<List<TrainDto>> filteredTrains(
+            @RequestParam(name = "dateStart", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                    LocalDate dateStart,
+            @RequestParam(name = "dateEnd", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                    LocalDate dateEnd) {
+        LOGGER.debug("Search trains from: {}, to: {}", dateStart, dateEnd);
+        return new ResponseEntity<>(
+                trainDtoService.getFilteredByDateTrainListWithPassengersCount(dateStart, dateEnd),
+                HttpStatus.OK);
     }
 
     /**
@@ -43,7 +60,7 @@ public class TrainRestController {
      * @param id train id.
      * @return train data.
      */
-    @GetMapping(value = "/trains/{id}")
+    @GetMapping(value = "/trains/{id}", produces = {"application/json"})
     public final ResponseEntity<Train> getById(@PathVariable Integer id) {
         Optional<Train> optionalTrain = trainService.findById(id);
         if (optionalTrain.isEmpty()) {
@@ -58,7 +75,7 @@ public class TrainRestController {
      * @param id train id.
      * @return number of deleted trains.
      */
-    @DeleteMapping(value = "/trains/{id}")
+    @DeleteMapping(value = "/trains/{id}", produces = {"application/json"})
     public final ResponseEntity<Integer> delete(@PathVariable Integer id) {
         Integer deleteResult = trainService.deleteTrain(id);
         if (deleteResult < 1) {
@@ -72,7 +89,7 @@ public class TrainRestController {
      *
      * @return trains count.
      */
-    @GetMapping(value = "/trains/count")
+    @GetMapping(value = "/trains/count", produces = {"application/json"})
     public final ResponseEntity<Integer> count() {
         return new ResponseEntity<>(trainService.getTrainsCount(), HttpStatus.OK);
     }
@@ -83,7 +100,7 @@ public class TrainRestController {
      * @param train train
      * @return new train id.
      */
-    @PostMapping(value = "/trains")
+    @PostMapping(value = "/trains", consumes = {"application/json"}, produces = {"application/json"})
     public final ResponseEntity<Integer> create(@RequestBody Train train) {
         return new ResponseEntity<>(trainService.createTrain(train), HttpStatus.CREATED);
     }
@@ -94,7 +111,7 @@ public class TrainRestController {
      * @param train train
      * @return number of updated trains.
      */
-    @PutMapping(value = "/trains/{id}")
+    @PutMapping(value = "/trains", consumes = {"application/json"}, produces = {"application/json"})
     public final ResponseEntity<Integer> update(@RequestBody Train train) {
         return new ResponseEntity<>(trainService.updateTrain(train), HttpStatus.OK);
     }

@@ -16,7 +16,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +26,7 @@ import java.util.Optional;
 
 import static by.epam.brest.model.constants.PassengerConstants.*;
 
+@Repository
 public class PassengerDaoJdbc implements PassengerDao {
 
     @SuppressWarnings("unused")
@@ -58,8 +61,8 @@ public class PassengerDaoJdbc implements PassengerDao {
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public PassengerDaoJdbc(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    public PassengerDaoJdbc(DataSource dataSource) {
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
     RowMapper<Passenger> rowMapper = BeanPropertyRowMapper.newInstance(Passenger.class);

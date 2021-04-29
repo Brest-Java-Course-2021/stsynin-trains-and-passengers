@@ -14,7 +14,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +24,7 @@ import java.util.Optional;
 
 import static by.epam.brest.model.constants.TrainConstants.*;
 
+@Repository
 public class TrainDaoJdbc implements TrainDao {
 
     @SuppressWarnings("unused")
@@ -60,8 +63,8 @@ public class TrainDaoJdbc implements TrainDao {
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public TrainDaoJdbc(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    public TrainDaoJdbc(DataSource dataSource) {
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
     RowMapper<Train> rowMapper = BeanPropertyRowMapper.newInstance(Train.class);

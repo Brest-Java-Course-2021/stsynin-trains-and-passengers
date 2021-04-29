@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -49,7 +50,9 @@ public class PassengerController {
      * @return view passenger or view error.
      */
     @GetMapping(value = "/passenger/{id}")
-    public final String gotoEditPassengerPage(@PathVariable Integer id, Model model) {
+    public final String gotoEditPassengerPage(@PathVariable Integer id,
+                                              Model model,
+                                              RedirectAttributes redirectAttributes) {
         Optional<Passenger> optionalPassenger = passengerService.findById(id);
         if (optionalPassenger.isPresent()) {
             model.addAttribute("isNew", false);
@@ -57,7 +60,7 @@ public class PassengerController {
             model.addAttribute("trains", trainService.findAll());
             return "passenger";
         } else {
-            model.addAttribute("errorMessage",
+            redirectAttributes.addAttribute("errorMessage",
                     "We're sorry, but we can't find record for this passenger.");
             return "redirect:/error";
         }
@@ -109,13 +112,15 @@ public class PassengerController {
      * @return view passengers.
      */
     @GetMapping(value = "/passenger/{id}/delete")
-    public String deletePassenger(@PathVariable Integer id, Model model) {
+    public String deletePassenger(@PathVariable Integer id,
+                                  Model model,
+                                  RedirectAttributes redirectAttributes) {
         Optional<Passenger> optionalPassenger = passengerService.findById(id);
         if (optionalPassenger.isPresent()) {
             this.passengerService.deletePassenger(id);
             return "redirect:/passengers";
         } else {
-            model.addAttribute(
+            redirectAttributes.addAttribute(
                     "errorMessage",
                     "We're sorry, but we can't find record for delete this passenger.");
             return "redirect:/error";

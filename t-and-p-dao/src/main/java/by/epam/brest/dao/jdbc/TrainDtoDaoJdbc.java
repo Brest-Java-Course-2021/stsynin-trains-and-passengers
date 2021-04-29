@@ -1,6 +1,7 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.TrainDtoDao;
+import by.epam.brest.dao.jdbc.exception.TrainWrongFiltersOrder;
 import by.epam.brest.model.dto.TrainDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,10 +9,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.time.LocalDate;
 import java.util.List;
 
+@Repository
 public class TrainDtoDaoJdbc implements TrainDtoDao {
 
     @Value("${TRN.sqlFindAllWithPassengersCount}")
@@ -30,8 +34,8 @@ public class TrainDtoDaoJdbc implements TrainDtoDao {
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public TrainDtoDaoJdbc(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    public TrainDtoDaoJdbc(DataSource dataSource) {
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
     @Override
@@ -72,7 +76,7 @@ public class TrainDtoDaoJdbc implements TrainDtoDao {
         logger.debug("Filtering by period");
         if (dateEnd.isBefore(dateStart)) {
             logger.error("Wrong date order for filtering");
-            throw new IllegalArgumentException("Wrong date order for filtering");
+            throw new TrainWrongFiltersOrder("Wrong dates order for filtering");
         }
         return sqlGetFilteredByDateTrainListWithPassengersCount;
     }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -53,9 +54,10 @@ public class TrainController {
                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateStart,
                                          @RequestParam(required = false)
                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEnd,
-                                         Model model) {
+                                         Model model,
+                                         RedirectAttributes redirectAttributes) {
         if (!(dateStart == null) && !(dateEnd == null) && dateEnd.isBefore(dateStart)) {
-            model.addAttribute("errorMessage",
+            redirectAttributes.addAttribute("errorMessage",
                     "We're sorry, but we use wrong search parameters.");
             return "redirect:/error";
         } else {
@@ -74,14 +76,16 @@ public class TrainController {
      * @return view train.
      */
     @GetMapping(value = "/train/{id}")
-    public final String gotoEditTrainPage(@PathVariable Integer id, Model model) {
+    public final String gotoEditTrainPage(@PathVariable Integer id,
+                                          Model model,
+                                          RedirectAttributes redirectAttributes) {
         Optional<Train> optionalTrain = trainService.findById(id);
         if (optionalTrain.isPresent()) {
             model.addAttribute("isNew", false);
             model.addAttribute("train", optionalTrain.get());
             return "train";
         } else {
-            model.addAttribute("errorMessage",
+            redirectAttributes.addAttribute("errorMessage",
                     "We're sorry, but we can't find record for this train.");
             return "redirect:/error";
         }
@@ -104,16 +108,16 @@ public class TrainController {
      * Save new train information into storage. If train name already exist - goto error page.
      *
      * @param train filled new train data.
-     * @param model model.
      * @return view trains or view error.
      */
     @PostMapping(value = "/train")
-    public String addTrain(Train train, Model model) {
+    public String addTrain(Train train,
+                           RedirectAttributes redirectAttributes) {
         if (!this.trainService.isSecondTrainWithSameNameExists(train)) {
             this.trainService.createTrain(train);
             return "redirect:/trains";
         } else {
-            model.addAttribute("errorMessage",
+            redirectAttributes.addAttribute("errorMessage",
                     "Unfortunately a train with name \"" + train.getTrainName() + "\" already exists.");
             return "redirect:/error";
         }
@@ -123,16 +127,16 @@ public class TrainController {
      * Update train information in storage. If train name already exist - goto error page.
      *
      * @param train updated train data.
-     * @param model model.
      * @return view trains or view error.
      */
     @PostMapping(value = "/train/{id}")
-    public String updateTrain(Train train, Model model) {
+    public String updateTrain(Train train,
+                              RedirectAttributes redirectAttributes) {
         if (!this.trainService.isSecondTrainWithSameNameExists(train)) {
             this.trainService.updateTrain(train);
             return "redirect:/trains";
         } else {
-            model.addAttribute("errorMessage",
+            redirectAttributes.addAttribute("errorMessage",
                     "Unfortunately a train name \"" + train.getTrainName() + "\" already exists.");
             return "redirect:/error";
         }
@@ -146,11 +150,13 @@ public class TrainController {
      * @return view trains or view error.
      */
     @GetMapping(value = "/train/{id}/delete")
-    public String deleteTrain(@PathVariable Integer id, Model model) {
+    public String deleteTrain(@PathVariable Integer id,
+                              Model model,
+                              RedirectAttributes redirectAttributes) {
         Optional<Train> optionalTrain = trainService.findById(id);
         if (optionalTrain.isPresent()) {
             if (trainService.isTrainLoaded(id)) {
-                model.addAttribute(
+                redirectAttributes.addAttribute(
                         "errorMessage",
                         "We're sorry, but we can't delete loaded train. You should remove passenger(s) first.");
                 return "redirect:/error";
@@ -158,7 +164,7 @@ public class TrainController {
             this.trainService.deleteTrain(id);
             return "redirect:/trains";
         } else {
-            model.addAttribute(
+            redirectAttributes.addAttribute(
                     "errorMessage",
                     "We're sorry, but we can't find record for delete this train.");
             return "redirect:/error";
