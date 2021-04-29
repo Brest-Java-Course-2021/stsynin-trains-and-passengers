@@ -21,6 +21,7 @@
         <module>t-and-p-dao</module>
         <module>t-and-p-service-api</module>
         <module>t-and-p-service</module>
+        <module>t-and-p-service-rest</module>
         <module>t-and-p-web-app</module>
         <module>t-and-p-rest-app</module>
     </modules>
@@ -75,6 +76,12 @@
             <dependency>
                 <groupId>by.epam.brest</groupId>
                 <artifactId>t-and-p-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>by.epam.brest</groupId>
+                <artifactId>t-and-p-service-rest</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
