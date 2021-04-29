@@ -84,11 +84,6 @@ class PassengerRestControllerIntegrationTest {
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse();
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(
-                response.getContentAsString(),
-                ErrorResponse.class);
-        assertNotNull(errorResponse);
-        assertEquals("PASSENGER_NOT_FOUND", errorResponse.getMessage());
     }
 
     @Test
@@ -111,11 +106,6 @@ class PassengerRestControllerIntegrationTest {
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse();
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(
-                response.getContentAsString(),
-                ErrorResponse.class);
-        assertNotNull(errorResponse);
-        assertEquals("PASSENGER_NOT_FOUND", errorResponse.getMessage());
     }
 
     @Test

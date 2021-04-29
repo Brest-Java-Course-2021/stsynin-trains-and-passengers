@@ -4,7 +4,8 @@ import by.epam.brest.model.Passenger;
 import by.epam.brest.model.dto.PassengerDto;
 import by.epam.brest.service.PassengerDtoService;
 import by.epam.brest.service.PassengerService;
-import by.epam.brest.service.rest_app.exception.PassengerNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,8 @@ import java.util.Optional;
  */
 @RestController
 public class PassengerRestController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PassengerRestController.class);
 
     private final PassengerDtoService passengerDtoService;
 
@@ -47,7 +50,8 @@ public class PassengerRestController {
     public final ResponseEntity<Passenger> getById(@PathVariable Integer id) {
         Optional<Passenger> optionalPassenger = passengerService.findById(id);
         if (optionalPassenger.isEmpty()) {
-            throw new PassengerNotFoundException("Passenger not found for id:" + id);
+            LOGGER.error("Passenger not found for id: {}", id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(optionalPassenger.get(), HttpStatus.OK);
     }
@@ -62,7 +66,8 @@ public class PassengerRestController {
     public final ResponseEntity<Integer> delete(@PathVariable Integer id) {
         Integer deleteResult = passengerService.deletePassenger(id);
         if (deleteResult < 1) {
-            throw new PassengerNotFoundException("Delete fail. Passenger not found id:" + id);
+            LOGGER.error("Delete fail. Passenger not found for id: {}", id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(deleteResult, HttpStatus.OK);
     }

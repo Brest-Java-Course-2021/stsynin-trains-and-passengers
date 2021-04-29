@@ -13,13 +13,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(PassengerNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handlePassengerNotFound(PassengerNotFoundException e) {
-        return new ResponseEntity<>(
-                new ErrorResponse("PASSENGER_NOT_FOUND", e),
-                HttpStatus.NOT_FOUND);
-    }
-
     @ExceptionHandler(PassengerEmptyNameException.class)
     public ResponseEntity<ErrorResponse> handlePassengerEmptyName(PassengerEmptyNameException e) {
         return new ResponseEntity<>(
@@ -41,15 +34,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    @ExceptionHandler(TrainNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handlePassengerNotFound(TrainNotFoundException e) {
-        return new ResponseEntity<>(
-                new ErrorResponse("TRAIN_NOT_FOUND", e),
-                HttpStatus.NOT_FOUND);
-    }
-
     @ExceptionHandler(TrainLoadedException.class)
-    public ResponseEntity<ErrorResponse> handlePassengerNotFound(TrainLoadedException e) {
+    public ResponseEntity<ErrorResponse> handleTrainLoaded(TrainLoadedException e) {
         return new ResponseEntity<>(
                 new ErrorResponse("TRAIN_LOADED", e),
                 HttpStatus.LOCKED);

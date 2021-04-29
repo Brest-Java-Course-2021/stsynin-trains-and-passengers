@@ -172,9 +172,6 @@ class TrainRestControllerIntegrationTest {
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse();
         assertNotNull(response);
-        ErrorResponse errorResponse = getRemappedError(response);
-        assertNotNull(errorResponse);
-        assertEquals("TRAIN_NOT_FOUND", errorResponse.getMessage());
     }
 
     @Test
@@ -197,9 +194,6 @@ class TrainRestControllerIntegrationTest {
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse();
         assertNotNull(response);
-        ErrorResponse errorResponse = getRemappedError(response);
-        assertNotNull(errorResponse);
-        assertEquals("TRAIN_NOT_FOUND", errorResponse.getMessage());
     }
 
     @Test
