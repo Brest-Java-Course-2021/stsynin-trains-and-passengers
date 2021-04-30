@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
-@Controller
+//@Controller
 public class PassengerController {
 
     private final PassengerDtoService passengerDtoService;

@@ -39,7 +39,7 @@ public class TrainRestController {
      * @param dateEnd   end of period of time.
      * @return TrainDto list.
      */
-    @GetMapping(value = "/trains", produces = {"application/json"})
+    @GetMapping(value = "/trains-dtos", produces = {"application/json"})
     public final ResponseEntity<List<TrainDto>> filteredTrains(
             @RequestParam(name = "dateStart", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
