@@ -1,5 +1,7 @@
 package by.epam.brest.web_app;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class MyErrorController implements ErrorController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyErrorController.class);
+
     /**
      * Custom error pages show.
      *
@@ -28,6 +32,7 @@ public class MyErrorController implements ErrorController {
         ModelAndView errorPage = new ModelAndView("error");
         if (errorMessage != null) {
             errorPage.addObject("errorMessage", errorMessage);
+            LOGGER.error(errorMessage);
             return errorPage;
         }
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
@@ -50,6 +55,7 @@ public class MyErrorController implements ErrorController {
                 break;
             }
         }
+        LOGGER.error(errorMsg);
         return errorMsg;
     }
 
