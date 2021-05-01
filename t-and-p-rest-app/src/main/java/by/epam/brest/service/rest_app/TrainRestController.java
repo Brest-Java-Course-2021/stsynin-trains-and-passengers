@@ -66,6 +66,7 @@ public class TrainRestController {
             LOGGER.error("Train not found for id: {}", id);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        LOGGER.debug("return info for train id: {}", id);
         return new ResponseEntity<>(optionalTrain.get(), HttpStatus.OK);
     }
 
@@ -82,6 +83,7 @@ public class TrainRestController {
             LOGGER.error("Delete fail. Train not found for id: {}", id);
             return new ResponseEntity<>(deleteResult, HttpStatus.NOT_FOUND);
         }
+        LOGGER.debug("train id: {} was deleted", id);
         return new ResponseEntity<>(deleteResult, HttpStatus.OK);
     }
 
