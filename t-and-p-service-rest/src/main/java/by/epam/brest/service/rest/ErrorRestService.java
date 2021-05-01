@@ -29,14 +29,14 @@ public class ErrorRestService implements ResponseErrorHandler {
     @Override
     public void handleError(ClientHttpResponse httpResponse) throws IOException {
         if (httpResponse.getStatusCode()
-                .series() == HttpStatus.Series.SERVER_ERROR)
-        {
+                .series() == HttpStatus.Series.SERVER_ERROR) {
             // handle SERVER_ERROR
             LOGGER.error("SERVER_ERROR");
         } else if (httpResponse.getStatusCode()
                 .series() == HttpStatus.Series.CLIENT_ERROR) {
             // handle CLIENT_ERROR
             LOGGER.error("CLIENT_ERROR");
+            LOGGER.error(String.valueOf(httpResponse.getStatusCode()));
             if (httpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
                 LOGGER.error("not found");
             }

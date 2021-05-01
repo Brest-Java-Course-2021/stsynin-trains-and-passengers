@@ -78,7 +78,7 @@ public class TrainRestService implements TrainService {
                 url,
                 train,
                 Integer.class).getBody();
-        LOGGER.debug("trains created: ({})", result);
+        LOGGER.debug("train id: ({}) created", result);
         return result;
     }
 
@@ -99,7 +99,7 @@ public class TrainRestService implements TrainService {
                 HttpMethod.PUT,
                 entity,
                 Integer.class).getBody();
-        LOGGER.debug("trains updated: ({})", result);
+        LOGGER.debug("train id: ({}) updated", result);
         return result;
     }
 
