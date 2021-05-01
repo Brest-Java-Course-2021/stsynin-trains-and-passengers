@@ -4,6 +4,8 @@ import by.epam.brest.model.Passenger;
 import by.epam.brest.service.PassengerDtoService;
 import by.epam.brest.service.PassengerService;
 import by.epam.brest.service.TrainService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +18,8 @@ import java.util.Optional;
 
 //@Controller
 public class PassengerController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainController.class);
 
     private final PassengerDtoService passengerDtoService;
 
@@ -38,12 +42,13 @@ public class PassengerController {
      */
     @GetMapping(value = "/passengers")
     public final String passengers(Model model) {
+        LOGGER.debug("user ask passengers list");
         model.addAttribute("passengers", passengerDtoService.findAllPassengersWithTrainName());
         return "passengers";
     }
 
     /**
-     * Goto edit passenger page.
+     * Goto edit passenger page. If passenger record not found - goto error page.
      *
      * @param model model.
      * @param id    passenger id.
@@ -53,13 +58,16 @@ public class PassengerController {
     public final String gotoEditPassengerPage(@PathVariable Integer id,
                                               Model model,
                                               RedirectAttributes redirectAttributes) {
+        LOGGER.debug("user ask passenger id: {}", id);
         Optional<Passenger> optionalPassenger = passengerService.findById(id);
         if (optionalPassenger.isPresent()) {
+            LOGGER.debug("return passenger id: {}", id);
             model.addAttribute("isNew", false);
             model.addAttribute("passenger", optionalPassenger.get());
             model.addAttribute("trains", trainService.findAll());
             return "passenger";
         } else {
+            LOGGER.error("passenger id: {} not found", id);
             redirectAttributes.addAttribute("errorMessage",
                     "We're sorry, but we can't find record for this passenger.");
             return "redirect:/error";
@@ -74,6 +82,7 @@ public class PassengerController {
      */
     @GetMapping(value = "/passenger")
     public final String gotoAddPassengerPage(Model model) {
+        LOGGER.debug("Create new passenger");
         model.addAttribute("isNew", true);
         model.addAttribute("passenger", new Passenger());
         model.addAttribute("trains", trainService.findAll());
@@ -81,31 +90,34 @@ public class PassengerController {
     }
 
     /**
-     * Save new passenger information into storage.
+     * Save new passenger information into storage. Check name for null and length.
      *
      * @param passenger filled new passenger data.
      * @return view passengers.
      */
     @PostMapping(value = "/passenger")
     public String addPassenger(Passenger passenger) {
+        LOGGER.debug("user ask to save new passenger");
         this.passengerService.createPassenger(passenger);
         return "redirect:/passengers";
     }
 
     /**
-     * Update passenger information in storage.
+     * Update passenger information in storage Check name for null and length.
      *
      * @param passenger updated passenger data.
      * @return view passengers.
      */
     @PostMapping(value = "/passenger/{id}")
     public String updatePassenger(Passenger passenger) {
+        LOGGER.debug("user ask to update passenger");
         this.passengerService.updatePassenger(passenger);
         return "redirect:/passengers";
     }
 
     /**
-     * Delete passenger information in storage. If passenger isn't exist - goto error page.
+     * Delete passenger information in storage.
+     * If passenger isn't exist - goto error page.
      *
      * @param model model.
      * @param id    passenger id.
@@ -115,11 +127,14 @@ public class PassengerController {
     public String deletePassenger(@PathVariable Integer id,
                                   Model model,
                                   RedirectAttributes redirectAttributes) {
+        LOGGER.debug("user ask to delete passenger id: {}", id);
         Optional<Passenger> optionalPassenger = passengerService.findById(id);
         if (optionalPassenger.isPresent()) {
+            LOGGER.debug("execute delete");
             this.passengerService.deletePassenger(id);
             return "redirect:/passengers";
         } else {
+            LOGGER.error("...but passenger id: {} was not found", id);
             redirectAttributes.addAttribute(
                     "errorMessage",
                     "We're sorry, but we can't find record for delete this passenger.");
