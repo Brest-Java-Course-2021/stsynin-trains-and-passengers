@@ -37,7 +37,7 @@ public class TrainDtoRestService implements TrainDtoService {
      */
     @Override
     public List<TrainDto> getFilteredByDateTrainListWithPassengersCount(LocalDate dateStart, LocalDate dateEnd) {
-        LOGGER.debug("getFilteredByDateTrainListWithPassengersCount( from {} to {} )", dateStart, dateEnd);
+        LOGGER.debug("get trains (from {} to {} ) with passengers count", dateStart, dateEnd);
         ResponseEntity<List<TrainDto>> result = restTemplate.exchange(
                 url + getDatesAsParameter(dateStart, dateEnd),
                 HttpMethod.GET,

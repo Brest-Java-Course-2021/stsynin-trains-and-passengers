@@ -58,7 +58,8 @@ class TrainDtoRestServiceTest {
     public void shouldReturnListOfDtoTrains() throws Exception {
         LOGGER.debug("shouldFindAllTrains()");
         // given
-        mockServer.expect(ExpectedCount.once(), requestTo(new URI(TRAINS_URL)))
+        mockServer.expect(ExpectedCount.once(), requestTo(new URI(
+                TRAINS_URL + "?dateStart=2010-10-10&dateEnd=2011-11-11")))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
