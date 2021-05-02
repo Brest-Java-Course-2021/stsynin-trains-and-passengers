@@ -16,7 +16,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
-//@Controller
+import static by.epam.brest.model.constants.PassengerConstants.MAX_PASSENGER_NAME_LENGTH;
+
+@Controller
 public class PassengerController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainController.class);
@@ -41,7 +43,7 @@ public class PassengerController {
      * @return view passengers.
      */
     @GetMapping(value = "/passengers")
-    public final String passengers(Model model) {
+    public final String passenger(Model model) {
         LOGGER.debug("user ask passengers list");
         model.addAttribute("passengers", passengerDtoService.findAllPassengersWithTrainName());
         return "passengers";
@@ -96,10 +98,19 @@ public class PassengerController {
      * @return view passengers.
      */
     @PostMapping(value = "/passenger")
-    public String addPassenger(Passenger passenger) {
+    public String addPassenger(Passenger passenger,
+                               RedirectAttributes redirectAttributes) {
         LOGGER.debug("user ask to save new passenger");
-        this.passengerService.createPassenger(passenger);
-        return "redirect:/passengers";
+        String errorWithPassengerName = getErrorWithPassengerNames(passenger, "Create");
+        if (errorWithPassengerName != null) {
+            LOGGER.error(errorWithPassengerName);
+            redirectAttributes.addAttribute("errorMessage", errorWithPassengerName);
+            return "redirect:/error";
+        } else {
+            LOGGER.debug("creating {}", passenger);
+            this.passengerService.createPassenger(passenger);
+            return "redirect:/passengers";
+        }
     }
 
     /**
@@ -109,10 +120,18 @@ public class PassengerController {
      * @return view passengers.
      */
     @PostMapping(value = "/passenger/{id}")
-    public String updatePassenger(Passenger passenger) {
+    public String updatePassenger(Passenger passenger,
+                                  RedirectAttributes redirectAttributes) {
         LOGGER.debug("user ask to update passenger");
-        this.passengerService.updatePassenger(passenger);
-        return "redirect:/passengers";
+        String errorWithPassengerName = getErrorWithPassengerNames(passenger, "Update");
+        if (errorWithPassengerName != null) {
+            LOGGER.error(errorWithPassengerName);
+            redirectAttributes.addAttribute("errorMessage", errorWithPassengerName);
+            return "redirect:/error";
+        } else {
+            this.passengerService.updatePassenger(passenger);
+            return "redirect:/passengers";
+        }
     }
 
     /**
@@ -140,5 +159,20 @@ public class PassengerController {
                     "We're sorry, but we can't find record for delete this passenger.");
             return "redirect:/error";
         }
+    }
+
+    private String getErrorWithPassengerNames(Passenger passenger, String stage) {
+        String passengerName = passenger.getPassengerName();
+        if (passengerName == null) {
+            return stage + " fail. Passenger name can't be empty";
+        }
+        if (passengerNameIsOverlong(passengerName)) {
+            return stage + " fail. Passenger name " + passengerName + " is too long";
+        }
+        return null;
+    }
+
+    private boolean passengerNameIsOverlong(String name) {
+        return name.length() > MAX_PASSENGER_NAME_LENGTH;
     }
 }
