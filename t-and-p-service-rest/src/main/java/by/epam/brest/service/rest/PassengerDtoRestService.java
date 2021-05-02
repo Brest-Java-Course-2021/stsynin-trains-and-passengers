@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 /**
  * @author Sergey Tsynin
  */
+@Service
 public class PassengerDtoRestService implements PassengerDtoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PassengerDtoRestService.class);
@@ -36,7 +38,7 @@ public class PassengerDtoRestService implements PassengerDtoService {
     public List<PassengerDto> findAllPassengersWithTrainName() {
         LOGGER.debug("get passengers list with trains names");
         ResponseEntity<List<PassengerDto>> result = restTemplate.exchange(
-                url + "-dto",
+                url,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {
