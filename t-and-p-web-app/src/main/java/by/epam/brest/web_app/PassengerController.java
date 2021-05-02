@@ -108,8 +108,15 @@ public class PassengerController {
             return "redirect:/error";
         } else {
             LOGGER.debug("creating {}", passenger);
-            this.passengerService.createPassenger(passenger);
-            return "redirect:/passengers";
+            if (this.passengerService.createPassenger(passenger) == 0) {
+                LOGGER.error("service return error, passenger not created");
+                redirectAttributes.addAttribute("errorMessage",
+                        "We are very sorry, but the entry has not been made ");
+                return "redirect:/error";
+            } else {
+                LOGGER.debug("Passenger created successfully. id: {}", passenger.getPassengerId());
+                return "redirect:/passengers";
+            }
         }
     }
 
@@ -129,7 +136,14 @@ public class PassengerController {
             redirectAttributes.addAttribute("errorMessage", errorWithPassengerName);
             return "redirect:/error";
         } else {
-            this.passengerService.updatePassenger(passenger);
+            LOGGER.debug("updating {}", passenger);
+            if(this.passengerService.updatePassenger(passenger)==0){
+                LOGGER.error("service return error, passenger not created");
+                redirectAttributes.addAttribute("errorMessage",
+                        "We are very sorry, but the entry has not been updated");
+                return "redirect:/error";
+            }
+            LOGGER.debug("Passenger updated successfully. id: {}", passenger.getPassengerId());
             return "redirect:/passengers";
         }
     }

@@ -40,6 +40,9 @@ public class ErrorRestService implements ResponseErrorHandler {
             if (httpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
                 LOGGER.error("not found");
             }
+            if (httpResponse.getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
+                LOGGER.error("wow! UNPROCESSABLE_ENTITY");
+            }
         }
     }
 }

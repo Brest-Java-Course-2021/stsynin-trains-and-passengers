@@ -72,12 +72,14 @@ public class PassengerRestService implements PassengerService {
     @Override
     public Integer createPassenger(Passenger passenger) {
         LOGGER.debug("createPassenger()");
-        Integer result = restTemplate.postForEntity(
-                url,
-                passenger,
-                Integer.class).getBody();
-        LOGGER.debug("passenger id: ({}) created", result);
-        return result;
+        Object o = restTemplate.postForObject(url, passenger, Object.class);
+        LOGGER.debug("raw answer: {}", o);
+        if (o instanceof Integer) {
+            LOGGER.debug("passenger id: ({}) created", o);
+            return (Integer) o;
+        }
+        LOGGER.error("passenger not created");
+        return 0;
     }
 
     /**
@@ -92,13 +94,18 @@ public class PassengerRestService implements PassengerService {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         HttpEntity<Passenger> entity = new HttpEntity<>(passenger, headers);
-        Integer result = restTemplate.exchange(
+        Object o = restTemplate.exchange(
                 url,
                 HttpMethod.PUT,
                 entity,
-                Integer.class).getBody();
-        LOGGER.debug("passenger id: ({}) updated", result);
-        return result;
+                Object.class).getBody();
+        LOGGER.debug("raw answer: {}", o);
+        if (o instanceof Integer) {
+            LOGGER.debug("passenger id: ({}) updated", o);
+            return (Integer) o;
+        }
+        LOGGER.error("passenger not updated");
+        return 0;
     }
 
     /**
