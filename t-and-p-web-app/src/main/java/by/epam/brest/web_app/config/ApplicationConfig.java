@@ -1,7 +1,11 @@
 package by.epam.brest.web_app.config;
 
+import by.epam.brest.service.PassengerDtoService;
+import by.epam.brest.service.PassengerService;
 import by.epam.brest.service.TrainDtoService;
 import by.epam.brest.service.TrainService;
+import by.epam.brest.service.rest.PassengerDtoRestService;
+import by.epam.brest.service.rest.PassengerRestService;
 import by.epam.brest.service.rest.TrainDtoRestService;
 import by.epam.brest.service.rest.TrainRestService;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,29 +40,21 @@ public class ApplicationConfig {
         return new TrainDtoRestService(url, restTemplate());
     }
 
-    ;
-
     @Bean
     TrainService trainService() {
         String url = String.format("%s://%s:%d/trains", protocol, host, port);
         return new TrainRestService(url, restTemplate());
     }
 
-    ;
+    @Bean
+    PassengerDtoService passengerDtoService() {
+        String url = String.format("%s://%s:%d/passengers-dtos", protocol, host, port);
+        return new PassengerDtoRestService(url, restTemplate());
+    }
 
-//    @Bean
-//    PassengerDtoService passengerDtoService() {
-//        String url = String.format("%s://%s:%d/passengers-dtos", protocol, host, port);
-//        return new PassengerDtoRestService(url, restTemplate());
-//    }
-//
-//    ;
-//
-//    @Bean
-//    PassengerService passengerService() {
-//        String url = String.format("%s://%s:%d/passengers", protocol, host, port);
-//        return new PassengerRestService(url, restTemplate());
-//    }
-//
-//    ;
+    @Bean
+    PassengerService passengerService() {
+        String url = String.format("%s://%s:%d/passengers", protocol, host, port);
+        return new PassengerRestService(url, restTemplate());
+    }
 }
