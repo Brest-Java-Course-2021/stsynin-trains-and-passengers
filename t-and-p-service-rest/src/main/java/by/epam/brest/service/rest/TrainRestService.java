@@ -28,7 +28,6 @@ public class TrainRestService implements TrainService {
     public TrainRestService(String url, RestTemplate restTemplate) {
         this.url = url;
         this.restTemplate = restTemplate;
-        this.restTemplate.setErrorHandler(new ErrorRestService());
     }
 
     /**
