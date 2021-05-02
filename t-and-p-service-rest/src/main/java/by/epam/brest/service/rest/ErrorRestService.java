@@ -18,7 +18,7 @@ import static org.springframework.http.HttpStatus.Series.SERVER_ERROR;
 @Component
 public class ErrorRestService implements ResponseErrorHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrainRestService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ErrorRestService.class);
 
     @Override
     public boolean hasError(ClientHttpResponse httpResponse) throws IOException {
