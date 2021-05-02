@@ -33,10 +33,23 @@ public class PassengerRestController {
     /**
      * Endpoint "/passengers". Passengers list.
      *
-     * @return ResponseEntity of PassengerDto list.
+     * @return ResponseEntity of Passenger list.
      */
     @GetMapping(value = "/passengers", produces = {"application/json"})
-    public final ResponseEntity<List<PassengerDto>> getAll() {
+
+    public final ResponseEntity<List<Passenger>> getAll() {
+        LOGGER.debug("get passengers list");
+        return new ResponseEntity<>(passengerService.findAll(), HttpStatus.OK);
+    }
+
+    /**
+     * Endpoint "/passengers-dtos". Passengers list.
+     *
+     * @return ResponseEntity of PassengerDto list.
+     */
+    @GetMapping(value = "/passengers-dtos", produces = {"application/json"})
+    public final ResponseEntity<List<PassengerDto>> getAllDto() {
+        LOGGER.debug("get passengers DTO list");
         return new ResponseEntity<>(passengerDtoService.findAllPassengersWithTrainName(), HttpStatus.OK);
     }
 

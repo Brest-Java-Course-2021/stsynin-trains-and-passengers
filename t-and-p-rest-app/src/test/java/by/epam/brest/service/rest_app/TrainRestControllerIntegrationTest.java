@@ -79,7 +79,7 @@ class TrainRestControllerIntegrationTest {
 
     @Test
     public void shouldReturnTrainBetweenTwoDates() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS)
+        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS + "-dtos")
                 .param("dateStart", PERIOD_START)
                 .param("dateEnd", PERIOD_END)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -95,7 +95,7 @@ class TrainRestControllerIntegrationTest {
 
     @Test
     public void shouldReturnTrainsFromStartDate() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS)
+        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS + "-dtos")
                 .param("dateStart", PERIOD_START)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -110,7 +110,7 @@ class TrainRestControllerIntegrationTest {
 
     @Test
     public void shouldReturnTrainsBeforeEndDate() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS)
+        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS + "-dtos")
                 .param("dateEnd", PERIOD_END)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -125,7 +125,7 @@ class TrainRestControllerIntegrationTest {
 
     @Test
     public void shouldReturnErrorWithWrongFiltersOrder() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS)
+        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS + "-dtos")
                 .param("dateStart", PERIOD_END)
                 .param("dateEnd", PERIOD_START)
                 .contentType(MediaType.APPLICATION_JSON)

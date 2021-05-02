@@ -64,7 +64,14 @@ class PassengerRestControllerIntegrationTest {
 
     @Test
     public void shouldReturnPassengersList() throws Exception {
-        List<PassengerDto> passengers = passengerService.findAll();
+        List<Passenger> passengers = passengerService.findAll();
+        assertNotNull(passengers);
+        assertTrue(passengers.size() > 0);
+    }
+
+    @Test
+    public void shouldReturnPassengersListWithTrainsNames() throws Exception {
+        List<PassengerDto> passengers = passengerService.findAllWithNames();
         assertNotNull(passengers);
         assertTrue(passengers.size() > 0);
     }
@@ -287,8 +294,21 @@ class PassengerRestControllerIntegrationTest {
 
     class MockMvcPassengerService {
 
-        public List<PassengerDto> findAll() throws Exception {
+        public List<Passenger> findAll() throws Exception {
             MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_PASSENGERS)
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse();
+            assertNotNull(response);
+
+            return objectMapper.readValue(
+                    response.getContentAsString(),
+                    new TypeReference<>() {
+                    });
+        }
+
+        public List<PassengerDto> findAllWithNames() throws Exception {
+            MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_PASSENGERS + "-dtos")
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andReturn().getResponse();

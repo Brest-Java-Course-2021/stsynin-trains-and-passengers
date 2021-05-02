@@ -33,6 +33,19 @@ public class TrainRestController {
     }
 
     /**
+     * Trains list.
+     *
+     * @return Train list.
+     */
+    @GetMapping(value = "/trains", produces = {"application/json"})
+    public final ResponseEntity<List<Train>> getAll() {
+        LOGGER.debug("Search trains list");
+        return new ResponseEntity<>(
+                trainService.findAll(),
+                HttpStatus.OK);
+    }
+
+    /**
      * Trains list, filtered by date.
      *
      * @param dateStart start of period of time.
