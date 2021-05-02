@@ -9,7 +9,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.RequestDispatcher;
@@ -21,8 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Sergey Tsynin
  */
 @SpringBootTest
-@Transactional
-class MyErrorControllerIntegrationTest {
+class MyErrorControllerTest {
 
     @Autowired
     private WebApplicationContext wac;
