@@ -5,6 +5,7 @@ import by.epam.brest.service.PassengerService;
 import by.epam.brest.service.TrainDtoService;
 import by.epam.brest.service.TrainService;
 import by.epam.brest.service.rest.PassengerDtoRestService;
+import by.epam.brest.service.rest.PassengerRestService;
 import by.epam.brest.service.rest.TrainDtoRestService;
 import by.epam.brest.service.rest.TrainRestService;
 import org.springframework.context.annotation.Bean;
@@ -36,10 +37,10 @@ public class TestConfig {
         return new TrainDtoRestService(TRAINS_URL, restTemplate());
     }
 
-//    @Bean
-//    PassengerService passengerService() {
-//        return new PassengerRestService(PASSENGERS_URL, restTemplate());
-//    }
+    @Bean
+    PassengerService passengerService() {
+        return new PassengerRestService(PASSENGERS_URL, restTemplate());
+    }
 
     @Bean
     PassengerDtoService passengerDtoService() {
