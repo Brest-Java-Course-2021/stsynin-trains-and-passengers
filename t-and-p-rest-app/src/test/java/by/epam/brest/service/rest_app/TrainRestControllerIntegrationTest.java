@@ -1,9 +1,9 @@
 package by.epam.brest.service.rest_app;
 
+import by.epam.brest.model.ErrorResponse;
 import by.epam.brest.model.Train;
 import by.epam.brest.model.dto.TrainDto;
 import by.epam.brest.service.rest_app.exception.CustomExceptionHandler;
-import by.epam.brest.service.rest_app.exception.ErrorResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

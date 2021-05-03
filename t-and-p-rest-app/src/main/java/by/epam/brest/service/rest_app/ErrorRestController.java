@@ -1,6 +1,6 @@
 package by.epam.brest.service.rest_app;
 
-import by.epam.brest.service.rest_app.exception.ErrorResponse;
+import by.epam.brest.model.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.error.ErrorController;

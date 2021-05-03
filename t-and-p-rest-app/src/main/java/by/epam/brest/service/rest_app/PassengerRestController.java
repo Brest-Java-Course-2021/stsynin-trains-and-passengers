@@ -1,5 +1,6 @@
 package by.epam.brest.service.rest_app;
 
+import by.epam.brest.model.ErrorResponse;
 import by.epam.brest.model.Passenger;
 import by.epam.brest.model.dto.PassengerDto;
 import by.epam.brest.service.PassengerDtoService;
@@ -113,7 +114,13 @@ public class PassengerRestController {
      * @return number of updated passengers.
      */
     @PutMapping(value = "/passengers", consumes = {"application/json"}, produces = {"application/json"})
-    public final ResponseEntity<Integer> update(@RequestBody Passenger passenger) {
-        return new ResponseEntity<>(passengerService.updatePassenger(passenger), HttpStatus.OK);
+//    public final ResponseEntity<Integer> update(@RequestBody Passenger passenger) {
+//        return new ResponseEntity<>(passengerService.updatePassenger(passenger), HttpStatus.OK);
+    public final ResponseEntity<ErrorResponse> update(@RequestBody Passenger passenger) {
+        Integer result = passengerService.updatePassenger(passenger);
+        return new ResponseEntity<>(new ErrorResponse(
+                "OK",
+                "Passenger id: " + result + " was successfully updated"),
+                HttpStatus.OK);
     }
 }

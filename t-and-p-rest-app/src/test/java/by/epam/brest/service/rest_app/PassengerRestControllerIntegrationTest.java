@@ -3,7 +3,7 @@ package by.epam.brest.service.rest_app;
 import by.epam.brest.model.Passenger;
 import by.epam.brest.model.dto.PassengerDto;
 import by.epam.brest.service.rest_app.exception.CustomExceptionHandler;
-import by.epam.brest.service.rest_app.exception.ErrorResponse;
+import by.epam.brest.model.ErrorResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;

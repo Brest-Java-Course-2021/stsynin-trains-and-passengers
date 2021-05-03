@@ -1,4 +1,4 @@
-package by.epam.brest.service.rest_app.exception;
+package by.epam.brest.model;
 
 /**
  * @author Sergey Tsynin

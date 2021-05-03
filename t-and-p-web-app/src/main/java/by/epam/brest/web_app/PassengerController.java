@@ -1,9 +1,10 @@
 package by.epam.brest.web_app;
 
+import by.epam.brest.model.ErrorResponse;
 import by.epam.brest.model.Passenger;
 import by.epam.brest.service.PassengerDtoService;
-import by.epam.brest.service.PassengerService;
 import by.epam.brest.service.TrainService;
+import by.epam.brest.service.rest.PassengerRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,12 @@ public class PassengerController {
 
     private final PassengerDtoService passengerDtoService;
 
-    private final PassengerService passengerService;
+    private final PassengerRestService passengerService;
 
     private final TrainService trainService;
 
     @Autowired
-    public PassengerController(PassengerDtoService passengerDtoService, PassengerService passengerService, TrainService trainService) {
+    public PassengerController(PassengerDtoService passengerDtoService, PassengerRestService passengerService, TrainService trainService) {
         this.passengerDtoService = passengerDtoService;
         this.passengerService = passengerService;
         this.trainService = trainService;

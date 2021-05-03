@@ -1,6 +1,6 @@
 package by.epam.brest.service.rest_app;
 
-import by.epam.brest.service.rest_app.exception.ErrorResponse;
+import by.epam.brest.model.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;

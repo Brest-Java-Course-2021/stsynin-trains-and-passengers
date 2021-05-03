@@ -1,6 +1,7 @@
 package by.epam.brest.service.rest_app.exception;
 
 import by.epam.brest.dao.jdbc.exception.*;
+import by.epam.brest.model.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

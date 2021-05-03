@@ -1,5 +1,6 @@
 package by.epam.brest.service.rest;
 
+import by.epam.brest.model.ErrorResponse;
 import by.epam.brest.model.Passenger;
 import by.epam.brest.service.PassengerService;
 import org.slf4j.Logger;
