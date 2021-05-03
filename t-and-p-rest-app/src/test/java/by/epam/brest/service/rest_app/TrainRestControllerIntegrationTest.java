@@ -1,6 +1,6 @@
 package by.epam.brest.service.rest_app;
 
-import by.epam.brest.model.ErrorResponse;
+import by.epam.brest.model.Acknowledgement;
 import by.epam.brest.model.Train;
 import by.epam.brest.model.dto.TrainDto;
 import by.epam.brest.service.rest_app.exception.CustomExceptionHandler;
@@ -134,9 +134,9 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = getRemappedError(response);
-        assertNotNull(errorResponse);
-        assertEquals("TRAINS_WRONG_FILTER", errorResponse.getMessage());
+        Acknowledgement acknowledgement = getRemappedError(response);
+        assertNotNull(acknowledgement);
+        assertEquals("TRAINS_WRONG_FILTER", acknowledgement.getMessage());
     }
 
     private List<Integer> getAllTrainsIds(List<TrainDto> trains) {
@@ -203,9 +203,9 @@ class TrainRestControllerIntegrationTest {
                 .andExpect(status().isLocked())
                 .andReturn().getResponse();
         assertNotNull(response);
-        ErrorResponse errorResponse = getRemappedError(response);
-        assertNotNull(errorResponse);
-        assertEquals("TRAIN_LOADED", errorResponse.getMessage());
+        Acknowledgement acknowledgement = getRemappedError(response);
+        assertNotNull(acknowledgement);
+        assertEquals("TRAIN_LOADED", acknowledgement.getMessage());
     }
 
     @Test
@@ -253,9 +253,9 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = getRemappedError(response);
-        assertNotNull(errorResponse);
-        assertEquals("TRAIN_DUPLICATED_NAME", errorResponse.getMessage());
+        Acknowledgement acknowledgement = getRemappedError(response);
+        assertNotNull(acknowledgement);
+        assertEquals("TRAIN_DUPLICATED_NAME", acknowledgement.getMessage());
     }
 
     @Test
@@ -271,9 +271,9 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = getRemappedError(response);
-        assertNotNull(errorResponse);
-        assertEquals("TRAIN_EMPTY_NAME", errorResponse.getMessage());
+        Acknowledgement acknowledgement = getRemappedError(response);
+        assertNotNull(acknowledgement);
+        assertEquals("TRAIN_EMPTY_NAME", acknowledgement.getMessage());
     }
 
     @Test
@@ -289,9 +289,9 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = getRemappedError(response);
-        assertNotNull(errorResponse);
-        assertEquals("TRAIN_OVERLONG_NAME", errorResponse.getMessage());
+        Acknowledgement acknowledgement = getRemappedError(response);
+        assertNotNull(acknowledgement);
+        assertEquals("TRAIN_OVERLONG_NAME", acknowledgement.getMessage());
     }
 
     @Test
@@ -308,9 +308,9 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = getRemappedError(response);
-        assertNotNull(errorResponse);
-        assertEquals("TRAIN_OVERLONG_DESTINATION_NAME", errorResponse.getMessage());
+        Acknowledgement acknowledgement = getRemappedError(response);
+        assertNotNull(acknowledgement);
+        assertEquals("TRAIN_OVERLONG_DESTINATION_NAME", acknowledgement.getMessage());
     }
 
     @Test
@@ -351,9 +351,9 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = getRemappedError(response);
-        assertNotNull(errorResponse);
-        assertEquals("TRAIN_DUPLICATED_NAME", errorResponse.getMessage());
+        Acknowledgement acknowledgement = getRemappedError(response);
+        assertNotNull(acknowledgement);
+        assertEquals("TRAIN_DUPLICATED_NAME", acknowledgement.getMessage());
     }
 
     @Test
@@ -373,9 +373,9 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = getRemappedError(response);
-        assertNotNull(errorResponse);
-        assertEquals("TRAIN_EMPTY_NAME", errorResponse.getMessage());
+        Acknowledgement acknowledgement = getRemappedError(response);
+        assertNotNull(acknowledgement);
+        assertEquals("TRAIN_EMPTY_NAME", acknowledgement.getMessage());
     }
 
     @Test
@@ -395,9 +395,9 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = getRemappedError(response);
-        assertNotNull(errorResponse);
-        assertEquals("TRAIN_OVERLONG_NAME", errorResponse.getMessage());
+        Acknowledgement acknowledgement = getRemappedError(response);
+        assertNotNull(acknowledgement);
+        assertEquals("TRAIN_OVERLONG_NAME", acknowledgement.getMessage());
     }
 
     @Test
@@ -417,9 +417,9 @@ class TrainRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = getRemappedError(response);
-        assertNotNull(errorResponse);
-        assertEquals("TRAIN_OVERLONG_DESTINATION_NAME", errorResponse.getMessage());
+        Acknowledgement acknowledgement = getRemappedError(response);
+        assertNotNull(acknowledgement);
+        assertEquals("TRAIN_OVERLONG_DESTINATION_NAME", acknowledgement.getMessage());
     }
 
     private String getOverlongName() {
@@ -434,8 +434,8 @@ class TrainRestControllerIntegrationTest {
         return getRemappedObject(response, Integer.class);
     }
 
-    private ErrorResponse getRemappedError(MockHttpServletResponse response) throws Exception {
-        return getRemappedObject(response, ErrorResponse.class);
+    private Acknowledgement getRemappedError(MockHttpServletResponse response) throws Exception {
+        return getRemappedObject(response, Acknowledgement.class);
     }
 
     private <T> T getRemappedObject(MockHttpServletResponse response, Class<T> valueType) throws Exception {

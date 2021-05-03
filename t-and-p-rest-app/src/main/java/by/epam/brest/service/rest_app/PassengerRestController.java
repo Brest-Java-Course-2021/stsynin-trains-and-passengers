@@ -1,6 +1,6 @@
 package by.epam.brest.service.rest_app;
 
-import by.epam.brest.model.ErrorResponse;
+import by.epam.brest.model.Acknowledgement;
 import by.epam.brest.model.Passenger;
 import by.epam.brest.model.dto.PassengerDto;
 import by.epam.brest.service.PassengerDtoService;
@@ -74,10 +74,10 @@ public class PassengerRestController {
      * Delete passenger information from storage.
      *
      * @param id passenger id.
-     * @return number of deleted passengers.
+     * @return Acknowledgement.
      */
     @DeleteMapping(value = "/passengers/{id}", produces = {"application/json"})
-    public final ResponseEntity<Integer> delete(@PathVariable Integer id) {
+    public final ResponseEntity<Acknowledgement> delete(@PathVariable Integer id) {
         Integer deleteResult = passengerService.deletePassenger(id);
         if (deleteResult < 1) {
             LOGGER.error("Delete fail. Passenger not found for id: {}", id);
@@ -100,23 +100,26 @@ public class PassengerRestController {
      * Create new passenger record.
      *
      * @param passenger passenger
-     * @return new record id.
+     * @return Acknowledgement with id.
      */
     @PostMapping(value = "/passengers", consumes = {"application/json"}, produces = {"application/json"})
-    public final ResponseEntity<Integer> create(@RequestBody Passenger passenger) {
-        return new ResponseEntity<>(passengerService.createPassenger(passenger), HttpStatus.CREATED);
+    public final ResponseEntity<Acknowledgement> create(@RequestBody Passenger passenger) {
+        Integer result = passengerService.createPassenger(passenger);
+        return new ResponseEntity<>(new Acknowledgement(
+                "OK",
+                "Passenger id: " + result + " was successfully created",
+                result
+        ), HttpStatus.CREATED);
     }
 
     /**
      * Update passenger record.
      *
      * @param passenger passenger
-     * @return number of updated passengers.
+     * @return Acknowledgement.
      */
     @PutMapping(value = "/passengers", consumes = {"application/json"}, produces = {"application/json"})
-//    public final ResponseEntity<Integer> update(@RequestBody Passenger passenger) {
-//        return new ResponseEntity<>(passengerService.updatePassenger(passenger), HttpStatus.OK);
-    public final ResponseEntity<ErrorResponse> update(@RequestBody Passenger passenger) {
+    public final ResponseEntity<Acknowledgement> update(@RequestBody Passenger passenger) {
         Integer result = passengerService.updatePassenger(passenger);
         return new ResponseEntity<>(new ErrorResponse(
                 "OK",

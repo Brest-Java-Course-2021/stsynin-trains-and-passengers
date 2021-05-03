@@ -3,7 +3,7 @@ package by.epam.brest.service.rest_app;
 import by.epam.brest.model.Passenger;
 import by.epam.brest.model.dto.PassengerDto;
 import by.epam.brest.service.rest_app.exception.CustomExceptionHandler;
-import by.epam.brest.model.ErrorResponse;
+import by.epam.brest.model.Acknowledgement;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -100,10 +100,16 @@ class PassengerRestControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
         assertNotNull(response);
-        Integer errorResponse = objectMapper.readValue(
-                response.getContentAsString(),
-                Integer.class);
-        assertEquals(1, errorResponse);
+
+        Acknowledgement acknowledgement = objectMapper.readValue(response.getContentAsString(), Acknowledgement.class);
+        assertNotNull(acknowledgement);
+        assertEquals("OK", acknowledgement.getMessage());
+        assertEquals("Passenger id: 1 was successfully deleted", acknowledgement.getDescriptions());
+
+//        Integer errorResponse = objectMapper.readValue(
+//                response.getContentAsString(),
+//                Integer.class);
+//        assertEquals(1, errorResponse);
     }
 
     @Test
@@ -160,9 +166,9 @@ class PassengerRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
-        assertNotNull(errorResponse);
-        assertEquals("PASSENGER_DUPLICATED_NAME", errorResponse.getMessage());
+        Acknowledgement acknowledgement = objectMapper.readValue(response.getContentAsString(), Acknowledgement.class);
+        assertNotNull(acknowledgement);
+        assertEquals("PASSENGER_DUPLICATED_NAME", acknowledgement.getMessage());
     }
 
     @Test
@@ -178,9 +184,9 @@ class PassengerRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
-        assertNotNull(errorResponse);
-        assertEquals("PASSENGER_EMPTY_NAME", errorResponse.getMessage());
+        Acknowledgement acknowledgement = objectMapper.readValue(response.getContentAsString(), Acknowledgement.class);
+        assertNotNull(acknowledgement);
+        assertEquals("PASSENGER_EMPTY_NAME", acknowledgement.getMessage());
     }
 
     @Test
@@ -196,9 +202,9 @@ class PassengerRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
-        assertNotNull(errorResponse);
-        assertEquals("PASSENGER_OVERLONG_NAME", errorResponse.getMessage());
+        Acknowledgement acknowledgement = objectMapper.readValue(response.getContentAsString(), Acknowledgement.class);
+        assertNotNull(acknowledgement);
+        assertEquals("PASSENGER_OVERLONG_NAME", acknowledgement.getMessage());
     }
 
     @Test
@@ -218,8 +224,10 @@ class PassengerRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        Integer UpdateResponse = objectMapper.readValue(response.getContentAsString(), Integer.class);
-        assertEquals(1, UpdateResponse);
+        Acknowledgement acknowledgement = objectMapper.readValue(response.getContentAsString(), Acknowledgement.class);
+        assertNotNull(acknowledgement);
+        assertEquals("OK", acknowledgement.getMessage());
+        assertEquals("Passenger id: 1 was successfully updated", acknowledgement.getDescriptions());
     }
 
     @Test
@@ -239,9 +247,9 @@ class PassengerRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
-        assertNotNull(errorResponse);
-        assertEquals("PASSENGER_DUPLICATED_NAME", errorResponse.getMessage());
+        Acknowledgement acknowledgement = objectMapper.readValue(response.getContentAsString(), Acknowledgement.class);
+        assertNotNull(acknowledgement);
+        assertEquals("PASSENGER_DUPLICATED_NAME", acknowledgement.getMessage());
     }
 
     @Test
@@ -261,9 +269,9 @@ class PassengerRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
-        assertNotNull(errorResponse);
-        assertEquals("PASSENGER_EMPTY_NAME", errorResponse.getMessage());
+        Acknowledgement acknowledgement = objectMapper.readValue(response.getContentAsString(), Acknowledgement.class);
+        assertNotNull(acknowledgement);
+        assertEquals("PASSENGER_EMPTY_NAME", acknowledgement.getMessage());
     }
 
     @Test
@@ -283,9 +291,9 @@ class PassengerRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
-        assertNotNull(errorResponse);
-        assertEquals("PASSENGER_OVERLONG_NAME", errorResponse.getMessage());
+        Acknowledgement acknowledgement = objectMapper.readValue(response.getContentAsString(), Acknowledgement.class);
+        assertNotNull(acknowledgement);
+        assertEquals("PASSENGER_OVERLONG_NAME", acknowledgement.getMessage());
     }
 
     private String getOverlongName() {
@@ -341,7 +349,11 @@ class PassengerRestControllerIntegrationTest {
                     .andExpect(status().isCreated())
                     .andReturn().getResponse();
 
-            return objectMapper.readValue(response.getContentAsString(), Integer.class);
+            assertNotNull(response);
+            Acknowledgement acknowledgement = objectMapper.readValue(response.getContentAsString(), Acknowledgement.class);
+            assertNotNull(acknowledgement);
+            assertEquals("OK", acknowledgement.getMessage());
+            return acknowledgement.getId();
         }
     }
 }
