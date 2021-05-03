@@ -20,7 +20,9 @@ import org.springframework.web.client.RestTemplate;
 public class TestConfig {
 
     public static final String PASSENGERS_URL = "http://localhost:8088/passengers";
+    public static final String PASSENGERS_DTOS_URL = "http://localhost:8088/passengers-dtos";
     public static final String TRAINS_URL = "http://localhost:8088/trains";
+    public static final String TRAINS_DTOS_URL = "http://localhost:8088/trains-dtos";
 
     @Bean
     RestTemplate restTemplate() {
@@ -34,7 +36,7 @@ public class TestConfig {
 
     @Bean
     TrainDtoService trainDtoService() {
-        return new TrainDtoRestService(TRAINS_URL, restTemplate());
+        return new TrainDtoRestService(TRAINS_DTOS_URL, restTemplate());
     }
 
     @Bean
@@ -44,6 +46,6 @@ public class TestConfig {
 
     @Bean
     PassengerDtoService passengerDtoService() {
-        return new PassengerDtoRestService(PASSENGERS_URL, restTemplate());
+        return new PassengerDtoRestService(PASSENGERS_DTOS_URL, restTemplate());
     }
 }

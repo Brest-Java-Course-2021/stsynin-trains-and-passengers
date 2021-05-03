@@ -1,7 +1,6 @@
 package by.epam.brest.service.rest;
 
 import by.epam.brest.model.dto.PassengerDto;
-import by.epam.brest.model.dto.TrainDto;
 import by.epam.brest.service.PassengerDtoService;
 import by.epam.brest.service.rest.config.TestConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +22,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
-import static by.epam.brest.service.rest.config.TestConfig.PASSENGERS_URL;
+import static by.epam.brest.service.rest.config.TestConfig.PASSENGERS_DTOS_URL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -58,7 +57,7 @@ class PassengerDtoRestServiceTest {
     void shouldReturnAllPassengersWithTrainsNames() throws Exception {
         LOGGER.debug("shouldReturnAllPassengersWithTrainsNames()");
         // given
-        mockServer.expect(ExpectedCount.once(), requestTo(new URI(PASSENGERS_URL + "-dto")))
+        mockServer.expect(ExpectedCount.once(), requestTo(new URI(PASSENGERS_DTOS_URL)))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)

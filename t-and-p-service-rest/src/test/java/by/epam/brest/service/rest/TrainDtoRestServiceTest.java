@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-import static by.epam.brest.service.rest.config.TestConfig.TRAINS_URL;
+import static by.epam.brest.service.rest.config.TestConfig.TRAINS_DTOS_URL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -59,7 +59,7 @@ class TrainDtoRestServiceTest {
         LOGGER.debug("shouldFindAllTrains()");
         // given
         mockServer.expect(ExpectedCount.once(), requestTo(new URI(
-                TRAINS_URL + "?dateStart=2010-10-10&dateEnd=2011-11-11")))
+                TRAINS_DTOS_URL + "?dateStart=2010-10-10&dateEnd=2011-11-11")))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
