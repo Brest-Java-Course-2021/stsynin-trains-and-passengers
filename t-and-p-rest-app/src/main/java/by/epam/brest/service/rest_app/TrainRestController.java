@@ -4,7 +4,6 @@ import by.epam.brest.model.Train;
 import by.epam.brest.model.dto.TrainDto;
 import by.epam.brest.service.TrainDtoService;
 import by.epam.brest.service.TrainService;
-import by.epam.brest.service.rest_app.exception.TrainNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -34,13 +33,26 @@ public class TrainRestController {
     }
 
     /**
+     * Trains list.
+     *
+     * @return Train list.
+     */
+    @GetMapping(value = "/trains", produces = {"application/json"})
+    public final ResponseEntity<List<Train>> getAll() {
+        LOGGER.debug("Search trains list");
+        return new ResponseEntity<>(
+                trainService.findAll(),
+                HttpStatus.OK);
+    }
+
+    /**
      * Trains list, filtered by date.
      *
      * @param dateStart start of period of time.
      * @param dateEnd   end of period of time.
      * @return TrainDto list.
      */
-    @GetMapping(value = "/trains", produces = {"application/json"})
+    @GetMapping(value = "/trains-dtos", produces = {"application/json"})
     public final ResponseEntity<List<TrainDto>> filteredTrains(
             @RequestParam(name = "dateStart", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -64,8 +76,10 @@ public class TrainRestController {
     public final ResponseEntity<Train> getById(@PathVariable Integer id) {
         Optional<Train> optionalTrain = trainService.findById(id);
         if (optionalTrain.isEmpty()) {
-            throw new TrainNotFoundException("Train not found for id:" + id);
+            LOGGER.error("Train not found for id: {}", id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        LOGGER.debug("return info for train id: {}", id);
         return new ResponseEntity<>(optionalTrain.get(), HttpStatus.OK);
     }
 
@@ -79,8 +93,10 @@ public class TrainRestController {
     public final ResponseEntity<Integer> delete(@PathVariable Integer id) {
         Integer deleteResult = trainService.deleteTrain(id);
         if (deleteResult < 1) {
-            throw new TrainNotFoundException("Delete fail. Train not found id:" + id);
+            LOGGER.error("Delete fail. Train not found for id: {}", id);
+            return new ResponseEntity<>(deleteResult, HttpStatus.NOT_FOUND);
         }
+        LOGGER.debug("train id: {} was deleted", id);
         return new ResponseEntity<>(deleteResult, HttpStatus.OK);
     }
 

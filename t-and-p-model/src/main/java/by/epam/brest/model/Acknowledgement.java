@@ -1,23 +1,31 @@
-package by.epam.brest.service.rest_app.exception;
+package by.epam.brest.model;
 
 /**
  * @author Sergey Tsynin
  */
-public class ErrorResponse {
+public class Acknowledgement {
 
     private String message;
 
     private String descriptions;
 
-    public ErrorResponse() {
+    private Integer id;
+
+    public Acknowledgement() {
     }
 
-    public ErrorResponse(String message, String descriptions) {
+    public Acknowledgement(String message, String descriptions) {
         this.message = message;
         this.descriptions = descriptions;
     }
 
-    public ErrorResponse(String message, Exception e) {
+    public Acknowledgement(String message, String descriptions, Integer id) {
+        this.message = message;
+        this.descriptions = descriptions;
+        this.id = id;
+    }
+
+    public Acknowledgement(String message, Exception e) {
         this.message = message;
         this.descriptions = e.getMessage();
     }
@@ -36,5 +44,13 @@ public class ErrorResponse {
 
     public void setDescriptions(String descriptions) {
         this.descriptions = descriptions;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

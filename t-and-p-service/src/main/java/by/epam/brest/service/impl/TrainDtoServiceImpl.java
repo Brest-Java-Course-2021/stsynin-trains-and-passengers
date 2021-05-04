@@ -9,6 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * TrainDto Service.
+ */
 @Service
 @Transactional
 public class TrainDtoServiceImpl implements TrainDtoService {
@@ -19,11 +22,13 @@ public class TrainDtoServiceImpl implements TrainDtoService {
         this.trainDtoDao = trainDtoDao;
     }
 
-    @Override
-    public List<TrainDto> findAllWithPassengersCount() {
-        return trainDtoDao.findAllWithPassengersCount();
-    }
-
+    /**
+     * Get trains from the database with counts of passengers from a period of time.
+     *
+     * @param dateStart start of period.
+     * @param dateEnd   end of period.
+     * @return trains list.
+     */
     @Override
     public List<TrainDto> getFilteredByDateTrainListWithPassengersCount(LocalDate dateStart, LocalDate dateEnd) {
         return trainDtoDao.getFilteredByDateTrainListWithPassengersCount(dateStart, dateEnd);

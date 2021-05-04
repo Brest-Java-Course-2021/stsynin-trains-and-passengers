@@ -170,7 +170,7 @@ public class TrainDaoJdbc implements TrainDao {
         String trainName = train.getTrainName();
         if (trainName == null) {
             logger.error(stage + " fail. Train name is null");
-            throw new TrainEmptyNameException(stage + " fail. Passenger name can't be empty");
+            throw new TrainEmptyNameException(stage + " fail. Train name can't be empty");
         }
         if (trainName.length() > MAX_TRAIN_NAME_LENGTH) {
             logger.error(stage + " fail. Train name {} is too long", trainName);

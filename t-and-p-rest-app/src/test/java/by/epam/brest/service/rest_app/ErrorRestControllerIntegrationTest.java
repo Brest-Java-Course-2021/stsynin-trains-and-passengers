@@ -1,6 +1,6 @@
 package by.epam.brest.service.rest_app;
 
-import by.epam.brest.service.rest_app.exception.ErrorResponse;
+import by.epam.brest.model.Acknowledgement;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,11 +56,11 @@ class ErrorRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        Acknowledgement acknowledgement = objectMapper.readValue(response.getContentAsString(), Acknowledgement.class);
 
-        assertNotNull(errorResponse);
-        assertEquals("404", errorResponse.getMessage());
-        assertEquals("Resource not found", errorResponse.getDescriptions());
+        assertNotNull(acknowledgement);
+        assertEquals("404", acknowledgement.getMessage());
+        assertEquals("Resource not found", acknowledgement.getDescriptions());
     }
 
     @Test
@@ -75,11 +75,11 @@ class ErrorRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        Acknowledgement acknowledgement = objectMapper.readValue(response.getContentAsString(), Acknowledgement.class);
 
-        assertNotNull(errorResponse);
-        assertEquals("500", errorResponse.getMessage());
-        assertEquals("Internal Server Error", errorResponse.getDescriptions());
+        assertNotNull(acknowledgement);
+        assertEquals("500", acknowledgement.getMessage());
+        assertEquals("Internal Server Error", acknowledgement.getDescriptions());
     }
 
     @Test
@@ -94,10 +94,10 @@ class ErrorRestControllerIntegrationTest {
                 .andReturn().getResponse();
 
         assertNotNull(response);
-        ErrorResponse errorResponse = objectMapper.readValue(response.getContentAsString(), ErrorResponse.class);
+        Acknowledgement acknowledgement = objectMapper.readValue(response.getContentAsString(), Acknowledgement.class);
 
-        assertNotNull(errorResponse);
-        assertEquals("501", errorResponse.getMessage());
-        assertEquals("Unknown error", errorResponse.getDescriptions());
+        assertNotNull(acknowledgement);
+        assertEquals("501", acknowledgement.getMessage());
+        assertEquals("Unknown error", acknowledgement.getDescriptions());
     }
 }

@@ -13,20 +13,11 @@
     <description>Spring MVC Web application</description>
 
     <properties>
+        <commons-lang3.version>3.8</commons-lang3.version>
         <spring-boot.version>2.4.4</spring-boot.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>by.epam.brest</groupId>
-            <artifactId>t-and-p-dao-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>by.epam.brest</groupId>
-            <artifactId>t-and-p-dao</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>by.epam.brest</groupId>
             <artifactId>t-and-p-service-api</artifactId>
@@ -34,18 +25,15 @@
 
         <dependency>
             <groupId>by.epam.brest</groupId>
-            <artifactId>t-and-p-service</artifactId>
+            <artifactId>t-and-p-service-rest</artifactId>
         </dependency>
 
         <!--tests-->
         <dependency>
-            <groupId>by.epam.brest</groupId>
-            <artifactId>t-and-p-test-db</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
