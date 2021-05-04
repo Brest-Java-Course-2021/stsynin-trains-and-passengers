@@ -1,7 +1,6 @@
 package by.epam.brest.service.rest.config;
 
 import by.epam.brest.service.PassengerDtoService;
-import by.epam.brest.service.PassengerService;
 import by.epam.brest.service.TrainDtoService;
 import by.epam.brest.service.TrainService;
 import by.epam.brest.service.rest.PassengerDtoRestService;
@@ -40,7 +39,7 @@ public class TestConfig {
     }
 
     @Bean
-    PassengerService passengerService() {
+    PassengerRestService passengerService() {
         return new PassengerRestService(PASSENGERS_URL, restTemplate());
     }
 

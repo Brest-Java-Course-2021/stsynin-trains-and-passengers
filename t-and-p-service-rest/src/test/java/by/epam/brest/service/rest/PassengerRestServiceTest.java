@@ -1,7 +1,7 @@
 package by.epam.brest.service.rest;
 
+import by.epam.brest.model.Acknowledgement;
 import by.epam.brest.model.Passenger;
-import by.epam.brest.service.PassengerService;
 import by.epam.brest.service.rest.config.TestConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ class PassengerRestServiceTest {
     RestTemplate restTemplate;
 
     @Autowired
-    PassengerService passengerService;
+    PassengerRestService passengerService;
 
     private MockRestServiceServer mockServer;
 
@@ -112,14 +112,17 @@ class PassengerRestServiceTest {
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(mapper.writeValueAsString("1"))
+                        .body(mapper.writeValueAsString(new Acknowledgement(
+                                "OK",
+                                "Passenger id: 11 was successfully created")))
                 );
         // when
-        Integer id = passengerService.createPassenger(passenger);
+        Acknowledgement result = passengerService.createPassenger(passenger);
 
         // then
         mockServer.verify();
-        assertNotNull(id);
+        assertNotNull(result);
+        assertEquals("OK", result.getMessage());
     }
 
     @Test
@@ -135,7 +138,9 @@ class PassengerRestServiceTest {
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(mapper.writeValueAsString("1"))
+                        .body(mapper.writeValueAsString(new Acknowledgement(
+                                "OK",
+                                "Passenger id: " + id + " was successfully updated")))
                 );
 
         mockServer.expect(ExpectedCount.once(), requestTo(new URI(PASSENGERS_URL + "/" + id)))
@@ -146,16 +151,16 @@ class PassengerRestServiceTest {
                 );
 
         // when
-        int result = passengerService.updatePassenger(passenger);
+        Acknowledgement result = passengerService.updatePassenger(passenger);
         Optional<Passenger> updatedPassengerOptional = passengerService.findById(id);
 
         // then
         mockServer.verify();
-        assertEquals(1, result);
+        assertNotNull(result);
+        assertEquals("OK", result.getMessage());
 
         assertTrue(updatedPassengerOptional.isPresent());
-        assertEquals(id, updatedPassengerOptional.get().getPassengerId());
-        assertEquals(passenger.getPassengerName(), updatedPassengerOptional.get().getPassengerName());
+        assertEquals(passenger, updatedPassengerOptional.get());
     }
 
     @Test
@@ -163,19 +168,23 @@ class PassengerRestServiceTest {
 
         LOGGER.debug("shouldDeletePassenger()");
         // given
-        Integer id = 1;
+        Integer id = 44;
         mockServer.expect(ExpectedCount.once(), requestTo(new URI(PASSENGERS_URL + "/" + id)))
                 .andExpect(method(HttpMethod.DELETE))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(mapper.writeValueAsString("1"))
+                        .body(mapper.writeValueAsString(new Acknowledgement(
+                                "OK",
+                                "Passenger id: " + id + " was successfully deleted",
+                                id)))
                 );
         // when
-        int result = passengerService.deletePassenger(id);
+        Acknowledgement result = passengerService.deletePassenger(id);
 
         // then
         mockServer.verify();
-        assertEquals(1, result);
+        assertNotNull(result);
+        assertEquals("OK", result.getMessage());
     }
 
     private Passenger createPassenger(int index) {

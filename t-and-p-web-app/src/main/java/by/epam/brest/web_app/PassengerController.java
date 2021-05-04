@@ -1,6 +1,6 @@
 package by.epam.brest.web_app;
 
-import by.epam.brest.model.ErrorResponse;
+import by.epam.brest.model.Acknowledgement;
 import by.epam.brest.model.Passenger;
 import by.epam.brest.service.PassengerDtoService;
 import by.epam.brest.service.TrainService;
@@ -22,7 +22,7 @@ import static by.epam.brest.model.constants.PassengerConstants.MAX_PASSENGER_NAM
 @Controller
 public class PassengerController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrainController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PassengerController.class);
 
     private final PassengerDtoService passengerDtoService;
 
@@ -106,19 +106,19 @@ public class PassengerController {
         if (errorWithPassengerName != null) {
             LOGGER.error(errorWithPassengerName);
             redirectAttributes.addAttribute("errorMessage", errorWithPassengerName);
-            return "redirect:/error";
         } else {
             LOGGER.debug("creating {}", passenger);
-            if (this.passengerService.createPassenger(passenger) == 0) {
+            Acknowledgement response = this.passengerService.createPassenger(passenger);
+            if (response.getMessage().equals("OK")) {
+                LOGGER.debug("Passenger created successfully. id: {}", response.getId());
+                return "redirect:/passengers";
+            } else {
                 LOGGER.error("service return error, passenger not created");
                 redirectAttributes.addAttribute("errorMessage",
-                        "We are very sorry, but the entry has not been made ");
-                return "redirect:/error";
-            } else {
-                LOGGER.debug("Passenger created successfully. id: {}", passenger.getPassengerId());
-                return "redirect:/passengers";
+                        response.getDescriptions());
             }
         }
+        return "redirect:/error";
     }
 
     /**
@@ -135,18 +135,19 @@ public class PassengerController {
         if (errorWithPassengerName != null) {
             LOGGER.error(errorWithPassengerName);
             redirectAttributes.addAttribute("errorMessage", errorWithPassengerName);
-            return "redirect:/error";
         } else {
             LOGGER.debug("updating {}", passenger);
-            if(this.passengerService.updatePassenger(passenger)==0){
-                LOGGER.error("service return error, passenger not created");
-                redirectAttributes.addAttribute("errorMessage",
-                        "We are very sorry, but the entry has not been updated");
-                return "redirect:/error";
+            Acknowledgement response = this.passengerService.updatePassenger(passenger);
+            if (response.getMessage().equals("OK")) {
+                LOGGER.debug("Passenger updated successfully. id: {}", response.getId());
+                return "redirect:/passengers";
             }
-            LOGGER.debug("Passenger updated successfully. id: {}", passenger.getPassengerId());
-            return "redirect:/passengers";
+            String errorMessage = response.getDescriptions();
+            LOGGER.error("service return error, passenger not created");
+            redirectAttributes.addAttribute("errorMessage",
+                    errorMessage);
         }
+        return "redirect:/error";
     }
 
     /**

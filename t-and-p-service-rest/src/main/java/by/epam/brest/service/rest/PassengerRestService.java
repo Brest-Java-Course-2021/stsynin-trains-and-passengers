@@ -1,8 +1,7 @@
 package by.epam.brest.service.rest;
 
-import by.epam.brest.model.ErrorResponse;
+import by.epam.brest.model.Acknowledgement;
 import by.epam.brest.model.Passenger;
-import by.epam.brest.service.PassengerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -12,13 +11,14 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
  * @author Sergey Tsynin
  */
 @Service
-public class PassengerRestService implements PassengerService {
+public class PassengerRestService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PassengerRestService.class);
 
@@ -36,7 +36,6 @@ public class PassengerRestService implements PassengerService {
      *
      * @return passengers list.
      */
-    @Override
     public List<Passenger> findAll() {
         LOGGER.debug("findAll()");
         ResponseEntity<List<Passenger>> responseEntity = restTemplate.exchange(
@@ -54,7 +53,6 @@ public class PassengerRestService implements PassengerService {
      * @param passengerId passenger Id.
      * @return passenger.
      */
-    @Override
     public Optional<Passenger> findById(Integer passengerId) {
         LOGGER.debug("findById({})", passengerId);
         ResponseEntity<Passenger> responseEntity =
@@ -68,66 +66,68 @@ public class PassengerRestService implements PassengerService {
      * Save new passenger record.
      *
      * @param passenger object.
-     * @return saved passenger Id.
+     * @return Acknowledgement with saved passenger Id.
      */
-    @Override
-    public Integer createPassenger(Passenger passenger) {
+    public Acknowledgement createPassenger(Passenger passenger) {
         LOGGER.debug("createPassenger()");
-        Object o = restTemplate.postForObject(url, passenger, Object.class);
-        LOGGER.debug("raw answer: {}", o);
-        if (o instanceof Integer) {
-            LOGGER.debug("passenger id: ({}) created", o);
-            return (Integer) o;
+        Acknowledgement response = restTemplate.postForObject(url, passenger, Acknowledgement.class);
+        LOGGER.debug("raw answer: {}", Objects.requireNonNull(response).getMessage());
+        if (response.getMessage().equals("OK")) {
+            LOGGER.debug("answer from rest controller: {}", response.getDescriptions());
+        } else {
+            LOGGER.error("passenger not created");
         }
-        LOGGER.error("passenger not created");
-        return 0;
+        return response;
     }
 
     /**
      * Update passenger record in the database.
      *
      * @param passenger object.
-     * @return number of updated passengers in the database.
+     * @return Acknowledgement.
      */
-    @Override
-    public Integer updatePassenger(Passenger passenger) {
+    public Acknowledgement updatePassenger(Passenger passenger) {
         LOGGER.debug("updatePassenger({})", passenger);
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         HttpEntity<Passenger> entity = new HttpEntity<>(passenger, headers);
-        Object o = restTemplate.exchange(
+        Acknowledgement response = restTemplate.exchange(
                 url,
                 HttpMethod.PUT,
                 entity,
-                Object.class).getBody();
-        LOGGER.debug("raw answer: {}", o);
-        if (o instanceof Integer) {
-            LOGGER.debug("passenger id: ({}) updated", o);
-            return (Integer) o;
+                Acknowledgement.class).getBody();
+        LOGGER.debug("raw answer: {}", Objects.requireNonNull(response).getMessage());
+        if (response.getMessage().equals("OK")) {
+            LOGGER.debug("answer from rest controller: {}", response.getDescriptions());
+        } else {
+            LOGGER.error("passenger not updated");
         }
-        LOGGER.error("passenger not updated");
-        return 0;
+        return response;
     }
 
     /**
      * Delete passenger by Id.
      *
      * @param passengerId train Id.
-     * @return number of deleted passengers in the database.
+     * @return Acknowledgement.
      */
-    @Override
-    public Integer deletePassenger(Integer passengerId) {
+    public Acknowledgement deletePassenger(Integer passengerId) {
         LOGGER.debug("deletePassenger({})", passengerId);
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         HttpEntity<Passenger> entity = new HttpEntity<>(headers);
-        Integer result = restTemplate.exchange(
+        Acknowledgement response = restTemplate.exchange(
                 url + "/" + passengerId,
                 HttpMethod.DELETE,
                 entity,
-                Integer.class).getBody();
-        LOGGER.debug("passenger deleted: ({})", result);
-        return result;
+                Acknowledgement.class).getBody();
+        LOGGER.debug("raw answer: {}", Objects.requireNonNull(response).getMessage());
+        if (response.getMessage().equals("OK")) {
+            LOGGER.debug("answer from rest controller: {}", response.getDescriptions());
+        } else {
+            LOGGER.error("passenger not deleted");
+        }
+        return response;
     }
 
     /**
@@ -135,7 +135,6 @@ public class PassengerRestService implements PassengerService {
      *
      * @return number of passengers in the database.
      */
-    @Override
     public Integer getPassengersCount() {
         return null;
     }
@@ -145,7 +144,6 @@ public class PassengerRestService implements PassengerService {
      *
      * @param passenger
      */
-    @Override
     public boolean isSecondPassengerWithSameNameExists(Passenger passenger) {
         return false;
     }

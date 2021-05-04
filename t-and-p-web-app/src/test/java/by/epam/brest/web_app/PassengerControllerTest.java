@@ -1,9 +1,10 @@
 package by.epam.brest.web_app;
 
+import by.epam.brest.model.Acknowledgement;
 import by.epam.brest.model.Passenger;
 import by.epam.brest.service.PassengerDtoService;
-import by.epam.brest.service.PassengerService;
 import by.epam.brest.service.TrainService;
+import by.epam.brest.service.rest.PassengerRestService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.Optional;
 
 import static by.epam.brest.model.constants.PassengerConstants.MAX_PASSENGER_NAME_LENGTH;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -31,7 +33,7 @@ public class PassengerControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private PassengerService passengerService;
+    private PassengerRestService passengerService;
 
     @MockBean
     private PassengerDtoService passengerDtoService;
@@ -62,6 +64,12 @@ public class PassengerControllerTest {
 
     @Test
     public void shouldAddNewPassenger() throws Exception {
+
+        // when
+        when(this.passengerService.createPassenger(any())).thenReturn(new Acknowledgement(
+                "OK",
+                "Passenger id: 42 was successfully created"));
+
         mockMvc.perform(post("/passenger")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("passengerName", "passengerName")
@@ -137,7 +145,13 @@ public class PassengerControllerTest {
 
     @Test
     public void shouldUpdatePassengerAfterEdit() throws Exception {
-        mockMvc.perform(post("/passenger/1")
+
+        // when
+        when(this.passengerService.updatePassenger(any())).thenReturn(new Acknowledgement(
+                "OK",
+                "Passenger id: 42 was successfully updated"));
+
+        mockMvc.perform(post("/passenger/42")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("passengerName", "passengerName")
         ).andExpect(status().isFound())

@@ -83,7 +83,11 @@ public class PassengerRestController {
             LOGGER.error("Delete fail. Passenger not found for id: {}", id);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(deleteResult, HttpStatus.OK);
+        return new ResponseEntity<>(new Acknowledgement(
+                "OK",
+                "Passenger id: " + id + " was successfully deleted",
+                id
+        ), HttpStatus.OK);
     }
 
     /**
@@ -104,11 +108,11 @@ public class PassengerRestController {
      */
     @PostMapping(value = "/passengers", consumes = {"application/json"}, produces = {"application/json"})
     public final ResponseEntity<Acknowledgement> create(@RequestBody Passenger passenger) {
-        Integer result = passengerService.createPassenger(passenger);
+        Integer id = passengerService.createPassenger(passenger);
         return new ResponseEntity<>(new Acknowledgement(
                 "OK",
-                "Passenger id: " + result + " was successfully created",
-                result
+                "Passenger id: " + id + " was successfully created",
+                id
         ), HttpStatus.CREATED);
     }
 
@@ -121,7 +125,7 @@ public class PassengerRestController {
     @PutMapping(value = "/passengers", consumes = {"application/json"}, produces = {"application/json"})
     public final ResponseEntity<Acknowledgement> update(@RequestBody Passenger passenger) {
         Integer result = passengerService.updatePassenger(passenger);
-        return new ResponseEntity<>(new ErrorResponse(
+        return new ResponseEntity<>(new Acknowledgement(
                 "OK",
                 "Passenger id: " + result + " was successfully updated"),
                 HttpStatus.OK);

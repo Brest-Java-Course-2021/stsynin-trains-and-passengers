@@ -52,7 +52,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    PassengerService passengerService() {
+    PassengerRestService passengerService() {
         String url = String.format("%s://%s:%d/passengers", protocol, host, port);
         return new PassengerRestService(url, restTemplate());
     }
