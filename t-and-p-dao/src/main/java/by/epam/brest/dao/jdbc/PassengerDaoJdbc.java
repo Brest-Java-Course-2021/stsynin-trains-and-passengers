@@ -152,7 +152,7 @@ public class PassengerDaoJdbc implements PassengerDao {
         String passengerName = passenger.getPassengerName();
         if (passengerName == null) {
             logger.error(stage + " fail. Passenger name is null");
-            throw new PassengerEmptyNameException("Update fail. Passenger name can't be empty");
+            throw new PassengerEmptyNameException(stage + " fail. Passenger name can't be empty");
         }
         if (passengerName.length() > MAX_PASSENGER_NAME_LENGTH) {
             logger.error("Passenger name {} is too long", passengerName);
