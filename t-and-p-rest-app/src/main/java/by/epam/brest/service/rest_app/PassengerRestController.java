@@ -127,7 +127,8 @@ public class PassengerRestController {
         Integer result = passengerService.updatePassenger(passenger);
         return new ResponseEntity<>(new Acknowledgement(
                 "OK",
-                "Passenger id: " + result + " was successfully updated"),
+                "Passenger was successfully updated",
+                passenger.getPassengerId()),
                 HttpStatus.OK);
     }
 }
