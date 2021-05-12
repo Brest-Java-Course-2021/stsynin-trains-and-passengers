@@ -4,7 +4,7 @@ Web приложение для работы по учёту рейсов и п�
 
 ## Program specification
 
-[See here](/documentation/srs/program specification.md)
+[See here](/documentation/srs/program_specification.md)
 
 ## Requirements:
 
