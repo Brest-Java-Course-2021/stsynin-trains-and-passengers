@@ -105,11 +105,6 @@ class PassengerRestControllerIntegrationTest {
         assertNotNull(acknowledgement);
         assertEquals("OK", acknowledgement.getMessage());
         assertEquals("Passenger id: 1 was successfully deleted", acknowledgement.getDescriptions());
-
-//        Integer errorResponse = objectMapper.readValue(
-//                response.getContentAsString(),
-//                Integer.class);
-//        assertEquals(1, errorResponse);
     }
 
     @Test
@@ -227,7 +222,7 @@ class PassengerRestControllerIntegrationTest {
         Acknowledgement acknowledgement = objectMapper.readValue(response.getContentAsString(), Acknowledgement.class);
         assertNotNull(acknowledgement);
         assertEquals("OK", acknowledgement.getMessage());
-        assertEquals("Passenger id: 1 was successfully updated", acknowledgement.getDescriptions());
+        assertEquals("Passenger was successfully updated", acknowledgement.getDescriptions());
     }
 
     @Test
