@@ -32,3 +32,7 @@ java -jar ./t-and-p-web-app/target/t-and-p-web-app.jar
 ## Rest commands:
 
 [See here](/documentation/srs/rest.md)
+
+## Swagger:
+
+[http://localhost:8088/swagger-ui/](http://localhost:8088/swagger-ui/)
