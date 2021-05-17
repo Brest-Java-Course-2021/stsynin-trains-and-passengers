@@ -37,6 +37,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-boot>2.4.4</spring-boot>
+        <springfox-swagger2.version>3.0.0</springfox-swagger2.version>
     </properties>
 
     <dependencyManagement>
@@ -89,6 +90,19 @@
                 <groupId>by.epam.brest</groupId>
                 <artifactId>t-and-p-test-db</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <!-- swagger -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-boot-starter</artifactId>
+                <version>${springfox-swagger2.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${springfox-swagger2.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
