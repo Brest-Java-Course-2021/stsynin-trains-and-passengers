@@ -10,12 +10,12 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>t-and-p-service-api</artifactId>
+    <artifactId>dao-api</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>by.epam.brest</groupId>
-            <artifactId>t-and-p-model</artifactId>
+            <artifactId>model</artifactId>
         </dependency>
     </dependencies>
 
