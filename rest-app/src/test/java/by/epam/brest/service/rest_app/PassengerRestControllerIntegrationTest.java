@@ -227,7 +227,7 @@ class PassengerRestControllerIntegrationTest {
         Acknowledgement acknowledgement = objectMapper.readValue(response.getContentAsString(), Acknowledgement.class);
         assertNotNull(acknowledgement);
         assertEquals("OK", acknowledgement.getMessage());
-        assertEquals("Passenger id: 1 was successfully updated", acknowledgement.getDescriptions());
+        assertEquals("Passenger was successfully updated", acknowledgement.getDescriptions());
     }
 
     @Test
