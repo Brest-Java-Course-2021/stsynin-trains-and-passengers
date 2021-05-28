@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>t-and-p-web-app</artifactId>
+    <artifactId>web-app</artifactId>
     <description>Spring MVC Web application</description>
 
     <properties>
@@ -20,12 +20,12 @@
     <dependencies>
         <dependency>
             <groupId>by.epam.brest</groupId>
-            <artifactId>t-and-p-service-api</artifactId>
+            <artifactId>service-api</artifactId>
         </dependency>
 
         <dependency>
             <groupId>by.epam.brest</groupId>
-            <artifactId>t-and-p-service-rest</artifactId>
+            <artifactId>service-rest</artifactId>
         </dependency>
 
         <!--tests-->
