@@ -32,3 +32,7 @@ java -jar ./web-app/target/web-app.jar
 ## Rest commands:
 
 [See here](/documentation/srs/rest.md)
+
+## Swagger:
+
+[http://localhost:8088/swagger-ui/](http://localhost:8088/swagger-ui/)
