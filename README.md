@@ -21,13 +21,13 @@ mvn clean install
 ## Start Rest:
 
 ```
-java -jar ./t-and-p-rest-app/target/t-and-p-rest-app.jar
+java -jar ./rest-app/target/rest-app.jar
 ```
 
 ## Start WEB application:
 
 ```
-java -jar ./t-and-p-web-app/target/t-and-p-web-app.jar
+java -jar ./web-app/target/web-app.jar
 ```
 ## Rest commands:
 
