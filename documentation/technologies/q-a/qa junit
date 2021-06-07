@@ -1,0 +1,63 @@
+Q1: What is Testing?
+
+Testing is the process of checking the functionality of the application whether it fulfills the requirement or not.
+
+Q2: What is JUnit?
+
+JUnit is the testing framework, it is used for unit testing of Java code.
+
+Q3: What is unit testing?
+
+The process of testing individual functionality (known as a unit) of the application is called unit testing.
+
+Q4: Is it necessary to write the test case for every logic?
+
+No, we should write the test case only for that logic that can be reasonably broken.
+
+Q5: How is the 'protected' method tested?
+
+To test the protected method, the test class is declared in the same package as the target class.
+
+Q6: How is the 'private' method tested?
+
+There is no direct way for testing of the private method; hence manual testing is to be performed, or the method is changed to "protected" method.
+
+Q7: Is the use of 'main' method possible for unit testing?
+
+Yes.
+
+Q8: What is the Unit Test Case?
+
+A Unit Test Case is the combination of input data and expected output result. It is defined to test the functionality of a unit.
+
+Q9: What is the use of @Test annotation?
+
+The @Test annotation is used to mark the method as the test method.
+
+Q10: What are the important JUnit annotations?
+
+The test runner is used to execute the test cases.
+    @Test
+    @BeforeClass
+    @Before
+    @After
+    @AfterClass
+
+Q11: What are Parameterized tests?
+
+Parameterized tests allow developer to run the same test over and over again using different values.
+
+Q12: What is a Mock Object?
+
+In a unit test, mock objects can simulate the behavior of complex, real (non-mock) objects and are therefore useful when a real object is impractical or impossible to incorporate into a unit test.
+
+Q13: Explain unit testing using Mock Objects.
+
+The common coding style for testing with mock objects is to −
+
+    Create instances of mock objects.
+    Set state and expectations in the mock objects.
+    Invoke domain code with mock objects as parameters.
+    Verify consistency in the mock objects.
+
+

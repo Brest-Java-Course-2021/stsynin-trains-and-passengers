@@ -1,0 +1,51 @@
+Q1: What is Spring MVC?
+
+Spring MVC is the web framework from Spring. It provides Model-View-Controller architecture that can be used to develop web applications.
+
+Q2: What is MVC?
+
+MVC is an abbreviation for Model-View-Controller design pattern. This pattern is based upon the separation-of-concerns design principle that promotes handling different functionality at different layers and loose coupling between layers.
+
+Q3: What is the DispatcherServlet?
+
+The DispatcherServlet is an implementation of the Front Controller design pattern that handles all incoming web request to a Spring MVC application.
+
+Q4: What is the @Controller annotation used for?
+
+@Controller – indicates that the class serves the role of a controller, and detects @RequestMapping annotations within the class
+
+Q5: Explain the Difference Between @Controller and @RestController?
+
+The main difference between the @Controller and @RestController annotations is that the @ResponseBody annotation is automatically included in the @RestController. This means that we don't need to annotate our handler methods with the @ResponseBody. We need to do this in a @Controller class if we want to write response type directly to the HTTP response body.
+
+Q6: What Is ViewResolver?
+
+The ViewResolver enables an application to render models in the browser – without tying the implementation to a specific view technology – by mapping view names to actual views.
+
+Q7: What is the @RequestParam used for?
+
+The @RequestParam is a Spring MVC annotation that is used to extract a request parameter or query parameters from the URL in the Controller's handler method.
+
+Q8: What is the @RequestMapping used for?
+
+The @RequestMapping is used to associate controllers with requests.
+
+Q9: What are the differences between @RequestParam and @PathVariable?
+
+The @RequestParam is used to extract query parameters, e.g. anything after "?" in the URL while the @PathVariable is used to extract the part of the URI itself.
+
+Q10: Explain a Controller Advice
+
+The @ControllerAdvice annotation allows us to write global code applicable to a wide range of controllers. We can tie the range of controllers to a chosen package or a specific annotation.
+
+Q11: What Does the @ExceptionHandler Annotation Do?
+
+The @ExceptionHandler annotation allows us to define a method that will handle the exceptions. We may use the annotation independently, but it's a far better option to use it together with the @ControllerAdvice.
+
+Q12: When do you need @ResponseBody annotation in Spring MVC? 
+
+The @ResponseBody annotation can be put on a method to indicate that the return type should be written directly to the HTTP response body (and not placed in a Model, or interpreted as a view name).
+
+Q13: Is @Controller a stereotype? Is @RestController a stereotype?
+
+Yes, both @Controller and @RestController are stereotypes. The @Controller is actually a specialization of Spring's @Component stereotype annotation. This means that the class annotated with the @Controller will also be automatically detected by the Spring container, as part of the container's component scanning process.

@@ -1,0 +1,69 @@
+Q1: What is Maven? 
+
+Maven is a project management tool. It provides the developer a complete build lifecycle framework. 
+
+Q2: How does it work?
+
+On executing Maven commands, it will look for POM file in Maven; it will run the command on the resources described in the POM. 
+
+Q3: What is POM?
+
+POM (Project Object Model) is the unit of work. It is an XML file which holds the information about the project and configuration details used to build a project by Maven. 
+
+Q4: What is Maven Repository?
+
+A Maven repository is a location where all the project jars, library jars, plugins or any other particular project related artifacts are stored and can be easily used by Maven. 
+
+Q5: What are Maven plugins used for?
+
+Maven plugins are used to
+
+    Create a jar or war files
+    Compile code files
+    Unit testing of code
+    Documenting projects
+    Reporting
+
+Q6: List out what are the build phases in Maven?
+
+    Validate
+    Compile
+    Test
+    Package
+    Install
+    Deploy
+
+Q7: List out the build, source and test source directory for POM in Maven?
+
+    Build = Target
+    Source = src/main/java
+    Test = src/main/test
+
+Q8: Where do you find the class files when you compile a Maven project?
+
+You will find the class files ${basedir}/target/classes/. 
+
+Q9: List out what are the Maven’s order of inheritance?
+
+The maven’s order of inheritance is
+
+    Parent Pom
+    Project Pom
+    Settings
+    CLI parameters
+
+Q10: For POM what are the minimum required elements?
+
+The minimum required elements for POM are project root, modelVersion, groupID, artifactID and version. 
+
+Q11: How to run test classes in Maven?
+
+To run test classes in Maven, you need surefire plugin, check and configure your settings in setting.xml and pom.xml for a property named "test." 
+
+Q12: What is Maven Artifact?
+
+An artifact is something that is either produced or used by a project. Examples of artifacts produced by Maven for a project include: JARs, source and binary distributions, WARs.
+
+Q13: What the command "mvn clean" does?
+
+The command does as suggested by cleaning the directory. You use it to remove the target directory, including all build data, before starting a new build process.

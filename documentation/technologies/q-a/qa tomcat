@@ -1,0 +1,56 @@
+Q1: What is Tomcat?
+
+Apache Tomcat is basically a Web Server and Servlet container.
+
+Q2: What is the name of inbuilt Web Container in Tomcat?
+
+The name of the inbuilt Web Container in Tomcat is Catalina.
+
+Q3: What is WebServers?
+
+Transaction with HTTP request and HTTP response is called webserver.  It will not process business logic.
+
+Q4: What are the connectors used in Tomcat?
+
+In Tomcat, two types of connectors are used:
+HTTP Connectors: It has many attributes that can be changed to determine exactly how it works and access functions such as redirects and proxy forwarding
+AJP Connectors: It works in the same manner as HTTP connectors, but they practice the AJP protocol in place of HTTP. 
+
+Q5: What is Tomcat Coyote?
+
+Tomcat Coyote is an HTTP connector based on HTTP/ 1.1 configuration which accepts and sends the web request to the Tomcat engine and again reverts to the client which makes the request.
+
+Q6: How is Apache Tomcat different from Apache Web Server?
+
+Apache Tomcat is used to host the web contents whereas Apache Web server is an HTTP server that is built to serve the static contents.
+
+Q7: What is different between webserver and application server?
+
+1)Webserver can execute only web applications i,e servlets and JSPs and has only a single container known as Web container which is used to interpret/execute web applications
+2)Application server can execute Enterprise application, i,e (servlets, jsps, and EJBs) it is having two containers 
+	1. Web Container(for interpreting/executing servlets and jsps) 
+	2. EJB container(for executing EJBs).
+
+Q8: Apache runs as which user?
+
+Apache runs with a user “nobody”.
+
+Q9: How can we put a restriction to upload files on our web server?
+
+Yes, we can restrict the user to upload files on our web server by using the “LimitRequestBody” directive.
+
+Q10: Is it possible to capture the MAC address of the clients who are using your server?
+
+No, it will not be possible to capture the MAC address of the clients who are using your server.
+
+Q11: Is there any chance to cache files which are viewed frequently?
+
+Yes, there is a chance to cache files which are viewed frequently by using Mod_file_cache module.
+
+Q12: Do Apache Tomcat generate Log files?
+
+Yes, Apache Tomcat generates Log files.
+
+Q13: What is the default port for Tomcat?
+
+The default port for Tomcat is 8080. 

@@ -1,0 +1,63 @@
+Q1: What is Spring Boot?
+
+Spring Boot is a Spring module which provides RAD (Rapid Application Development) feature to Spring framework.
+It is used to create stand alone spring based application that you can just run because it needs very little spring configuration.
+
+Q2: What are the advantages of Spring Boot?
+
+    Create stand-alone Spring applications that can be started using java -jar.
+    Embed Tomcat, Jetty or Undertow directly. You don't need to deploy WAR files.
+    It provides opinionated 'starter' POMs to simplify your Maven configuration.
+    It automatically configure Spring whenever possible.
+
+Q3: What is Spring Boot dependency management?
+
+Spring Boot manages dependencies and configuration automatically. You don't need to specify version for any of that dependencies.
+
+Q4: What are the Spring Boot Starters?
+
+Starters are a set of convenient dependency descriptors which we can include in our application.
+Spring Boot provides built-in starters which makes development easier and rapid. 
+
+Q5:  What is Spring Boot Actuator?
+
+Spring Boot provides actuator to monitor and manage our application. Actuator is a tool which has HTTP endpoints. when application is pushed to production, you can choose to manage and monitor your application using HTTP endpoints.
+
+Q6: What Are the Differences Between Spring and Spring Boot?
+
+    Auto-configure applications based on the artifacts it finds on the classpath
+    Embedded server to avoid complexity in application deployment
+    Metrics, Health check, and externalized configuration
+    Automatic config for Spring functionality – whenever possible
+
+Q7:  What is Spring Boot dependency management?
+
+Spring Boot dependency management is basically used to manage dependencies and configuration automatically without you specifying the version for any of that dependencies.
+
+Q8: How to Deploy Spring Boot Web Applications as Jar and War Files?
+
+Notice that the packaging element in the pom.xml file must be set to jar to build a JAR file.
+In case we want to build a WAR file, change the packaging element to war:
+
+Q9: What Does it Mean that Spring Boot Supports Relaxed Binding?
+
+With relaxed binding, the key of a property doesn't need to be an exact match of a property name. Such an environment property can be written in camelCase, kebab-case, snake_case, or in uppercase with words separated by underscores.
+
+Q10: What is Spring Boot Devtools Used For?
+
+Spring Boot Developer Tools, or DevTools, is a set of tools making the development process easier.
+DevTools applies properties suitable to a development environment. These properties disable template caching, enable debug logging for the web group, and so on.
+
+Q11: How to Write Integration Tests?
+
+When running integration tests for a Spring application, we must have an ApplicationContext.
+Spring Boot provides a special annotation for testing – @SpringBootTest. This annotation creates an ApplicationContext from configuration classes indicated by its classes attribute.
+
+Q12: What Are the Basic Annotations that Spring Boot Offers?
+
+@EnableAutoConfiguration – to make Spring Boot look for auto-configuration beans on its classpath and automatically apply them.
+@SpringBootApplication – used to denote the main class of a Boot Application. This annotation combines @Configuration, @EnableAutoConfiguration, and @ComponentScan annotations with their default attributes.
+
+Q13: Which Embedded Servers does Spring Boot Support?
+
+Spring MVC supports Tomcat, Jetty, and Undertow. Tomcat is the default application server supported by Spring Boot's web starter.
