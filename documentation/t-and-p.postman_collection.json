@@ -1,0 +1,680 @@
+{
+	"info": {
+		"_postman_id": "5ac4c8ab-819c-4e94-85a5-50f601a7e010",
+		"name": "t-and-p",
+		"description": "test collection for testing train-and-passenger program",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "trains",
+			"item": [
+				{
+					"name": "get all trains",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/trains",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"trains"
+							]
+						},
+						"description": "get list of all trains"
+					},
+					"response": []
+				},
+				{
+					"name": "get trains with id:1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/trains/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"trains",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get trains with id:4",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/trains/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"trains",
+								"4"
+							]
+						},
+						"description": "this train doesn't exist by default"
+					},
+					"response": []
+				},
+				{
+					"name": "get count of train records",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/trains/count",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"trains",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "save new train",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"trainName\": \"Arbalete\",\n\t\"trainDestination\": \"Zurich\",\n\t\"trainDepartureDate\": \"1957-06-02\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8088/trains",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"trains"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update 1st train information",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"trainId\": 1,\n\t\"trainName\": \"Arbalete\",\n\t\"trainDestination\": \"Paris\",\n\t\"trainDepartureDate\": \"1957-06-02\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8088/trains",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"trains"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete train with id:1",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/trains/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"trains",
+								"1"
+							]
+						},
+						"description": "delete information about the trains with id:1"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "trains-dtos",
+			"item": [
+				{
+					"name": "get train id:2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Right train returned\", () => {",
+									"  const responseJson = pm.response.json();",
+									"  pm.expect(responseJson).to.length(1);",
+									"  pm.expect(responseJson[0][\"trainId\"]).to.eql(2);",
+									"  pm.expect(responseJson[0][\"trainName\"]).to.eql(\"second\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/trains-dtos?dateStart=2020-01-01&dateEnd=2020-02-25",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"trains-dtos"
+							],
+							"query": [
+								{
+									"key": "dateStart",
+									"value": "2020-01-01"
+								},
+								{
+									"key": "dateEnd",
+									"value": "2020-02-25"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get trains id:1, id:2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Right train returned\", () => {",
+									"  const responseJson = pm.response.json();",
+									"  pm.expect(responseJson).to.length(2);",
+									"  pm.expect(responseJson[0][\"trainId\"]).to.oneOf([1,2]);",
+									"  pm.expect(responseJson[1][\"trainId\"]).to.oneOf([1,2]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/trains-dtos?dateEnd=2020-02-25",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"trains-dtos"
+							],
+							"query": [
+								{
+									"key": "dateStart",
+									"value": "2020-01-01",
+									"disabled": true
+								},
+								{
+									"key": "dateEnd",
+									"value": "2020-02-25"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get trains id:2, id:3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Right train returned\", () => {",
+									"  const responseJson = pm.response.json();",
+									"  pm.expect(responseJson).to.length(2);",
+									"  pm.expect(responseJson[0][\"trainId\"]).to.oneOf([2,3]);",
+									"  pm.expect(responseJson[1][\"trainId\"]).to.oneOf([2,3]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/trains-dtos?dateStart=2020-01-01",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"trains-dtos"
+							],
+							"query": [
+								{
+									"key": "dateStart",
+									"value": "2020-01-01"
+								},
+								{
+									"key": "dateEnd",
+									"value": "2020-02-25",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get error with wrong filters order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 422\", () => {",
+									"  pm.response.to.have.status(422);",
+									"});",
+									"pm.test(\"Right error message\", () => {",
+									"  const responseJson = pm.response.json();",
+									"  pm.expect(responseJson.message).to.eql(\"TRAINS_WRONG_FILTER\");",
+									"  pm.expect(responseJson.descriptions).to.eql(\"Wrong dates order for filtering\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/trains-dtos?dateEnd=2020-01-01&dateStart=2020-02-25",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"trains-dtos"
+							],
+							"query": [
+								{
+									"key": "dateEnd",
+									"value": "2020-01-01"
+								},
+								{
+									"key": "dateStart",
+									"value": "2020-02-25"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "return list of trains with count of passengers, selected by date",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "passengers",
+			"item": [
+				{
+					"name": "get all passengers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/passengers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"passengers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get passenger with id:1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/passengers/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"passengers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get passenger with id:9",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/passengers/9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"passengers",
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get count of passenger records",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/passengers/count",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"passengers",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "save new passenger",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"passengerName\": \"Bill Gilbert\",\n\t\"trainId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8088/passengers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"passengers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update passenger information",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"passengerId\": 7,\n    \"passengerName\": \"Bill Gilbert\",\n\t\"trainId\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8088/passengers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"passengers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete passenger with id:1",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/passengers/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"passengers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "passengers-dtos",
+			"item": [
+				{
+					"name": "get list of all passengers with trains names",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Right train returned\", () => {",
+									"  const responseJson = pm.response.json();",
+									"  pm.expect(responseJson).to.length(6);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/passengers-dtos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"passengers-dtos"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "get list of all passengers with trains names"
+		},
+		{
+			"name": "version",
+			"item": [
+				{
+					"name": "get 0.0.1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Get right version\", function () {",
+									"  pm.response.to.have.body(\"0.0.1\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8088/version",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"version"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "get 0.0.1",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8088/version",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8088",
+									"path": [
+										"version"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain;charset=UTF-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "5"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 09 Jun 2021 14:41:46 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "0.0.1"
+						}
+					]
+				}
+			]
+		}
+	]
+}
