@@ -20,6 +20,13 @@ public class Train {
         this.trainName = trainName;
     }
 
+    public Train(Integer trainId, String trainName, String trainDestination, LocalDate trainDepartureDate) {
+        this.trainId = trainId;
+        this.trainName = trainName;
+        this.trainDestination = trainDestination;
+        this.trainDepartureDate = trainDepartureDate;
+    }
+
     public Integer getTrainId() {
         return trainId;
     }
