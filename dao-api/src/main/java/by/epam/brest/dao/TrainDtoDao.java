@@ -11,7 +11,7 @@ import java.util.List;
 public interface TrainDtoDao {
 
     /**
-     * Get trains from the database with counts of passengers from a period of time.
+     * Get trains from а database with passengers counts for a given period of time.
      *
      * @return trains list.
      */

@@ -6,7 +6,7 @@ package by.epam.brest.model.dto;
 public class PassengerDto {
 
     /**
-     * Passenger Id.
+     * Passenger id.
      */
     private Integer passengerId;
 
@@ -16,7 +16,7 @@ public class PassengerDto {
     private String passengerName;
 
     /**
-     * Train Id.
+     * Train id.
      */
     private String passengerTrainName;
 
@@ -38,16 +38,16 @@ public class PassengerDto {
     /**
      * Returns <code>Integer</code> representation of this passengerId.
      *
-     * @return passenger Id.
+     * @return passenger id.
      */
     public Integer getPassengerId() {
         return passengerId;
     }
 
     /**
-     * Sets passenger Id.
+     * Sets passenger id.
      *
-     * @param passengerId passenger Id.
+     * @param passengerId passenger id.
      */
     public void setPassengerId(Integer passengerId) {
         this.passengerId = passengerId;
@@ -74,16 +74,16 @@ public class PassengerDto {
     /**
      * Returns <code>String</code> representation of this passenger train name.
      *
-     * @return passenger train name.
+     * @return passenger's train name.
      */
     public String getPassengerTrainName() {
         return passengerTrainName;
     }
 
     /**
-     * Sets passenger train name.
+     * Sets the train name for the passenger.
      *
-     * @param passengerTrainName passenger train name.
+     * @param passengerTrainName passenger's train name.
      */
     public void setPassengerTrainName(String passengerTrainName) {
         this.passengerTrainName = passengerTrainName;

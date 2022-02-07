@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public class TrainDto {
 
     /**
-     * Train Id.
+     * Train id.
      */
     private Integer trainId;
 
@@ -50,16 +50,16 @@ public class TrainDto {
     /**
      * Returns <code>Integer</code> representation of this trainId.
      *
-     * @return train Id.
+     * @return train id.
      */
     public Integer getTrainId() {
         return trainId;
     }
 
     /**
-     * Sets train Id.
+     * Sets train id.
      *
-     * @param trainId train Id.
+     * @param trainId train id.
      */
     public void setTrainId(Integer trainId) {
         this.trainId = trainId;
