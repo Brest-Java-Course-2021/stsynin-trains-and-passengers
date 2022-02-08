@@ -128,7 +128,7 @@ public class TrainDaoJdbc implements TrainDao {
     }
 
     @Override
-    public Integer getTrainsCount() {
+    public Integer count() {
         logger.debug("count()");
         return namedParameterJdbcTemplate.queryForObject(
                 sqlGetTrainsCount,
@@ -170,23 +170,23 @@ public class TrainDaoJdbc implements TrainDao {
         String trainName = train.getTrainName();
         if (trainName == null) {
             logger.error(stage + " fail. Train name is null");
-            throw new TrainEmptyNameException(stage + " fail. Train name can't be empty");
+            throw new ArgumentNullException(stage + " fail. Train name can't be empty");
         }
         if (trainName.length() > MAX_TRAIN_NAME_LENGTH) {
             logger.error(stage + " fail. Train name {} is too long", trainName);
-            throw new TrainOverlongNameException(
-                    stage + " fail. This name is too long : '" + trainName + "'");
+            throw new ArgumentOutOfRangeException(
+                    stage + " fail. This name is too long.");
         }
         if (isSecondTrainWithSameNameExists(train)) {
-            logger.error("Train named {} is already exists", trainName);
-            throw new TrainDuplicatedNameException(
-                    stage + " fail. This name already exists: '" + trainName + "'");
+            logger.error(stage + " fail. Train named {} is already exists", trainName);
+            throw new ArgumentException(
+                    stage + " fail. This name already exists.");
         }
         if (train.getTrainDestination() != null &&
                 train.getTrainDestination().length() > MAX_TRAIN_DESTINATION_NAME_LENGTH) {
             logger.error(stage + " fail. Train destination name {} is too long", train.getTrainDestination());
-            throw new TrainOverlongDestinationNameException(
-                    stage + " fail. This name of destination is too long : '" + train.getTrainDestination() + "'");
+            throw new ArgumentOutOfRangeException(
+                    stage + " fail. This name of destination is too long.");
         }
     }
 }

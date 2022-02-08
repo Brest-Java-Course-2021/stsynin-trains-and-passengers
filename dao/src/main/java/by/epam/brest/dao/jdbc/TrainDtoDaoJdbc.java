@@ -1,7 +1,7 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.TrainDtoDao;
-import by.epam.brest.dao.jdbc.exception.TrainWrongFiltersOrder;
+import by.epam.brest.dao.jdbc.exception.ArgumentException;
 import by.epam.brest.model.dto.TrainDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +68,7 @@ public class TrainDtoDaoJdbc implements TrainDtoDao {
         logger.debug("Filtering by period");
         if (dateEnd.isBefore(dateStart)) {
             logger.error("Wrong date order for filtering");
-            throw new TrainWrongFiltersOrder("Wrong dates order for filtering");
+            throw new ArgumentException("Wrong dates order for filtering");
         }
         return sqlGetFilteredByDateTrainListWithPassengersCount;
     }

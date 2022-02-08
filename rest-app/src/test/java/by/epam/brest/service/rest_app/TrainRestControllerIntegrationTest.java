@@ -1,50 +1,47 @@
 package by.epam.brest.service.rest_app;
 
-import by.epam.brest.model.Acknowledgement;
 import by.epam.brest.model.Train;
-import by.epam.brest.model.dto.TrainDto;
 import by.epam.brest.service.rest_app.exception.CustomExceptionHandler;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_DESTINATION_NAME_LENGTH;
 import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * @author Sergey Tsynin
  */
-@SpringBootTest
+@WebMvcTest(controllers = TrainRestController.class)
 @Transactional
 class TrainRestControllerIntegrationTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainRestControllerIntegrationTest.class);
+
     public static final String ENDPOINT_TRAINS = "/trains";
+    public static final String ENDPOINT_TRAINS_ID = ENDPOINT_TRAINS + "/{id}";
 
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-
-    private final MockMvcTrainService trainService = new MockMvcTrainService();
 
     private MockMvc mockMvc;
 
@@ -59,283 +56,325 @@ class TrainRestControllerIntegrationTest {
         mockMvc = MockMvcBuilders.standaloneSetup(trainRestController)
                 .setMessageConverters(new MappingJackson2HttpMessageConverter())
                 .setControllerAdvice(customExceptionHandler)
-                .alwaysDo(MockMvcResultHandlers.print())
+//                .alwaysDo(MockMvcResultHandlers.print())
                 .build();
     }
 
     @Test
     public void shouldReturnTrainsList() throws Exception {
-        List<TrainDto> trains = trainService.findAll();
-        assertNotNull(trains);
-        assertTrue(trains.size() > 0);
+        LOGGER.info("shouldReturnTrainsList()");
+
+        // when
+        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS)
+                        .accept(MediaType.APPLICATION_JSON))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+        assertNotNull(response);
+        assertEquals(4, extractTrainsList(response).size());
     }
 
     @Test
     public void shouldReturnTrainById() throws Exception {
-        Optional<Train> optionalTrain = trainService.findById(1);
-        assertTrue(optionalTrain.isPresent());
-        assertEquals(1, optionalTrain.get().getTrainId());
-        assertEquals("first", optionalTrain.get().getTrainName());
-        assertEquals("first direction", optionalTrain.get().getTrainDestination());
-        LocalDate testDate = LocalDate.of(1970, 1, 1);
-        assertEquals(testDate, optionalTrain.get().getTrainDepartureDate());
+        LOGGER.info("shouldReturnTrainById()");
+
+        // when
+        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS_ID, 1)
+                        .accept(MediaType.APPLICATION_JSON))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        assertNotNull(response);
+        Train train = extractTrain(response);
+        assertEquals(1, train.getTrainId());
+        assertEquals("first", train.getTrainName());
+        assertEquals("first direction", train.getTrainDestination());
+        assertEquals(LocalDate.of(1970, 1, 1), train.getTrainDepartureDate());
     }
 
     @Test
     public void shouldReturnTrainNotFoundById() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS + "/999")
+        LOGGER.info("shouldReturnTrainNotFoundById()");
+
+        // when
+        mockMvc.perform(get(ENDPOINT_TRAINS_ID, 9)
                         .accept(MediaType.APPLICATION_JSON))
+
+                // then
                 .andExpect(status().isNotFound())
-                .andReturn().getResponse();
-        assertNotNull(response);
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message")
+                        .value("No train with id 9 exists!"));
     }
 
     @Test
     public void shouldDeleteTrainById() throws Exception {
-        Train train = new Train("zombie");
-        Integer freeTrainId = trainService.create(train);
-        MockHttpServletResponse response = mockMvc.perform(
-                        MockMvcRequestBuilders.delete(ENDPOINT_TRAINS + "/" + freeTrainId))
-                .andExpect(status().isOk())
-                .andReturn().getResponse();
-        assertNotNull(response);
-        Integer errorResponse = getRemappedInteger(response);
-        assertEquals(1, errorResponse);
+        LOGGER.info("shouldDeleteTrainById()");
+
+        // when
+        mockMvc.perform(delete(ENDPOINT_TRAINS_ID, 4)
+                        .accept(MediaType.APPLICATION_JSON))
+
+                // then
+                .andExpect(status().isNoContent())
+                .andExpect(content().string("1"));
     }
 
     @Test
     public void shouldReturnErrorForDeleteTrainByWrongId() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(
-                        MockMvcRequestBuilders.delete(ENDPOINT_TRAINS + "/999"))
+        LOGGER.info("shouldReturnErrorForDeleteTrainByWrongId()");
+
+        // when
+        mockMvc.perform(delete(ENDPOINT_TRAINS_ID, 99)
+                        .accept(MediaType.APPLICATION_JSON))
+
+                // then
                 .andExpect(status().isNotFound())
-                .andReturn().getResponse();
-        assertNotNull(response);
+                .andExpect(jsonPath("$.message")
+                        .value("No train with id 99 exists!"));
     }
 
     @Test
     public void shouldReturnErrorForDeleteTrainWithPassengers() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(
-                        MockMvcRequestBuilders.delete(ENDPOINT_TRAINS + "/1"))
+        LOGGER.info("shouldReturnErrorForDeleteTrainWithPassengers()");
+
+        // when
+        mockMvc.perform(delete(ENDPOINT_TRAINS_ID, 1)
+                        .accept(MediaType.APPLICATION_JSON))
+
+                // then
                 .andExpect(status().isLocked())
-                .andReturn().getResponse();
-        assertNotNull(response);
-        Acknowledgement acknowledgement = getRemappedError(response);
-        assertNotNull(acknowledgement);
-        assertEquals("TRAIN_LOADED", acknowledgement.getMessage());
+                .andExpect(jsonPath("$.message")
+                        .value("Delete fail. There are registered passengers. Train id:1"));
     }
 
     @Test
     public void shouldReturnTrainsCount() throws Exception {
-        int expectedCount = trainService.findAll().size();
+        LOGGER.info("shouldReturnTrainsCount()");
 
-        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS + "/count")
+        // when
+        mockMvc.perform(get(ENDPOINT_TRAINS + "/count")
                         .accept(MediaType.APPLICATION_JSON))
+
+                // then
                 .andExpect(status().isOk())
-                .andReturn().getResponse();
-        assertNotNull(response);
-        Integer errorResponse = getRemappedInteger(response);
-        assertNotNull(errorResponse);
-        assertEquals(expectedCount, errorResponse);
+                .andExpect(content().string("4"));
     }
 
     @Test
-    public void shouldCreateTrain() throws Exception {
-        Train newTrain = new Train("Zombie");
-        newTrain.setTrainDestination("west");
-        newTrain.setTrainDepartureDate(LocalDate.now());
+    public void shouldReturnIdForCreatedTrain() throws Exception {
+        LOGGER.info("shouldReturnIdForCreatedTrain()");
 
-        Integer newId = trainService.create(newTrain);
-        newTrain.setTrainId(newId);
+        // given
+        Train trainToBeCreated = new Train(null, "bob", "up", LocalDate.now());
+        String json = objectMapper.writeValueAsString(trainToBeCreated);
 
-        assertNotNull(newId);
-        Optional<Train> optionalTrain = trainService.findById(newId);
-        assertTrue(optionalTrain.isPresent());
+        // when
+        mockMvc.perform(post(ENDPOINT_TRAINS)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .characterEncoding("utf-8")
+                        .accept(MediaType.APPLICATION_JSON))
 
-        Train actualTrain = optionalTrain.get();
-        assertEquals(newTrain, actualTrain);
-
+                // then
+                .andExpect(status().isCreated())
+                .andExpect(content().string("5"));
     }
 
     @Test
     public void shouldReturnErrorWithDuplicatedNameForCreate() throws Exception {
-        Train newTrain = new Train("first");
+        LOGGER.info("shouldReturnErrorWithDuplicatedNameForCreate()");
 
-        String json = objectMapper.writeValueAsString(newTrain);
-        MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
+        // given
+        Train trainToBeCreated = new Train(null, "first", "up", LocalDate.now());
+        String json = objectMapper.writeValueAsString(trainToBeCreated);
+
+        // when
+        mockMvc.perform(post(ENDPOINT_TRAINS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
+                        .characterEncoding("utf-8")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnprocessableEntity())
-                .andReturn().getResponse();
 
-        assertNotNull(response);
-        Acknowledgement acknowledgement = getRemappedError(response);
-        assertNotNull(acknowledgement);
-        assertEquals("TRAIN_DUPLICATED_NAME", acknowledgement.getMessage());
+                // then
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.message")
+                        .value("Create fail. This name already exists."));
+
     }
 
     @Test
     public void shouldReturnErrorWithEmptyNameForCreate() throws Exception {
-        Train newTrain = new Train();
+        LOGGER.info("shouldReturnErrorWithEmptyNameForCreate()");
 
-        String json = objectMapper.writeValueAsString(newTrain);
-        MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
+        // given
+        Train trainToBeCreated = new Train(null, null, "up", LocalDate.now());
+        String json = objectMapper.writeValueAsString(trainToBeCreated);
+
+        // when
+        mockMvc.perform(post(ENDPOINT_TRAINS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
+                        .characterEncoding("utf-8")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnprocessableEntity())
-                .andReturn().getResponse();
 
-        assertNotNull(response);
-        Acknowledgement acknowledgement = getRemappedError(response);
-        assertNotNull(acknowledgement);
-        assertEquals("TRAIN_EMPTY_NAME", acknowledgement.getMessage());
+                // then
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.message")
+                        .value("Create fail. Train name can't be empty"));
     }
 
     @Test
     public void shouldReturnErrorWithOverlongNameForCreate() throws Exception {
-        Train newTrain = new Train(getOverlongName());
+        LOGGER.info("shouldReturnErrorWithOverlongNameForCreate()");
 
-        String json = objectMapper.writeValueAsString(newTrain);
-        MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
+        // given
+        Train trainToBeCreated = new Train(null, getOverlongName(), "up", LocalDate.now());
+        String json = objectMapper.writeValueAsString(trainToBeCreated);
+
+        // when
+        mockMvc.perform(post(ENDPOINT_TRAINS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
+                        .characterEncoding("utf-8")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnprocessableEntity())
-                .andReturn().getResponse();
 
-        assertNotNull(response);
-        Acknowledgement acknowledgement = getRemappedError(response);
-        assertNotNull(acknowledgement);
-        assertEquals("TRAIN_OVERLONG_NAME", acknowledgement.getMessage());
+                // then
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.message")
+                        .value("Create fail. This name is too long."));
     }
 
     @Test
     public void shouldReturnErrorWithOverlongDestinationNameForCreate() throws Exception {
-        Train newTrain = new Train("zombie");
-        newTrain.setTrainDestination(getOverlongDestinationName());
+        LOGGER.info("shouldReturnErrorWithOverlongDestinationNameForCreate()");
 
-        String json = objectMapper.writeValueAsString(newTrain);
-        MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
+        // given
+        Train trainToBeCreated = new Train(null, "fourth", getOverlongDestinationName(), LocalDate.now());
+        String json = objectMapper.writeValueAsString(trainToBeCreated);
+
+        // when
+        mockMvc.perform(post(ENDPOINT_TRAINS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
+                        .characterEncoding("utf-8")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnprocessableEntity())
-                .andReturn().getResponse();
 
-        assertNotNull(response);
-        Acknowledgement acknowledgement = getRemappedError(response);
-        assertNotNull(acknowledgement);
-        assertEquals("TRAIN_OVERLONG_DESTINATION_NAME", acknowledgement.getMessage());
+                // then
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.message")
+                        .value("Create fail. This name of destination is too long."));
     }
 
     @Test
-    public void shouldUpdateTrain() throws Exception {
-        Optional<Train> optionalGuineaPig = trainService.findById(1);
-        assertTrue(optionalGuineaPig.isPresent());
+    public void shouldReturnUpdatedTrainsCount() throws Exception {
+        LOGGER.info("shouldReturnUpdatedTrainsCount()");
 
-        Train guineaPig = optionalGuineaPig.get();
-        guineaPig.setTrainName("firstNew");
+        // given
+        Train trainToBeCreated = new Train(1, "firstNew", "up", LocalDate.now());
+        String json = objectMapper.writeValueAsString(trainToBeCreated);
 
-        String json = objectMapper.writeValueAsString(guineaPig);
-        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS)
+        // when
+        mockMvc.perform(put(ENDPOINT_TRAINS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
+                        .characterEncoding("utf-8")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn().getResponse();
 
-        assertNotNull(response);
-        Integer UpdateResponse = getRemappedInteger(response);
-        assertEquals(1, UpdateResponse);
+                // then
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string("1"));
     }
 
     @Test
     public void shouldReturnErrorWithDuplicatedNameForUpdate() throws Exception {
-        Optional<Train> optionalGuineaPig = trainService.findById(1);
-        assertTrue(optionalGuineaPig.isPresent());
+        LOGGER.info("shouldReturnErrorWithDuplicatedNameForUpdate()");
 
-        Train guineaPig = optionalGuineaPig.get();
-        guineaPig.setTrainName("second");
+        // given
+        Train trainToBeCreated = new Train(1, "second", "up", LocalDate.now());
+        String json = objectMapper.writeValueAsString(trainToBeCreated);
 
-        String json = objectMapper.writeValueAsString(guineaPig);
-        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS)
+        // when
+        mockMvc.perform(put(ENDPOINT_TRAINS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
+                        .characterEncoding("utf-8")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnprocessableEntity())
-                .andReturn().getResponse();
 
-        assertNotNull(response);
-        Acknowledgement acknowledgement = getRemappedError(response);
-        assertNotNull(acknowledgement);
-        assertEquals("TRAIN_DUPLICATED_NAME", acknowledgement.getMessage());
+                // then
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.message")
+                        .value("Update fail. This name already exists."));
     }
 
     @Test
     public void shouldReturnErrorWithEmptyNameForUpdate() throws Exception {
-        Optional<Train> optionalGuineaPig = trainService.findById(1);
-        assertTrue(optionalGuineaPig.isPresent());
+        LOGGER.info("shouldReturnErrorWithEmptyNameForUpdate()");
 
-        Train guineaPig = optionalGuineaPig.get();
-        guineaPig.setTrainName(null);
+        // given
+        Train trainToBeCreated = new Train(1, null, "up", LocalDate.now());
+        String json = objectMapper.writeValueAsString(trainToBeCreated);
 
-        String json = objectMapper.writeValueAsString(guineaPig);
-        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS)
+        // when
+        mockMvc.perform(put(ENDPOINT_TRAINS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
+                        .characterEncoding("utf-8")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnprocessableEntity())
-                .andReturn().getResponse();
 
-        assertNotNull(response);
-        Acknowledgement acknowledgement = getRemappedError(response);
-        assertNotNull(acknowledgement);
-        assertEquals("TRAIN_EMPTY_NAME", acknowledgement.getMessage());
+                // then
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.message")
+                        .value("Update fail. Train name can't be empty"));
     }
 
     @Test
     public void shouldReturnErrorWithOverlongNameForUpdate() throws Exception {
-        Optional<Train> optionalGuineaPig = trainService.findById(1);
-        assertTrue(optionalGuineaPig.isPresent());
+        LOGGER.info("shouldReturnErrorWithOverlongNameForUpdate()");
 
-        Train guineaPig = optionalGuineaPig.get();
-        guineaPig.setTrainName(getOverlongName());
+        // given
+        Train trainToBeCreated = new Train(1, getOverlongName(), "up", LocalDate.now());
+        String json = objectMapper.writeValueAsString(trainToBeCreated);
 
-        String json = objectMapper.writeValueAsString(guineaPig);
-        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS)
+        // when
+        mockMvc.perform(put(ENDPOINT_TRAINS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
+                        .characterEncoding("utf-8")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnprocessableEntity())
-                .andReturn().getResponse();
 
-        assertNotNull(response);
-        Acknowledgement acknowledgement = getRemappedError(response);
-        assertNotNull(acknowledgement);
-        assertEquals("TRAIN_OVERLONG_NAME", acknowledgement.getMessage());
+                // then
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.message")
+                        .value("Update fail. This name is too long."));
     }
 
     @Test
     public void shouldReturnErrorWithOverlongDestinationNameForUpdate() throws Exception {
-        Optional<Train> optionalGuineaPig = trainService.findById(1);
-        assertTrue(optionalGuineaPig.isPresent());
+        LOGGER.info("shouldReturnErrorWithOverlongDestinationNameForUpdate()");
 
-        Train guineaPig = optionalGuineaPig.get();
-        guineaPig.setTrainDestination(getOverlongDestinationName());
+        // given
+        Train trainToBeCreated = new Train(
+                1, "first", getOverlongDestinationName(), LocalDate.now());
+        String json = objectMapper.writeValueAsString(trainToBeCreated);
 
-        String json = objectMapper.writeValueAsString(guineaPig);
-        MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS)
+        // when
+        mockMvc.perform(put(ENDPOINT_TRAINS)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
+                        .characterEncoding("utf-8")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnprocessableEntity())
-                .andReturn().getResponse();
 
-        assertNotNull(response);
-        Acknowledgement acknowledgement = getRemappedError(response);
-        assertNotNull(acknowledgement);
-        assertEquals("TRAIN_OVERLONG_DESTINATION_NAME", acknowledgement.getMessage());
+                // then
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.message")
+                        .value("Update fail. This name of destination is too long."));
     }
 
     private String getOverlongName() {
@@ -346,59 +385,13 @@ class TrainRestControllerIntegrationTest {
         return RandomStringUtils.randomAlphabetic(MAX_TRAIN_DESTINATION_NAME_LENGTH + 1);
     }
 
-    private Integer getRemappedInteger(MockHttpServletResponse response) throws Exception {
-        return getRemappedObject(response, Integer.class);
+    private Train extractTrain(MockHttpServletResponse response) throws Exception {
+        return objectMapper.readValue(response.getContentAsString(), Train.class);
     }
 
-    private Acknowledgement getRemappedError(MockHttpServletResponse response) throws Exception {
-        return getRemappedObject(response, Acknowledgement.class);
-    }
-
-    private <T> T getRemappedObject(MockHttpServletResponse response, Class<T> valueType) throws Exception {
-        return objectMapper.readValue(response.getContentAsString(), valueType);
-    }
-
-    private List<TrainDto> getRemappedTrains(MockHttpServletResponse response)
-            throws JsonProcessingException, UnsupportedEncodingException {
+    private List<Train> extractTrainsList(MockHttpServletResponse response) throws Exception {
         return objectMapper.readValue(response.getContentAsString(),
                 new TypeReference<>() {
                 });
-    }
-
-    class MockMvcTrainService {
-
-        public List<TrainDto> findAll() throws Exception {
-            MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andReturn().getResponse();
-            assertNotNull(response);
-
-            return getRemappedTrains(response);
-        }
-
-        public Optional<Train> findById(Integer id) throws Exception {
-            MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS + "/" + id)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andReturn().getResponse();
-
-            return Optional.of(objectMapper.readValue(
-                    response.getContentAsString(),
-                    Train.class
-            ));
-        }
-
-        public Integer create(Train train) throws Exception {
-            String json = objectMapper.writeValueAsString(train);
-            MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(json)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isCreated())
-                    .andReturn().getResponse();
-
-            return objectMapper.readValue(response.getContentAsString(), Integer.class);
-        }
     }
 }

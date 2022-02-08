@@ -1,9 +1,9 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.PassengerDao;
-import by.epam.brest.dao.jdbc.exception.PassengerDuplicatedNameException;
-import by.epam.brest.dao.jdbc.exception.PassengerEmptyNameException;
-import by.epam.brest.dao.jdbc.exception.PassengerOverlongNameException;
+import by.epam.brest.dao.jdbc.exception.ArgumentException;
+import by.epam.brest.dao.jdbc.exception.ArgumentNullException;
+import by.epam.brest.dao.jdbc.exception.ArgumentOutOfRangeException;
 import by.epam.brest.model.Passenger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -152,16 +152,16 @@ public class PassengerDaoJdbc implements PassengerDao {
         String passengerName = passenger.getPassengerName();
         if (passengerName == null) {
             logger.error(stage + " fail. Passenger name is null");
-            throw new PassengerEmptyNameException(stage + " fail. Passenger name can't be empty");
+            throw new ArgumentNullException(stage + " fail. Passenger name can't be empty");
         }
         if (passengerName.length() > MAX_PASSENGER_NAME_LENGTH) {
             logger.error("Passenger name {} is too long", passengerName);
-            throw new PassengerOverlongNameException(
+            throw new ArgumentOutOfRangeException(
                     stage + " fail. This name is too long : '" + passengerName + "'");
         }
         if (isSecondPassengerWithSameNameExists(passenger)) {
             logger.error("Passenger named {} is already exists", passengerName);
-            throw new PassengerDuplicatedNameException(
+            throw new ArgumentException(
                     stage + " fail. This name already exists: '" + passengerName + "'");
         }
     }
