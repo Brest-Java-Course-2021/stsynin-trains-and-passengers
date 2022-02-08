@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,8 +41,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TrainRestControllerIntegrationTest {
 
     public static final String ENDPOINT_TRAINS = "/trains";
-    public static final String PERIOD_START = "2020-01-01";
-    public static final String PERIOD_END = "2020-02-25";
 
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
@@ -51,15 +48,11 @@ class TrainRestControllerIntegrationTest {
 
     private MockMvc mockMvc;
 
-    private final TrainRestController trainRestController;
+    @Autowired
+    private TrainRestController trainRestController;
 
     @Autowired
     private CustomExceptionHandler customExceptionHandler;
-
-    @Autowired
-    TrainRestControllerIntegrationTest(TrainRestController trainRestController) {
-        this.trainRestController = trainRestController;
-    }
 
     @BeforeEach
     public void setup() {
@@ -78,83 +71,6 @@ class TrainRestControllerIntegrationTest {
     }
 
     @Test
-    public void shouldReturnTrainBetweenTwoDates() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS + "-dtos")
-                .param("dateStart", PERIOD_START)
-                .param("dateEnd", PERIOD_END)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn().getResponse();
-        assertNotNull(response);
-
-        List<TrainDto> trains = getRemappedTrains(response);
-        assertEquals(1, trains.size());
-        assertEquals(2, trains.get(0).getTrainId());
-    }
-
-    @Test
-    public void shouldReturnTrainsFromStartDate() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS + "-dtos")
-                .param("dateStart", PERIOD_START)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn().getResponse();
-        assertNotNull(response);
-
-        List<TrainDto> trains = getRemappedTrains(response);
-        assertEquals(2, trains.size());
-        assertFalse(getAllTrainsIds(trains).contains(1));
-    }
-
-    @Test
-    public void shouldReturnTrainsBeforeEndDate() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS + "-dtos")
-                .param("dateEnd", PERIOD_END)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn().getResponse();
-        assertNotNull(response);
-
-        List<TrainDto> trains = getRemappedTrains(response);
-        assertEquals(2, trains.size());
-        assertFalse(getAllTrainsIds(trains).contains(3));
-    }
-
-    @Test
-    public void shouldReturnErrorWithWrongFiltersOrder() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS + "-dtos")
-                .param("dateStart", PERIOD_END)
-                .param("dateEnd", PERIOD_START)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnprocessableEntity())
-                .andReturn().getResponse();
-
-        assertNotNull(response);
-        Acknowledgement acknowledgement = getRemappedError(response);
-        assertNotNull(acknowledgement);
-        assertEquals("TRAINS_WRONG_FILTER", acknowledgement.getMessage());
-    }
-
-    private List<Integer> getAllTrainsIds(List<TrainDto> trains) {
-        List<Integer> result = new ArrayList<>();
-        for (TrainDto train : trains) {
-            result.add(train.getTrainId());
-        }
-        return result;
-    }
-
-    private List<TrainDto> getRemappedTrains(MockHttpServletResponse response)
-            throws JsonProcessingException, UnsupportedEncodingException {
-        return objectMapper.readValue(response.getContentAsString(),
-                new TypeReference<>() {
-                });
-    }
-
-    @Test
     public void shouldReturnTrainById() throws Exception {
         Optional<Train> optionalTrain = trainService.findById(1);
         assertTrue(optionalTrain.isPresent());
@@ -168,7 +84,7 @@ class TrainRestControllerIntegrationTest {
     @Test
     public void shouldReturnTrainNotFoundById() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS + "/999")
-                .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse();
         assertNotNull(response);
@@ -179,7 +95,7 @@ class TrainRestControllerIntegrationTest {
         Train train = new Train("zombie");
         Integer freeTrainId = trainService.create(train);
         MockHttpServletResponse response = mockMvc.perform(
-                MockMvcRequestBuilders.delete(ENDPOINT_TRAINS + "/" + freeTrainId))
+                        MockMvcRequestBuilders.delete(ENDPOINT_TRAINS + "/" + freeTrainId))
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
         assertNotNull(response);
@@ -190,7 +106,7 @@ class TrainRestControllerIntegrationTest {
     @Test
     public void shouldReturnErrorForDeleteTrainByWrongId() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(
-                MockMvcRequestBuilders.delete(ENDPOINT_TRAINS + "/999"))
+                        MockMvcRequestBuilders.delete(ENDPOINT_TRAINS + "/999"))
                 .andExpect(status().isNotFound())
                 .andReturn().getResponse();
         assertNotNull(response);
@@ -199,7 +115,7 @@ class TrainRestControllerIntegrationTest {
     @Test
     public void shouldReturnErrorForDeleteTrainWithPassengers() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(
-                MockMvcRequestBuilders.delete(ENDPOINT_TRAINS + "/1"))
+                        MockMvcRequestBuilders.delete(ENDPOINT_TRAINS + "/1"))
                 .andExpect(status().isLocked())
                 .andReturn().getResponse();
         assertNotNull(response);
@@ -213,7 +129,7 @@ class TrainRestControllerIntegrationTest {
         int expectedCount = trainService.findAll().size();
 
         MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS + "/count")
-                .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
         assertNotNull(response);
@@ -246,9 +162,9 @@ class TrainRestControllerIntegrationTest {
 
         String json = objectMapper.writeValueAsString(newTrain);
         MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn().getResponse();
 
@@ -264,9 +180,9 @@ class TrainRestControllerIntegrationTest {
 
         String json = objectMapper.writeValueAsString(newTrain);
         MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn().getResponse();
 
@@ -282,9 +198,9 @@ class TrainRestControllerIntegrationTest {
 
         String json = objectMapper.writeValueAsString(newTrain);
         MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn().getResponse();
 
@@ -301,9 +217,9 @@ class TrainRestControllerIntegrationTest {
 
         String json = objectMapper.writeValueAsString(newTrain);
         MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn().getResponse();
 
@@ -323,9 +239,9 @@ class TrainRestControllerIntegrationTest {
 
         String json = objectMapper.writeValueAsString(guineaPig);
         MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
 
@@ -344,9 +260,9 @@ class TrainRestControllerIntegrationTest {
 
         String json = objectMapper.writeValueAsString(guineaPig);
         MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn().getResponse();
 
@@ -366,9 +282,9 @@ class TrainRestControllerIntegrationTest {
 
         String json = objectMapper.writeValueAsString(guineaPig);
         MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn().getResponse();
 
@@ -388,9 +304,9 @@ class TrainRestControllerIntegrationTest {
 
         String json = objectMapper.writeValueAsString(guineaPig);
         MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn().getResponse();
 
@@ -410,9 +326,9 @@ class TrainRestControllerIntegrationTest {
 
         String json = objectMapper.writeValueAsString(guineaPig);
         MockHttpServletResponse response = mockMvc.perform(put(ENDPOINT_TRAINS)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnprocessableEntity())
                 .andReturn().getResponse();
 
@@ -442,11 +358,18 @@ class TrainRestControllerIntegrationTest {
         return objectMapper.readValue(response.getContentAsString(), valueType);
     }
 
+    private List<TrainDto> getRemappedTrains(MockHttpServletResponse response)
+            throws JsonProcessingException, UnsupportedEncodingException {
+        return objectMapper.readValue(response.getContentAsString(),
+                new TypeReference<>() {
+                });
+    }
+
     class MockMvcTrainService {
 
         public List<TrainDto> findAll() throws Exception {
             MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS)
-                    .accept(MediaType.APPLICATION_JSON))
+                            .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andReturn().getResponse();
             assertNotNull(response);
@@ -456,7 +379,7 @@ class TrainRestControllerIntegrationTest {
 
         public Optional<Train> findById(Integer id) throws Exception {
             MockHttpServletResponse response = mockMvc.perform(get(ENDPOINT_TRAINS + "/" + id)
-                    .accept(MediaType.APPLICATION_JSON))
+                            .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andReturn().getResponse();
 
@@ -469,9 +392,9 @@ class TrainRestControllerIntegrationTest {
         public Integer create(Train train) throws Exception {
             String json = objectMapper.writeValueAsString(train);
             MockHttpServletResponse response = mockMvc.perform(post(ENDPOINT_TRAINS)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(json)
-                    .accept(MediaType.APPLICATION_JSON))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(json)
+                            .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isCreated())
                     .andReturn().getResponse();
 
