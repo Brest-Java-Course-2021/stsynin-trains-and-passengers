@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -75,7 +74,7 @@ public class TrainRestControllerUnitTest {
 
         // given
         Train train = new Train(1, "name", "aaa", LocalDate.now());
-        when(trainService.findById(1)).thenReturn(Optional.of(train));
+        when(trainService.findById(1)).thenReturn(train);
 
         // when
         MockHttpServletResponse servletResponse = mockMvc.perform(get(URI_ID, 1)
@@ -144,17 +143,17 @@ public class TrainRestControllerUnitTest {
         LOGGER.info("shouldReturnDeletedTrainsCount()");
 
         // given
-        when(trainService.deleteTrain(3)).thenReturn(1);
+        when(trainService.deleteById(3)).thenReturn(1);
 
         // when
         mockMvc.perform(delete(URI_ID, 3)
                         .accept(MediaType.APPLICATION_JSON))
 
                 // then
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("1"));
-        verify(trainService).deleteTrain(3);
+        verify(trainService).deleteById(3);
     }
 
     @Test

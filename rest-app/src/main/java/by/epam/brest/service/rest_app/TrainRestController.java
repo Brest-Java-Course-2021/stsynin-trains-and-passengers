@@ -6,11 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Sergey Tsynin
@@ -30,87 +28,86 @@ public class TrainRestController {
     }
 
     /**
-     * Trains list.
+     * Get all trains list.
      *
-     * @return Train list.
+     * @return trains list.
      */
     @GetMapping(produces = {"application/json"})
-    public final ResponseEntity<List<Train>> findAllTrains() {
+    public final List<Train> findAllTrains() {
         LOGGER.info(" IN: findAllTrains() - []");
-        LOGGER.debug("Search trains list");
-        return new ResponseEntity<>(
-                trainService.findAll(),
-                HttpStatus.OK);
+        List<Train> trains = trainService.findAll();
+        LOGGER.info("OUT: findAllTrains() - found {} train(s)", trains.size());
+        return trains;
     }
 
     /**
-     * Train data.
+     * Get train by id.
      *
      * @param id train id.
-     * @return train data.
+     * @return train.
      */
     @GetMapping(value = "/{id}", produces = {"application/json"})
-    public final ResponseEntity<Train> findTrainById(@PathVariable Integer id) {
+    public final Train findTrainById(@PathVariable Integer id) {
         LOGGER.info(" IN: findTrainById() - [{}]", id);
-        Optional<Train> optionalTrain = trainService.findById(id);
-        if (optionalTrain.isEmpty()) {
-            LOGGER.error("Train not found for id: {}", id);
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        LOGGER.debug("return info for train id: {}", id);
-        return new ResponseEntity<>(optionalTrain.get(), HttpStatus.OK);
+        Train train = trainService.findById(id);
+        LOGGER.info("OUT: findTrainById() - [{}]", train);
+        return train;
     }
 
     /**
-     * Delete train information from storage.
+     * Save the new train.
      *
-     * @param id train id.
-     * @return number of deleted trains.
-     */
-    @DeleteMapping(value = "/{id}", produces = {"application/json"})
-    public final ResponseEntity<Integer> deleteTrainById(@PathVariable Integer id) {
-        LOGGER.info(" IN: deleteTrainById() - [{}]", id);
-        Integer deleteResult = trainService.deleteTrain(id);
-        if (deleteResult < 1) {
-            LOGGER.error("Delete fail. Train not found for id: {}", id);
-            return new ResponseEntity<>(deleteResult, HttpStatus.NOT_FOUND);
-        }
-        LOGGER.debug("train id: {} was deleted", id);
-        return new ResponseEntity<>(deleteResult, HttpStatus.OK);
-    }
-
-    /**
-     * Trains count.
-     *
-     * @return trains count.
-     */
-    @GetMapping(value = "/count", produces = {"application/json"})
-    public final ResponseEntity<Integer> trainsCount() {
-        LOGGER.info(" IN: trainsCount() - []");
-        return new ResponseEntity<>(trainService.getTrainsCount(), HttpStatus.OK);
-    }
-
-    /**
-     * Create new train record.
-     *
-     * @param train train
+     * @param train object
      * @return new train id.
      */
     @PostMapping(consumes = {"application/json"}, produces = {"application/json"})
-    public final ResponseEntity<Integer> createTrain(@RequestBody Train train) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public final Integer createTrain(@RequestBody Train train) {
         LOGGER.info(" IN: createTrain() - [{}]", train);
-        return new ResponseEntity<>(trainService.createTrain(train), HttpStatus.CREATED);
+        Integer id = trainService.createTrain(train);
+        LOGGER.info("OUT: createTrain() - [{}]", id);
+        return id;
     }
 
     /**
-     * Update train record.
+     * Update train record in the database.
      *
-     * @param train train
-     * @return number of updated trains.
+     * @param train object
+     * @return number of updated trains in the database.
      */
     @PutMapping(consumes = {"application/json"}, produces = {"application/json"})
-    public final ResponseEntity<Integer> updateTrain(@RequestBody Train train) {
+    public final Integer updateTrain(@RequestBody Train train) {
         LOGGER.info(" IN: updateTrain() - [{}]", train);
-        return new ResponseEntity<>(trainService.updateTrain(train), HttpStatus.OK);
+        Integer count = trainService.updateTrain(train);
+        LOGGER.info("OUT: updateTrain() - [{}]", count);
+        return count;
+    }
+
+    /**
+     * Delete train by id.
+     *
+     * @param id train id.
+     * @return number of deleted trains in the database.
+     */
+    @DeleteMapping(value = "/{id}", produces = {"application/json"})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public final Integer deleteTrainById(@PathVariable Integer id) {
+        LOGGER.info(" IN: deleteTrainById() - [{}]", id);
+        Integer count = trainService.deleteById(id);
+        LOGGER.info("OUT: deleteTrainById() - [{}]", count);
+        return count;
+    }
+
+    /**
+     * Get count of trains in the database.
+     *
+     * @return count of trains in the database.
+     */
+    @GetMapping(value = "/count", produces = {"application/json"})
+    public final Integer trainsCount() {
+        LOGGER.info(" IN: trainsCount() - []");
+        Integer count = trainService.getTrainsCount();
+        LOGGER.info("OUT: trainsCount() - [{}]", count);
+        return count;
     }
 }
