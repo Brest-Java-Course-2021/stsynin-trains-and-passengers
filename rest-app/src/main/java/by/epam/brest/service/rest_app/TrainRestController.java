@@ -35,7 +35,8 @@ public class TrainRestController {
      * @return Train list.
      */
     @GetMapping(produces = {"application/json"})
-    public final ResponseEntity<List<Train>> getAll() {
+    public final ResponseEntity<List<Train>> findAllTrains() {
+        LOGGER.info(" IN: findAllTrains() - []");
         LOGGER.debug("Search trains list");
         return new ResponseEntity<>(
                 trainService.findAll(),
@@ -49,7 +50,8 @@ public class TrainRestController {
      * @return train data.
      */
     @GetMapping(value = "/{id}", produces = {"application/json"})
-    public final ResponseEntity<Train> getById(@PathVariable Integer id) {
+    public final ResponseEntity<Train> findTrainById(@PathVariable Integer id) {
+        LOGGER.info(" IN: findTrainById() - [{}]", id);
         Optional<Train> optionalTrain = trainService.findById(id);
         if (optionalTrain.isEmpty()) {
             LOGGER.error("Train not found for id: {}", id);
@@ -66,7 +68,8 @@ public class TrainRestController {
      * @return number of deleted trains.
      */
     @DeleteMapping(value = "/{id}", produces = {"application/json"})
-    public final ResponseEntity<Integer> delete(@PathVariable Integer id) {
+    public final ResponseEntity<Integer> deleteTrainById(@PathVariable Integer id) {
+        LOGGER.info(" IN: deleteTrainById() - [{}]", id);
         Integer deleteResult = trainService.deleteTrain(id);
         if (deleteResult < 1) {
             LOGGER.error("Delete fail. Train not found for id: {}", id);
@@ -82,7 +85,8 @@ public class TrainRestController {
      * @return trains count.
      */
     @GetMapping(value = "/count", produces = {"application/json"})
-    public final ResponseEntity<Integer> count() {
+    public final ResponseEntity<Integer> trainsCount() {
+        LOGGER.info(" IN: trainsCount() - []");
         return new ResponseEntity<>(trainService.getTrainsCount(), HttpStatus.OK);
     }
 
@@ -93,7 +97,8 @@ public class TrainRestController {
      * @return new train id.
      */
     @PostMapping(consumes = {"application/json"}, produces = {"application/json"})
-    public final ResponseEntity<Integer> create(@RequestBody Train train) {
+    public final ResponseEntity<Integer> createTrain(@RequestBody Train train) {
+        LOGGER.info(" IN: createTrain() - [{}]", train);
         return new ResponseEntity<>(trainService.createTrain(train), HttpStatus.CREATED);
     }
 
@@ -104,7 +109,8 @@ public class TrainRestController {
      * @return number of updated trains.
      */
     @PutMapping(consumes = {"application/json"}, produces = {"application/json"})
-    public final ResponseEntity<Integer> update(@RequestBody Train train) {
+    public final ResponseEntity<Integer> updateTrain(@RequestBody Train train) {
+        LOGGER.info(" IN: updateTrain() - [{}]", train);
         return new ResponseEntity<>(trainService.updateTrain(train), HttpStatus.OK);
     }
 }
