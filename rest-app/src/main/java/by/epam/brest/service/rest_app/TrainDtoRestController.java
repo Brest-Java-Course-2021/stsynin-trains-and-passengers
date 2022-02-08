@@ -6,8 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,23 +30,23 @@ public class TrainDtoRestController {
     }
 
     /**
-     * Trains list, filtered by date.
+     * Get a list of trains with the ability to filter by name.
      *
      * @param dateStart start of period of time.
      * @param dateEnd   end of period of time.
      * @return TrainDto list.
      */
     @GetMapping(value = "/trains-dtos", produces = {"application/json"})
-    public final ResponseEntity<List<TrainDto>> filteredTrains(
+    public final List<TrainDto> getFilteredTrains(
             @RequestParam(name = "dateStart", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                     LocalDate dateStart,
             @RequestParam(name = "dateEnd", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                     LocalDate dateEnd) {
-        LOGGER.debug("Search trains from: {}, to: {}", dateStart, dateEnd);
-        return new ResponseEntity<>(
-                trainDtoService.getFilteredByDateTrainListWithPassengersCount(dateStart, dateEnd),
-                HttpStatus.OK);
+        LOGGER.info(" IN: getFilteredTrains() - [dateStart={}, dateEnd={}]", dateStart, dateEnd);
+        List<TrainDto> trainDtos = trainDtoService.getFilteredByDateTrainListWithPassengersCount(dateStart, dateEnd);
+        LOGGER.info("OUT: getFilteredTrains() - found {} train(s)", trainDtos.size());
+        return trainDtos;
     }
 }
