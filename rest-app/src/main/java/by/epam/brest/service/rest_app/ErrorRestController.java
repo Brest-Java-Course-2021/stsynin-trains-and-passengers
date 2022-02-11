@@ -1,6 +1,6 @@
 package by.epam.brest.service.rest_app;
 
-import by.epam.brest.model.Acknowledgement;
+import by.epam.brest.model.ErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -18,10 +18,14 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public class ErrorRestController implements ErrorController {
 
+    public ErrorRestController() {
+        LOGGER.info("ErrorRestController was created");
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorRestController.class);
 
     @RequestMapping("/error")
-    public ResponseEntity<Acknowledgement> handleError(HttpServletRequest request) {
+    public ResponseEntity<ErrorMessage> handleError(HttpServletRequest request) {
 
         LOGGER.error("error detected!!!");
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
@@ -33,20 +37,20 @@ public class ErrorRestController implements ErrorController {
                 case 404: {
                     LOGGER.error(" Resource not found");
                     return new ResponseEntity<>(
-                            new Acknowledgement("404", "Resource not found"),
+                            new ErrorMessage("Resource not found"),
                             HttpStatus.NOT_FOUND);
                 }
                 case 500: {
                     LOGGER.error(" Internal Server Error");
                     return new ResponseEntity<>(
-                            new Acknowledgement("500", "Internal Server Error"),
+                            new ErrorMessage("Internal Server Error"),
                             HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             }
         }
         LOGGER.error(" Unknown error");
         return new ResponseEntity<>(
-                new Acknowledgement("501", "Unknown error"),
+                new ErrorMessage("Unknown error"),
                 HttpStatus.NOT_IMPLEMENTED);
     }
 
