@@ -1,6 +1,7 @@
 package by.epam.brest.model.dto;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * POJO Train for model.
@@ -45,6 +46,23 @@ public class TrainDto {
      */
     public TrainDto(String trainName) {
         this.trainName = trainName;
+    }
+
+    /**
+     * Constructor with All parameters.
+     *
+     * @param trainId             train id.
+     * @param trainName           train name.
+     * @param trainDestination    train destination.
+     * @param trainDepartureDate  train departure date.
+     * @param trainPassengerCount count of passengers.
+     */
+    public TrainDto(Integer trainId, String trainName, String trainDestination, LocalDate trainDepartureDate, Integer trainPassengerCount) {
+        this.trainId = trainId;
+        this.trainName = trainName;
+        this.trainDestination = trainDestination;
+        this.trainDepartureDate = trainDepartureDate;
+        this.trainPassengerCount = trainPassengerCount;
     }
 
     /**
@@ -146,5 +164,22 @@ public class TrainDto {
                 ", trainDepartureDate=" + trainDepartureDate +
                 ", trainPassengerCount=" + trainPassengerCount +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TrainDto)) return false;
+        TrainDto trainDto = (TrainDto) o;
+        return Objects.equals(trainId, trainDto.trainId)
+                && Objects.equals(trainName, trainDto.trainName)
+                && Objects.equals(trainDestination, trainDto.trainDestination)
+                && Objects.equals(trainDepartureDate, trainDto.trainDepartureDate)
+                && Objects.equals(trainPassengerCount, trainDto.trainPassengerCount);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(trainId, trainName, trainDestination, trainDepartureDate, trainPassengerCount);
     }
 }
