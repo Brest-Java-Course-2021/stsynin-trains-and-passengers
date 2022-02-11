@@ -4,7 +4,6 @@ import by.epam.brest.model.Train;
 import by.epam.brest.service.rest_app.exception.CustomExceptionHandler;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -34,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(controllers = TrainRestController.class)
 @Transactional
+@ComponentScan(basePackages = "by.epam.brest")
 class TrainRestControllerIntegrationTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainRestControllerIntegrationTest.class);
@@ -41,7 +42,7 @@ class TrainRestControllerIntegrationTest {
     public static final String ENDPOINT_TRAINS = "/trains";
     public static final String ENDPOINT_TRAINS_ID = ENDPOINT_TRAINS + "/{id}";
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private MockMvc mockMvc;
 
