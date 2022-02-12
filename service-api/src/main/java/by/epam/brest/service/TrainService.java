@@ -3,7 +3,6 @@ package by.epam.brest.service;
 import by.epam.brest.model.Train;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface TrainService {
     /**
@@ -14,18 +13,18 @@ public interface TrainService {
     List<Train> findAll();
 
     /**
-     * Get train by Id.
+     * Get train by id.
      *
-     * @param trainId train Id.
+     * @param trainId train id.
      * @return train.
      */
-    Optional<Train> findById(Integer trainId);
+    Train findById(Integer trainId);
 
     /**
-     * Save new train record.
+     * Save the new train.
      *
      * @param train object.
-     * @return saved train Id.
+     * @return new train id.
      */
     Integer createTrain(Train train);
 
@@ -38,17 +37,17 @@ public interface TrainService {
     Integer updateTrain(Train train);
 
     /**
-     * Delete train by Id.
+     * Delete train by id.
      *
-     * @param trainId train Id.
+     * @param trainId train id.
      * @return number of deleted trains in the database.
      */
-    Integer deleteTrain(Integer trainId);
+    Integer deleteById(Integer trainId);
 
     /**
-     * Get numbers of trains in the database.
+     * Get count of trains in the database.
      *
-     * @return numbers of trains in the database.
+     * @return count of trains in the database.
      */
     Integer getTrainsCount();
 
@@ -56,7 +55,7 @@ public interface TrainService {
      * Check for another train with the same name.
      *
      * @param train object.
-     * @return train with the same name presence.
+     * @return trains with the same name presence.
      */
     boolean isSecondTrainWithSameNameExists(Train train);
 
