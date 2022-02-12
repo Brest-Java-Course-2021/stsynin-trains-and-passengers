@@ -1,8 +1,6 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.TrainDao;
-import by.epam.brest.dao.jdbc.exception.ArgumentException;
-import by.epam.brest.dao.jdbc.exception.TrainLoadedException;
 import by.epam.brest.model.Train;
 import by.epam.brest.testDb.SpringJdbcConfig;
 import org.junit.jupiter.api.Test;
@@ -43,7 +41,7 @@ public class TrainDaoJdbcTest {
 
         // then
         assertNotNull(trains);
-        assertEquals(3, trains.size());
+        assertEquals(4, trains.size());
     }
 
     @Test
@@ -69,104 +67,50 @@ public class TrainDaoJdbcTest {
 
         // given
         Train newTrain = new Train(0, "newName", "newDirection", LocalDate.now());
-        int oldDbSize = trainDao.count();
 
         // when
         Integer id = trainDao.createTrain(newTrain);
 
         // then
-        assertEquals(4, id);
-        assertEquals(4,trainDao.count());
-//        Integer resultOfUpdate = trainDao.updateTrain(renewableTrain);
-//        assertEquals(1, (int) resultOfUpdate, "update failed");
-//
-//        Train actualTrain = trainDao.findById(renewableTrain.getTrainId()).orElse(null);
-//        assertEquals(renewableTrain, actualTrain);
-//
-//        List<Train> trainsAfterUpdate = trainDao.findAll();
-//        assertEquals(oldDbSize, trainsAfterUpdate.size());
+        assertEquals(5, id);
+        assertEquals(5, trainDao.count());
     }
 
     @Test
-    public void test_updateTrainWithDuplicatedName() {
-        List<Train> trains = trainDao.findAll();
-        Train renewableTrain = trains.get(0);
-        renewableTrain.setTrainName(trains.get(1).getTrainName());
-        assertThrows(ArgumentException.class, () ->
-                trainDao.updateTrain(renewableTrain)
-        );
+    public void shouldReturnUpdatedTrainsCount(){
+        LOGGER.info("shouldReturnUpdatedTrainsCount()");
+
+        // given
+        Train trainToBeCreated = new Train(1, "firstNew", "up", LocalDate.now());
+
+        // when
+        Integer count = trainDao.updateTrain(trainToBeCreated);
+
+        // then
+        assertEquals(1, count);
+        assertEquals(4, trainDao.count());
     }
 
     @Test
-    public void test_updateTrainWithSameName() {
-        Train trainForUpdate = new Train("RabbitSameName");
-        trainForUpdate.setTrainDestination("oldDirection");
-        Integer testId = trainDao.createTrain(trainForUpdate);
+    public void shouldDeleteTrainById(){
+        LOGGER.info("shouldDeleteTrainById()");
 
-        trainForUpdate.setTrainDestination("newDirection");
-        Integer resultOfUpdate = trainDao.updateTrain(trainForUpdate);
-        assertEquals(1, (int) resultOfUpdate, "update failed");
-        assertEquals("newDirection", trainDao.findById(testId).get().getTrainDestination(), "wrong save");
+        // when
+        Integer count = trainDao.deleteTrain(4);
+
+        // then
+        assertEquals(1, count);
+        assertEquals(3, trainDao.count());
     }
 
     @Test
-    public void test_updateNonexistentTrain() {
-        Integer renewableTrainId = 999;
+    public void shouldReturnTrainsCount(){
+        LOGGER.info("shouldReturnTrainsCount()");
 
-        Train renewableTrain = new Train("newNameForNonexistentTrain");
-        renewableTrain.setTrainId(renewableTrainId);
+        // when
+        Integer count = trainDao.count();
 
-        Integer resultOfUpdate = trainDao.updateTrain(renewableTrain);
-        assertEquals(0, (int) resultOfUpdate, "update nonexistent train");
-    }
-
-    @Test
-    public void test_createNewTrain() {
-        List<Train> trainsBeforeCreate = trainDao.findAll();
-        Train newTrain = new Train("nameless");
-        newTrain.setTrainDestination("fakeDestination");
-        newTrain.setTrainDepartureDate(LocalDate.of(2011, 11, 11));
-        Integer newTrainId = trainDao.createTrain(newTrain);
-        assertTrue(newTrainId > 0);
-        newTrain.setTrainId(newTrainId);
-
-        List<Train> trainsAfterCreate = trainDao.findAll();
-        assertEquals(trainsBeforeCreate.size() + 1, trainsAfterCreate.size());
-        assertEquals(newTrain, trainDao.findById(newTrainId).orElse(null));
-    }
-
-    @Test
-    public void test_createTrainWithExistsName() {
-        assertThrows(ArgumentException.class, () ->
-                trainDao.createTrain(new Train(trainDao.findAll().get(0).getTrainName())));
-    }
-
-    @Test
-    public void test_deleteTrain() {
-        int trainForDeleteId = trainDao.createTrain(new Train("nameForDelete"));
-        List<Train> trainsBeforeDelete = trainDao.findAll();
-        int baseSizeBeforeDelete = trainsBeforeDelete.size();
-        assertEquals(1, (int) trainDao.deleteTrain(trainForDeleteId));
-
-        assertEquals(baseSizeBeforeDelete - 1, trainDao.count());
-    }
-
-    @Test
-    public void test_deleteTrainWithPassenger() {
-        List<Train> trainsBeforeDelete = trainDao.findAll();
-        assertThrows(TrainLoadedException.class, () ->
-                trainDao.deleteTrain(trainsBeforeDelete.get(0).getTrainId()));
-    }
-
-    @Test
-    public void test_deleteNonExistsTrain() {
-        Integer testId = 999;
-        Integer resultOfDelete = trainDao.deleteTrain(testId);
-        assertEquals(0, (int) resultOfDelete);
-    }
-
-    @Test
-    public void test_getTrainsCount() {
-        assertEquals(trainDao.findAll().size(), trainDao.count());
+        // then
+        assertEquals(4, count);
     }
 }
