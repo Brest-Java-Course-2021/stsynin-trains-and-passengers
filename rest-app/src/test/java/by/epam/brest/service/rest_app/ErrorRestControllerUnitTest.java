@@ -64,24 +64,6 @@ class ErrorRestControllerUnitTest {
     }
 
     @Test
-    void shouldProcessInternalServerError() throws Exception {
-        LOGGER.info("shouldProcessInternalServerError()");
-
-        // when
-        mockMvc.perform(
-                        get("/error")
-                                .with(request -> {
-                                    request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, 500);
-                                    return request;
-                                })
-                )
-                // then
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.message")
-                        .value("Internal Server Error"));
-    }
-
-    @Test
     void shouldProcessUnknownError() throws Exception {
         LOGGER.info("shouldProcessUnknownError()");
 

@@ -33,19 +33,11 @@ public class ErrorRestController implements ErrorController {
             int statusCode = Integer.parseInt(status.toString());
             LOGGER.error(" statusCode: {}", statusCode);
 
-            switch (statusCode) {
-                case 404: {
-                    LOGGER.error(" Resource not found");
-                    return new ResponseEntity<>(
-                            new ErrorMessage("Resource not found"),
-                            HttpStatus.NOT_FOUND);
-                }
-                case 500: {
-                    LOGGER.error(" Internal Server Error");
-                    return new ResponseEntity<>(
-                            new ErrorMessage("Internal Server Error"),
-                            HttpStatus.INTERNAL_SERVER_ERROR);
-                }
+            if (statusCode == 404) {
+                LOGGER.error(" Resource not found");
+                return new ResponseEntity<>(
+                        new ErrorMessage("Resource not found"),
+                        HttpStatus.NOT_FOUND);
             }
         }
         LOGGER.error(" Unknown error");
