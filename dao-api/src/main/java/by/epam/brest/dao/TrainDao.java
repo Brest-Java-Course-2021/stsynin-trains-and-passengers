@@ -26,7 +26,7 @@ public interface TrainDao {
      * Save the new train.
      *
      * @param train object.
-     * @return saved train id.
+     * @return new train id.
      */
     Integer createTrain(Train train);
 
@@ -47,25 +47,9 @@ public interface TrainDao {
     Integer deleteTrain(Integer trainId);
 
     /**
-     * Get number of trains in the database.
+     * Get count of trains in the database.
      *
-     * @return number of trains in the database.
+     * @return count of trains in the database.
      */
-    Integer getTrainsCount();
-
-    /**
-     * Check if this train name exists in the database.
-     *
-     * @param train object.
-     * @return train with the same name presence.
-     */
-    boolean isSecondTrainWithSameNameExists(Train train);
-
-    /**
-     * Check if there are passengers on this train.
-     *
-     * @param trainId train Id.
-     * @return the presence of passengers on this train.
-     */
-    boolean isTrainLoaded(Integer trainId);
+    Integer count();
 }

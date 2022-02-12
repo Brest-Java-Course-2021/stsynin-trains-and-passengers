@@ -134,11 +134,6 @@ public class TrainDaoJdbc implements TrainDao {
                 Integer.class);
     }
 
-    @Override
-    public boolean isTrainLoaded(Integer trainId) {
-        return getPassengerCountForTrain(trainId) > 0;
-    }
-
     private Integer getPassengerCountForTrain(Integer trainId) {
         return namedParameterJdbcTemplate.queryForObject(
                 sqlGetPassengersCountForTrain,
@@ -156,7 +151,7 @@ public class TrainDaoJdbc implements TrainDao {
         return parameterSource;
     }
 
-    public boolean isSecondTrainWithSameNameExists(Train train) {
+    private boolean isSecondTrainWithSameNameExists(Train train) {
         List<Train> trains = namedParameterJdbcTemplate.query(
                 sqlGetTrainByName,
                 new MapSqlParameterSource(TRAIN_NAME, train.getTrainName()),
