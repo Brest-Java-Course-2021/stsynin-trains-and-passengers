@@ -19,6 +19,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class CustomExceptionHandler {
 
+    public CustomExceptionHandler() {
+        LOGGER.info("CustomExceptionHandler was created");
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomExceptionHandler.class);
 
     @ExceptionHandler(ResourceNotFoundException.class)
