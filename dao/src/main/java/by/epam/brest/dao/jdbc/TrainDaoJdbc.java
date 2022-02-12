@@ -1,7 +1,9 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.TrainDao;
-import by.epam.brest.dao.jdbc.exception.*;
+import by.epam.brest.dao.jdbc.exception.ArgumentException;
+import by.epam.brest.dao.jdbc.exception.ArgumentNullException;
+import by.epam.brest.dao.jdbc.exception.ArgumentOutOfRangeException;
 import by.epam.brest.model.Train;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,10 +119,6 @@ public class TrainDaoJdbc implements TrainDao {
 
     @Override
     public Integer deleteTrain(Integer trainId) {
-        if (isTrainLoaded(trainId)) {
-            logger.error("Can't delete train id: {}: this train have a passenger(s)", trainId);
-            throw new TrainLoadedException("Delete fail. There are registered passengers. Train id:" + trainId);
-        }
         logger.debug("Delete train id: {}", trainId);
         return namedParameterJdbcTemplate.update(
                 sqlDeleteTrainById,

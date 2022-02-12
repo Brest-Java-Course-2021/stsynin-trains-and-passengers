@@ -1,9 +1,11 @@
 package by.epam.brest.service.impl;
 
 import by.epam.brest.dao.TrainDao;
+import by.epam.brest.dao.jdbc.exception.TrainLoadedException;
 import by.epam.brest.model.Train;
 import by.epam.brest.service.TrainService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,8 +44,18 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public Integer deleteTrain(Integer trainId) {
-        return trainDao.deleteTrain(trainId);
+    public Integer deleteById(Integer trainId) {
+        Integer deleteResult;
+        try {
+            deleteResult = trainDao.deleteTrain(trainId);
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            throw new TrainLoadedException("Delete fail. There are registered passengers. Train id:" + trainId);
+        }
+        if (deleteResult < 1) {
+            throw new ResourceNotFoundException(notFoundForThisIdMessage(trainId));
+        }
+        return deleteResult;
     }
 
     @Override
