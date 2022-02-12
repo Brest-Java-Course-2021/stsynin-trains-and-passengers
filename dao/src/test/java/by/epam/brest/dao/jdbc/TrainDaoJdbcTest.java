@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.time.LocalDate;
@@ -21,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJdbcTest
 @Import(TrainDaoJdbc.class)
-@PropertySource({"classpath:sql-requests.properties"})
 @ContextConfiguration(classes = SpringJdbcConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class TrainDaoJdbcTest {
@@ -77,7 +75,7 @@ public class TrainDaoJdbcTest {
     }
 
     @Test
-    public void shouldReturnUpdatedTrainsCount(){
+    public void shouldReturnUpdatedTrainsCount() {
         LOGGER.info("shouldReturnUpdatedTrainsCount()");
 
         // given
@@ -92,7 +90,7 @@ public class TrainDaoJdbcTest {
     }
 
     @Test
-    public void shouldDeleteTrainById(){
+    public void shouldDeleteTrainById() {
         LOGGER.info("shouldDeleteTrainById()");
 
         // when
@@ -104,7 +102,7 @@ public class TrainDaoJdbcTest {
     }
 
     @Test
-    public void shouldReturnTrainsCount(){
+    public void shouldReturnTrainsCount() {
         LOGGER.info("shouldReturnTrainsCount()");
 
         // when
