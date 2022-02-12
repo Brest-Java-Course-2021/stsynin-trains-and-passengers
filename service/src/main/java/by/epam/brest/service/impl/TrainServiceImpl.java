@@ -4,13 +4,13 @@ import by.epam.brest.dao.TrainDao;
 import by.epam.brest.dao.jdbc.exception.TrainLoadedException;
 import by.epam.brest.model.Train;
 import by.epam.brest.service.TrainService;
+import by.epam.brest.service.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -29,8 +29,10 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public Optional<Train> findById(Integer trainId) {
-        return trainDao.findById(trainId);
+    public Train findById(Integer trainId) {
+        return trainDao.findById(trainId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(notFoundForThisIdMessage(trainId)));
     }
 
     @Override
@@ -60,7 +62,7 @@ public class TrainServiceImpl implements TrainService {
 
     @Override
     public Integer getTrainsCount() {
-        return trainDao.getTrainsCount();
+        return trainDao.count();
     }
 
     @Override
@@ -71,5 +73,9 @@ public class TrainServiceImpl implements TrainService {
     @Override
     public boolean isTrainLoaded(Integer trainId) {
         return trainDao.isTrainLoaded(trainId);
+    }
+
+    private String notFoundForThisIdMessage(Integer trainId) {
+        return String.format("No train with id %s exists!", trainId);
     }
 }
