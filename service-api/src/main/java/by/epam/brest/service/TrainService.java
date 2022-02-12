@@ -50,20 +50,4 @@ public interface TrainService {
      * @return count of trains in the database.
      */
     Integer getTrainsCount();
-
-    /**
-     * Check for another train with the same name.
-     *
-     * @param train object.
-     * @return trains with the same name presence.
-     */
-    boolean isSecondTrainWithSameNameExists(Train train);
-
-    /**
-     * Check if train have passengers.
-     *
-     * @param trainId train Id.
-     * @return the presence of passengers on this train.
-     */
-    boolean isTrainLoaded(Integer trainId);
 }

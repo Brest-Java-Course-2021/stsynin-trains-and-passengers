@@ -65,16 +65,6 @@ public class TrainServiceImpl implements TrainService {
         return trainDao.count();
     }
 
-    @Override
-    public boolean isSecondTrainWithSameNameExists(Train train) {
-        return trainDao.isSecondTrainWithSameNameExists(train);
-    }
-
-    @Override
-    public boolean isTrainLoaded(Integer trainId) {
-        return trainDao.isTrainLoaded(trainId);
-    }
-
     private String notFoundForThisIdMessage(Integer trainId) {
         return String.format("No train with id %s exists!", trainId);
     }

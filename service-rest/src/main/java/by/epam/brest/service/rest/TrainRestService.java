@@ -132,26 +132,4 @@ public class TrainRestService implements TrainService {
     public Integer getTrainsCount() {
         return null;
     }
-
-    /**
-     * Check for another train with the same name.
-     *
-     * @param train object.
-     * @return train with the same name presence.
-     */
-    @Override
-    public boolean isSecondTrainWithSameNameExists(Train train) {
-        return false;
-    }
-
-    /**
-     * Check if train have passengers.
-     *
-     * @param trainId train Id.
-     * @return the presence of passengers on this train.
-     */
-    @Override
-    public boolean isTrainLoaded(Integer trainId) {
-        return false;
-    }
 }
