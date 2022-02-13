@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TrainService {
     /**
-     * Get all trains from the database.
+     * Get all trains list.
      *
      * @return trains list.
      */
@@ -15,10 +15,10 @@ public interface TrainService {
     /**
      * Get train by id.
      *
-     * @param trainId train id.
+     * @param id train id.
      * @return train.
      */
-    Train findById(Integer trainId);
+    Train findById(Integer id);
 
     /**
      * Save the new train.
@@ -39,10 +39,10 @@ public interface TrainService {
     /**
      * Delete train by id.
      *
-     * @param trainId train id.
+     * @param id train id.
      * @return number of deleted trains in the database.
      */
-    Integer deleteById(Integer trainId);
+    Integer deleteById(Integer id);
 
     /**
      * Get count of trains in the database.

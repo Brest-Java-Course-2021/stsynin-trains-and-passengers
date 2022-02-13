@@ -29,10 +29,10 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public Train findById(Integer trainId) {
-        return trainDao.findById(trainId)
+    public Train findById(Integer id) {
+        return trainDao.findById(id)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException(notFoundForThisIdMessage(trainId)));
+                        new ResourceNotFoundException(notFoundForThisIdMessage(id)));
     }
 
     @Override
@@ -46,16 +46,16 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public Integer deleteById(Integer trainId) {
+    public Integer deleteById(Integer id) {
         Integer deleteResult;
         try {
-            deleteResult = trainDao.deleteTrain(trainId);
+            deleteResult = trainDao.deleteTrain(id);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
-            throw new TrainLoadedException("Delete fail. There are registered passengers. Train id:" + trainId);
+            throw new TrainLoadedException("Delete fail. There are registered passengers. Train id:" + id);
         }
         if (deleteResult < 1) {
-            throw new ResourceNotFoundException(notFoundForThisIdMessage(trainId));
+            throw new ResourceNotFoundException(notFoundForThisIdMessage(id));
         }
         return deleteResult;
     }
