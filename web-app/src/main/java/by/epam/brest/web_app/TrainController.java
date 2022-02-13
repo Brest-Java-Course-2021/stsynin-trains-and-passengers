@@ -67,29 +67,19 @@ public class TrainController {
     }
 
     /**
-     * Goto edit train page. If train record not found - goto error page.
+     * Goto edit train page.
      *
-     * @param model model.
-     * @param id    train id.
+     * @param id train id.
      * @return view train.
      */
     @GetMapping(value = "/train/{id}")
-    public final String gotoEditTrainPage(@PathVariable Integer id,
-                                          Model model,
-                                          RedirectAttributes redirectAttributes) {
-        LOGGER.debug("user ask train id: {}", id);
-        Optional<Train> optionalTrain = trainService.findById(id);
-        if (optionalTrain.isPresent()) {
-            LOGGER.debug("return train id: {}", id);
-            model.addAttribute("isNew", false);
-            model.addAttribute("train", optionalTrain.get());
-            return "train";
-        } else {
-            LOGGER.error("train id: {} not found", id);
-            redirectAttributes.addAttribute("errorMessage",
-                    "We're sorry, but we can't find record for this train.");
-            return "redirect:/error";
-        }
+    public final String gotoEditTrainPage(@PathVariable Integer id, Model model) {
+        LOGGER.info(" IN: gotoEditTrainPage() - [{}]", id);
+        Train train = trainService.findById(id);
+        model.addAttribute("isNew", false);
+        model.addAttribute("train", train);
+        LOGGER.info("OUT: gotoEditTrainPage() - [{}]", train);
+        return "train";
     }
 
     /**
