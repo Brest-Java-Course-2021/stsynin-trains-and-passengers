@@ -1,17 +1,17 @@
 package by.epam.brest.service.rest;
 
+import by.epam.brest.model.ErrorMessage;
 import by.epam.brest.service.exception.ResourceNotFoundException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.client.ResponseErrorHandler;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 import static org.springframework.http.HttpStatus.Series.CLIENT_ERROR;
@@ -22,6 +22,8 @@ import static org.springframework.http.HttpStatus.Series.SERVER_ERROR;
  */
 @Component
 public class ErrorRestService implements ResponseErrorHandler {
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorRestService.class);
 
@@ -36,31 +38,29 @@ public class ErrorRestService implements ResponseErrorHandler {
         if (httpResponse.getStatusCode()
                 .series() == HttpStatus.Series.SERVER_ERROR) {
             // handle SERVER_ERROR
-            LOGGER.error("SERVER_ERROR");
+            LOGGER.debug("SERVER_ERROR");
         } else if (httpResponse.getStatusCode()
                 .series() == HttpStatus.Series.CLIENT_ERROR) {
             // handle CLIENT_ERROR
-            LOGGER.error("CLIENT_ERROR");
-            LOGGER.error(String.valueOf(httpResponse.getStatusCode()));
+            LOGGER.debug("CLIENT_ERROR");
+            LOGGER.debug(String.valueOf(httpResponse.getStatusCode()));
             if (httpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
-                System.out.println(bodyToString(httpResponse.getBody()));
-                LOGGER.error("not found");
-                throw new ResourceNotFoundException("We're sorry, but we can't find anything about this.");
+                String message = extractErrorMessage(httpResponse).getMessage();
+                LOGGER.error("message from server - " + message);
+//                throw new ResourceNotFoundException("We're sorry, but we can't find anything about this.");
+                throw new ResourceNotFoundException(message);
             }
             if (httpResponse.getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
                 LOGGER.error("wow! UNPROCESSABLE_ENTITY");
             }
         }
     }
-    private String bodyToString(InputStream body) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(body, StandardCharsets.UTF_8));
-        String line = bufferedReader.readLine();
-        while (line != null) {
-            builder.append(line).append(System.lineSeparator());
-            line = bufferedReader.readLine();
-        }
-        bufferedReader.close();
-        return builder.toString();
+
+    private ErrorMessage extractErrorMessage(ClientHttpResponse httpResponse) throws IOException {
+        return objectMapper.readValue(httpResponseToString(httpResponse), ErrorMessage.class);
+    }
+
+    private String httpResponseToString(ClientHttpResponse httpResponse) throws IOException {
+        return StreamUtils.copyToString(httpResponse.getBody(), StandardCharsets.UTF_8);
     }
 }
