@@ -1,10 +1,10 @@
 package by.epam.brest.web_app.config;
 
 import by.epam.brest.service.PassengerDtoService;
-import by.epam.brest.service.PassengerService;
 import by.epam.brest.service.TrainDtoService;
 import by.epam.brest.service.TrainService;
 import by.epam.brest.service.rest.*;
+import by.epam.brest.service.rest.exception.RestServiceExceptionHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -55,5 +55,10 @@ public class ApplicationConfig {
     PassengerRestService passengerService() {
         String url = String.format("%s://%s:%d/passengers", protocol, host, port);
         return new PassengerRestService(url, restTemplate());
+    }
+
+    @Bean
+    RestServiceExceptionHandler exceptionHandler() {
+        return new RestServiceExceptionHandler();
     }
 }
