@@ -1,7 +1,5 @@
 package by.epam.brest.service.rest_app;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -26,8 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ErrorRestControllerUnitTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorRestControllerUnitTest.class);
-
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     private MockMvc mockMvc;
 
