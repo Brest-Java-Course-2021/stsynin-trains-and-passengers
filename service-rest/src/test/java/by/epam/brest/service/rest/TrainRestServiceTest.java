@@ -4,7 +4,6 @@ import by.epam.brest.model.Train;
 import by.epam.brest.service.TrainService;
 import by.epam.brest.service.rest.config.TestConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,8 +55,8 @@ public class TrainRestServiceTest {
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(mapper.writeValueAsString(Arrays.asList(
-                                createTrain(0),
-                                createTrain(1))))
+                                new Train(0, "first", "down", LocalDate.now()),
+                                new Train(1, "second", "up", LocalDate.now()))))
                 );
 
         // when
@@ -75,8 +74,7 @@ public class TrainRestServiceTest {
 
         // given
         int id = 1;
-        Train train = createTrain(id);
-
+        Train train = new Train(id, "Name", "West", LocalDate.now());
         mockServer.expect(ExpectedCount.once(), requestTo(new URI(TRAINS_URL + "/" + id)))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.OK)
@@ -97,20 +95,19 @@ public class TrainRestServiceTest {
         LOGGER.debug("shouldCreateTrain()");
 
         // given
-        Train train = new Train("TrainName");
-
+        Train train = new Train(null, "Name", "West", LocalDate.now());
         mockServer.expect(ExpectedCount.once(), requestTo(new URI(TRAINS_URL)))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(mapper.writeValueAsString("1"))
+                        .body(mapper.writeValueAsString("2"))
                 );
         // when
         Integer id = trainService.createTrain(train);
 
         // then
         mockServer.verify();
-        assertNotNull(id);
+        assertEquals(2, id);
     }
 
     @Test
@@ -118,10 +115,7 @@ public class TrainRestServiceTest {
         LOGGER.debug("shouldUpdateTrain()");
 
         // given
-        Integer id = 1;
-        Train train = new Train("TrainName");
-        train.setTrainId(id);
-
+        Train train = new Train(2, "Name", "West", LocalDate.now());
         mockServer.expect(ExpectedCount.once(), requestTo(new URI(TRAINS_URL)))
                 .andExpect(method(HttpMethod.PUT))
                 .andRespond(withStatus(HttpStatus.OK)
@@ -129,21 +123,12 @@ public class TrainRestServiceTest {
                         .body(mapper.writeValueAsString("1"))
                 );
 
-        mockServer.expect(ExpectedCount.once(), requestTo(new URI(TRAINS_URL + "/" + id)))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withStatus(HttpStatus.OK)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(mapper.writeValueAsString(train))
-                );
-
         // when
-        int result = trainService.updateTrain(train);
-        Train returnedTrain = trainService.findById(id);
+        Integer result = trainService.updateTrain(train);
 
         // then
         mockServer.verify();
         assertEquals(1, result);
-        assertEquals(train, returnedTrain);
     }
 
     @Test
@@ -166,10 +151,22 @@ public class TrainRestServiceTest {
         assertEquals(1, result);
     }
 
-    private Train createTrain(int index) {
-        Train train = new Train();
-        train.setTrainId(index);
-        train.setTrainName("train_#" + index);
-        return train;
+    @Test
+    void shouldGetCountOfTrains() throws Exception {
+        LOGGER.debug("shouldGetCountOfTrains()");
+
+        // given
+        mockServer.expect(ExpectedCount.once(), requestTo(new URI(TRAINS_URL + "/count")))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withStatus(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(mapper.writeValueAsString("123")));
+
+        // when
+        Integer result = trainService.getTrainsCount();
+
+        // then
+        mockServer.verify();
+        assertEquals(123, result);
     }
 }
