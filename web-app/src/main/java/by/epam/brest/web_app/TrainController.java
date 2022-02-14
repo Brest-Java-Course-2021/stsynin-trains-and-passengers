@@ -95,23 +95,19 @@ public class TrainController {
     /**
      * Save new train information into storage. Check name & destination for null and length.
      *
-     * @param train filled new train data.
-     * @return view trains or view error.
+     * @param train new train data.
+     * @return view trains.
      */
     @PostMapping(value = "/train")
-    public String addTrain(@RequestBody Train train,
-                           RedirectAttributes redirectAttributes) {
+    public String addTrain(@RequestBody Train train) {
         LOGGER.info(" IN: addTrain() - [{}]", train);
         String errorWithTrainNames = getErrorWithTrainNames(train, "Creation");
         if (errorWithTrainNames != null) {
-            LOGGER.error(errorWithTrainNames);
-            redirectAttributes.addAttribute("errorMessage", errorWithTrainNames);
-            return "redirect:/error";
-        } else {
-            Integer newId = trainService.createTrain(train);
-            LOGGER.info("OUT: addTrain() - new train id: [{}]", newId);
-            return "redirect:/trains";
+            throw new ValidationErrorException(errorWithTrainNames);
         }
+        Integer newId = trainService.createTrain(train);
+        LOGGER.info("OUT: addTrain() - new train id: [{}]", newId);
+        return "redirect:/trains";
     }
 
     /**

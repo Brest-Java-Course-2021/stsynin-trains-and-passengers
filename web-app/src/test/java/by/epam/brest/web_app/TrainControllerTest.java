@@ -199,9 +199,11 @@ class TrainControllerTest {
                 ).andDo(print())
 
                 // then
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/error"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
+                        is("We don't know how it happened, but there was a mistake in the data you entered.")))
+                .andExpect(model().attribute("errorDescription",
                         is("Creation failure. The train name cannot be empty.")));
     }
 
@@ -220,9 +222,11 @@ class TrainControllerTest {
                 ).andDo(print())
 
                 // then
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/error"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
+                        is("We don't know how it happened, but there was a mistake in the data you entered.")))
+                .andExpect(model().attribute("errorDescription",
                         is("Creation failure. The name of the train is too long.")));
     }
 
@@ -240,9 +244,11 @@ class TrainControllerTest {
                 ).andDo(print())
 
                 // then
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/error"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
+                        is("We don't know how it happened, but there was a mistake in the data you entered.")))
+                .andExpect(model().attribute("errorDescription",
                         is("Creation failure. The name of the train's destination cannot be empty.")));
     }
 
@@ -261,9 +267,11 @@ class TrainControllerTest {
                 ).andDo(print())
 
                 // then
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/error"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
+                        is("We don't know how it happened, but there was a mistake in the data you entered.")))
+                .andExpect(model().attribute("errorDescription",
                         is("Creation failure. The name of the train's destination is too long.")));
     }
 
