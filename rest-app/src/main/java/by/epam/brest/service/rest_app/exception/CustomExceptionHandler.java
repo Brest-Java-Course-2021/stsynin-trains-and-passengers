@@ -3,7 +3,7 @@ package by.epam.brest.service.rest_app.exception;
 import by.epam.brest.dao.jdbc.exception.ArgumentException;
 import by.epam.brest.dao.jdbc.exception.ArgumentNullException;
 import by.epam.brest.dao.jdbc.exception.ArgumentOutOfRangeException;
-import by.epam.brest.dao.jdbc.exception.TrainLoadedException;
+import by.epam.brest.service.exception.ResourceLockedException;
 import by.epam.brest.model.ErrorMessage;
 import by.epam.brest.service.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
@@ -32,9 +32,9 @@ public class CustomExceptionHandler {
         return new ErrorMessage(e.getMessage());
     }
 
-    @ExceptionHandler(TrainLoadedException.class)
+    @ExceptionHandler(ResourceLockedException.class)
     @ResponseStatus(HttpStatus.LOCKED)
-    public ErrorMessage handleTrainLoaded(TrainLoadedException e) {
+    public ErrorMessage handleTrainLoaded(ResourceLockedException e) {
         LOGGER.error(e.getMessage());
         return new ErrorMessage(e.getMessage());
     }

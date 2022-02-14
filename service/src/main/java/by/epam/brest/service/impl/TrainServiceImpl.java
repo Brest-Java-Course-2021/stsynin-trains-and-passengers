@@ -1,7 +1,7 @@
 package by.epam.brest.service.impl;
 
 import by.epam.brest.dao.TrainDao;
-import by.epam.brest.dao.jdbc.exception.TrainLoadedException;
+import by.epam.brest.service.exception.ResourceLockedException;
 import by.epam.brest.model.Train;
 import by.epam.brest.service.TrainService;
 import by.epam.brest.service.exception.ResourceNotFoundException;
@@ -52,7 +52,7 @@ public class TrainServiceImpl implements TrainService {
             deleteResult = trainDao.deleteTrain(id);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
-            throw new TrainLoadedException("Delete fail. There are registered passengers. Train id:" + id);
+            throw new ResourceLockedException("Delete fail. There are registered passengers. Train id:" + id);
         }
         if (deleteResult < 1) {
             throw new ResourceNotFoundException(notFoundForThisIdMessage(id));

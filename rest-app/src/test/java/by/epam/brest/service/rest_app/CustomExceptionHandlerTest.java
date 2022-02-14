@@ -1,7 +1,7 @@
 package by.epam.brest.service.rest_app;
 
 import by.epam.brest.dao.jdbc.exception.ArgumentNullException;
-import by.epam.brest.dao.jdbc.exception.TrainLoadedException;
+import by.epam.brest.service.exception.ResourceLockedException;
 import by.epam.brest.service.TrainService;
 import by.epam.brest.service.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,7 @@ public class CustomExceptionHandlerTest {
         LOGGER.info("shouldReturnTrainLoadedError()");
 
         // given
-        when(trainService.deleteById(1)).thenThrow(new TrainLoadedException("TrainLoadedError"));
+        when(trainService.deleteById(1)).thenThrow(new ResourceLockedException("TrainLoadedError"));
 
         // when
         mockMvc.perform(delete(URI_ID, 1)
