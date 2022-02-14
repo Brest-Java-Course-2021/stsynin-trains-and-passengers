@@ -44,13 +44,10 @@ public class TrainRestService implements TrainService {
 
     @Override
     public Train findById(Integer id) {
-        LOGGER.debug(" IN: findTrainById() - [{}]", id);
-        ResponseEntity<Train> responseEntity =
-                restTemplate.getForEntity(
-                        url + "/" + id,
-                        Train.class);
-        Train train = responseEntity.getBody();
-        LOGGER.debug("OUT: findTrainById() - [{}]", train);
+        LOGGER.debug(" IN: findById() - [{}]", id);
+
+        Train train = restTemplate.getForObject(url + "/{id}", Train.class, id);
+        LOGGER.debug("OUT: findById() - [{}]", train);
         return train;
     }
 
@@ -81,18 +78,19 @@ public class TrainRestService implements TrainService {
     }
 
     @Override
-    public Integer deleteById(Integer id) {
-        LOGGER.debug("deleteById({})", id);
+   public Integer deleteById(Integer id) {
+        LOGGER.debug(" IN: deleteById() - [{}]", id);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         HttpEntity<Train> entity = new HttpEntity<>(headers);
-        Integer result = restTemplate.exchange(
+        restTemplate.exchange(
                 url + "/" + id,
                 HttpMethod.DELETE,
                 entity,
-                Integer.class).getBody();
-        LOGGER.debug("trains deleted: ({})", result);
-        return result;
+                Integer.class);
+        LOGGER.debug("OUT: deleteById() - [deleted]");
+        return 1;
     }
 
     @Override

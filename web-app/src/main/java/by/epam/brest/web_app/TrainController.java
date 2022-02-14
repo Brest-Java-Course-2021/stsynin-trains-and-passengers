@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_DESTINATION_NAME_LENGTH;
 import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
@@ -142,37 +141,36 @@ public class TrainController {
 
     /**
      * Delete train information in storage.
-     * If train isn't exist - goto error page.
-     * if train loaded - goto error page.
      *
-     * @param model model.
-     * @param id    train id.
-     * @return view trains or view error.
+     * @param id train id.
+     * @return view trains.
      */
     @GetMapping(value = "/train/{id}/delete")
-    public String deleteTrain(@PathVariable Integer id,
-                              Model model,
-                              RedirectAttributes redirectAttributes) {
-        LOGGER.debug("user ask to delete train id: {}", id);
-        Optional<Train> optionalTrain = trainService.findById(id);
-        if (optionalTrain.isPresent()) {
-            if (trainService.isTrainLoaded(id)) {
-                LOGGER.error("...but train id: {} is loaded", id);
-                redirectAttributes.addAttribute(
-                        "errorMessage",
-                        "We're sorry, but we can't delete loaded train. You should remove passenger(s) first.");
-                return "redirect:/error";
-            }
-            LOGGER.debug("execute delete");
-            this.trainService.deleteTrain(id);
-            return "redirect:/trains";
-        } else {
-            LOGGER.error("...but train id: {} was not found", id);
-            redirectAttributes.addAttribute(
-                    "errorMessage",
-                    "We're sorry, but we can't find record for delete this train.");
-            return "redirect:/error";
-        }
+    public String deleteTrain(@PathVariable Integer id) {
+        LOGGER.info(" IN: deleteTrain() - [{}]", id);
+        trainService.deleteById(id);
+        LOGGER.info("OUT: deleteTrain() - [deleted]");
+        return "redirect:/trains";
+
+
+//        LOGGER.debug("user ask to delete train id: {}", id);
+//        Optional<Train> optionalTrain = Optional.of(trainService.findById(id));
+//        if (optionalTrain.isPresent()) {
+////            if (trainService.isTrainLoaded(id)) {
+////                LOGGER.error("...but train id: {} is loaded", id);
+////                redirectAttributes.addAttribute(
+////                        "errorMessage",
+////                        "We're sorry, but we can't delete loaded train. You should remove passenger(s) first.");
+////                return "redirect:/error";
+////            }
+//            LOGGER.debug("execute delete");
+//        } else {
+//            LOGGER.error("...but train id: {} was not found", id);
+//            redirectAttributes.addAttribute(
+//                    "errorMessage",
+//                    "We're sorry, but we can't find record for delete this train.");
+//            return "redirect:/error";
+//        }
     }
 
     private String getErrorWithTrainNames(Train train, String stage) {

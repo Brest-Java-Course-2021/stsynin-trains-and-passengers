@@ -46,7 +46,7 @@ public class TrainRestServiceTest {
 
     private MockRestServiceServer mockServer;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     public void before() {
@@ -160,18 +160,18 @@ public class TrainRestServiceTest {
 
     @Test
     public void shouldDeleteTrain() throws Exception {
-
         LOGGER.debug("shouldDeleteTrain()");
+
         // given
         Integer id = 1;
         mockServer.expect(ExpectedCount.once(), requestTo(new URI(TRAINS_URL + "/" + id)))
                 .andExpect(method(HttpMethod.DELETE))
-                .andRespond(withStatus(HttpStatus.OK)
+                .andRespond(withStatus(HttpStatus.NO_CONTENT)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(mapper.writeValueAsString("1"))
-                );
+                        .body(mapper.writeValueAsString("1")));
+
         // when
-        int result = trainService.deleteTrain(id);
+        int result = trainService.deleteById(id);
 
         // then
         mockServer.verify();
