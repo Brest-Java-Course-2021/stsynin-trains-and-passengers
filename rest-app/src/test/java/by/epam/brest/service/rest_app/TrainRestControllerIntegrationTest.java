@@ -149,7 +149,7 @@ class TrainRestControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
 
                 // then
-                .andExpect(status().isLocked())
+                .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message")
                         .value("Delete fail. There are registered passengers. Train id:1"));
     }

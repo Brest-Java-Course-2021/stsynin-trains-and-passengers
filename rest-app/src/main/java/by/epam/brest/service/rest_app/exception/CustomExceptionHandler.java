@@ -33,7 +33,7 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(ResourceLockedException.class)
-    @ResponseStatus(HttpStatus.LOCKED)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorMessage handleTrainLoaded(ResourceLockedException e) {
         LOGGER.error(e.getMessage());
         return new ErrorMessage(e.getMessage());
