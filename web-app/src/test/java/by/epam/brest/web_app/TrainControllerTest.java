@@ -1,9 +1,12 @@
 package by.epam.brest.web_app;
 
+import by.epam.brest.model.ErrorMessage;
 import by.epam.brest.model.Train;
 import by.epam.brest.model.dto.TrainDto;
 import by.epam.brest.service.TrainDtoService;
 import by.epam.brest.service.TrainService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -12,10 +15,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -24,6 +29,7 @@ import java.util.List;
 import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_DESTINATION_NAME_LENGTH;
 import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -38,6 +44,8 @@ class TrainControllerTest {
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainControllerTest.class);
+
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     private MockMvc mockMvc;
@@ -74,6 +82,7 @@ class TrainControllerTest {
                 .andExpect(model().attribute("dateEnd", is(dateEnd)))
                 .andExpect(model().attribute("trains", is(trainDtoList)))
                 .andExpect(view().name("trains"));
+        verify(trainDtoService).getFilteredByDateTrainListWithPassengersCount(dateStart, dateEnd);
     }
 
     @Test
@@ -96,46 +105,58 @@ class TrainControllerTest {
 
     @Test
     public void shouldReturnTrainPageToEdit() throws Exception {
+        LOGGER.info("shouldReturnTrainPageToEdit()");
 
         // given
-        Train train = new Train("TrainName");
         Integer id = 1;
-        train.setTrainId(id);
-
-        // when
+        Train train = new Train(id, "bob", "up", LocalDate.now());
         when(trainService.findById(id)).thenReturn(train);
 
+        // when
         mockMvc.perform(get("/train/" + id)
                 ).andDo(print())
+
+                // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/html;charset=UTF-8"))
                 .andExpect(view().name("train"))
                 .andExpect(model().attribute("isNew", is(false)))
-                .andExpect(model().attribute("train", is(train)))
-        ;
+                .andExpect(model().attribute("train", is(train)));
+        verify(trainService).findById(id);
     }
 
     @Test
-    @Disabled
     public void shouldRedirectToErrorPageIfTrainNotFoundById() throws Exception {
+        LOGGER.info("shouldRedirectToErrorPageIfTrainNotFoundById()");
 
         // given
         Integer id = 9;
+        ErrorMessage message = new ErrorMessage("help");
+        when(trainService.findById(id)).thenThrow(getNotFoundErrorException(message));
 
         // when
-        when(trainService.findById(id)).thenReturn(null);
-
-        mockMvc.perform(get("/train/1")
+        mockMvc.perform(get("/train/" + id)
                 ).andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/error"))
-        ;
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
+                .andExpect(model().attribute("errorMessage",
+                        is("We're sorry, but we can't find anything about this.")))
+                .andExpect(model().attribute("errorDescription",
+                        is("help")));
+        verify(trainService).findById(id);
     }
 
     @Test
     public void shouldOpenNewTrainPage() throws Exception {
+        LOGGER.info("shouldOpenNewTrainPage()");
+
+        // when
         mockMvc.perform(get("/train")
                 ).andDo(print())
+
+                // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/html;charset=UTF-8"))
                 .andExpect(view().name("train"))
@@ -145,68 +166,105 @@ class TrainControllerTest {
 
     @Test
     public void shouldAddNewTrain() throws Exception {
+        LOGGER.info("shouldAddNewTrain()");
+
+        // given
+        Train train = new Train(null, "new", "nowhere", LocalDate.now());
+        when(trainService.createTrain(train)).thenReturn(69);
+
+        // when
         mockMvc.perform(post("/train")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("trainName", "trainName")
-                        .param("trainDestination", "trainDestination")
-                ).andExpect(status().isFound())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(train))
+                ).andDo(print())
+
+                // then
+                .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/trains"))
-                .andExpect(redirectedUrl("/trains"))
-        ;
+                .andExpect(redirectedUrl("/trains"));
+        verify(trainService).createTrain(train);
     }
 
     @Test
     public void shouldNotAddNewTrainBecauseEmptyName() throws Exception {
+        LOGGER.info("shouldNotAddNewTrainBecauseEmptyName()");
+
+        // given
+        Train train = new Train(null, null, "nowhere", LocalDate.now());
+
+        // when
         mockMvc.perform(post("/train")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("trainName", (String) null)
-                        .param("trainDestination", "trainDestination")
-                ).andExpect(status().is3xxRedirection())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(train))
+                ).andDo(print())
+
+                // then
+                .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Create fail. Train name can't be empty")))
-        ;
+                        is("Creation failure. The train name cannot be empty.")));
     }
 
     @Test
     public void shouldNotAddNewTrainBecauseOverlongName() throws Exception {
+        LOGGER.info("shouldNotAddNewTrainBecauseOverlongName()");
+
+        // given
         String trainName = getOverlongName();
+        Train train = new Train(null, trainName, "nowhere", LocalDate.now());
+
+        // when
         mockMvc.perform(post("/train")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("trainName", trainName)
-                        .param("trainDestination", "trainDestination")
-                ).andExpect(status().is3xxRedirection())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(train))
+                ).andDo(print())
+
+                // then
+                .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Create fail. Train name " + trainName + " is too long")))
-        ;
+                        is("Creation failure. The name of the train is too long.")));
     }
 
     @Test
     public void shouldNotAddNewTrainBecauseEmptyDestinationName() throws Exception {
+        LOGGER.info("shouldNotAddNewTrainBecauseEmptyDestinationName()");
+
+        // given
+        Train train = new Train(null, "new", null, LocalDate.now());
+
+        // when
         mockMvc.perform(post("/train")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("trainName", "trainName")
-                        .param("trainDestination", (String) null)
-                ).andExpect(status().is3xxRedirection())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(train))
+                ).andDo(print())
+
+                // then
+                .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Create fail. Train destination name can't be empty")))
-        ;
+                        is("Creation failure. The name of the train's destination cannot be empty.")));
     }
 
     @Test
     public void shouldNotAddNewTrainBecauseOverlongDestinationName() throws Exception {
+        LOGGER.info("shouldNotAddNewTrainBecauseOverlongDestinationName()");
+
+        // given
         String trainDestination = getOverlongDestinationName();
+        Train train = new Train(null, "new", trainDestination, LocalDate.now());
+
+        // when
         mockMvc.perform(post("/train")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("trainName", "trainName")
-                        .param("trainDestination", trainDestination)
-                ).andExpect(status().is3xxRedirection())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(train))
+                ).andDo(print())
+
+                // then
+                .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Create fail. Train destination name " + trainDestination + " is too long")))
-        ;
+                        is("Creation failure. The name of the train's destination is too long.")));
     }
 
     @Test
@@ -230,7 +288,7 @@ class TrainControllerTest {
                 ).andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Update fail. Train name can't be empty")))
+                        is("Update failure. The train name cannot be empty.")))
         ;
     }
 
@@ -244,7 +302,7 @@ class TrainControllerTest {
                 ).andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Update fail. Train name " + trainName + " is too long")))
+                        is("Update failure. The name of the train is too long.")))
         ;
     }
 
@@ -257,7 +315,7 @@ class TrainControllerTest {
                 ).andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Update fail. Train destination name can't be empty")))
+                        is("Update failure. The name of the train's destination cannot be empty.")))
         ;
     }
 
@@ -271,7 +329,7 @@ class TrainControllerTest {
                 ).andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Update fail. Train destination name " + trainDestination + " is too long")))
+                        is("Update failure. The name of the train's destination is too long.")))
         ;
     }
 
@@ -341,6 +399,15 @@ class TrainControllerTest {
 //TODO    public void shouldNotAddTrainIfTrainNameExistInBase() throws Exception {
 
 //TODO    public void shouldNotUpdateTrainIfNewNameAlreadyExists() throws Exception {
+
+    private HttpClientErrorException getNotFoundErrorException(ErrorMessage message) throws JsonProcessingException {
+        return HttpClientErrorException.create(
+                HttpStatus.NOT_FOUND,
+                "none",
+                null,
+                mapper.writeValueAsString(message).getBytes(),
+                null);
+    }
 
     private String getOverlongName() {
         return RandomStringUtils.randomAlphabetic(MAX_TRAIN_NAME_LENGTH + 1);

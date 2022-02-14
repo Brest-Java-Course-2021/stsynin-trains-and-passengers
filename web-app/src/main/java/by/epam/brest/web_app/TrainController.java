@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
@@ -54,7 +51,7 @@ public class TrainController {
                                          Model model) {
         LOGGER.info(" IN: trainsWithFilter() - [from: {} to: {}]", dateStart, dateEnd);
         if (!(dateStart == null) && !(dateEnd == null) && dateEnd.isBefore(dateStart)) {
-                throw new ValidationErrorException(
+            throw new ValidationErrorException(
                     "The start date {" + dateStart + "} is later than the end date {" + dateEnd + "}.");
         }
         List<TrainDto> trains = trainDtoService.getFilteredByDateTrainListWithPassengersCount(dateStart, dateEnd);
@@ -84,14 +81,14 @@ public class TrainController {
     /**
      * Goto add new train page.
      *
-     * @param model model.
      * @return view train.
      */
     @GetMapping(value = "/train")
     public final String gotoAddTrainPage(Model model) {
-        LOGGER.debug("Create new train");
+        LOGGER.info(" IN: gotoAddTrainPage() - []");
         model.addAttribute("isNew", true);
         model.addAttribute("train", new Train());
+        LOGGER.info("OUT: gotoAddTrainPage() - [empty train]");
         return "train";
     }
 
@@ -102,17 +99,17 @@ public class TrainController {
      * @return view trains or view error.
      */
     @PostMapping(value = "/train")
-    public String addTrain(Train train,
+    public String addTrain(@RequestBody Train train,
                            RedirectAttributes redirectAttributes) {
-        LOGGER.debug("user ask to save new train");
-        String errorWithTrainNames = getErrorWithTrainNames(train, "Create");
+        LOGGER.info(" IN: addTrain() - [{}]", train);
+        String errorWithTrainNames = getErrorWithTrainNames(train, "Creation");
         if (errorWithTrainNames != null) {
             LOGGER.error(errorWithTrainNames);
             redirectAttributes.addAttribute("errorMessage", errorWithTrainNames);
             return "redirect:/error";
         } else {
-            LOGGER.debug("creating {}", train);
-            this.trainService.createTrain(train);
+            Integer newId = trainService.createTrain(train);
+            LOGGER.info("OUT: addTrain() - new train id: [{}]", newId);
             return "redirect:/trains";
         }
     }
@@ -177,16 +174,16 @@ public class TrainController {
         String trainName = train.getTrainName();
         String trainDestination = train.getTrainDestination();
         if (trainName == null) {
-            return stage + " fail. Train name can't be empty";
+            return stage + " failure. The train name cannot be empty.";
         }
         if (trainDestination == null) {
-            return stage + " fail. Train destination name can't be empty";
+            return stage + " failure. The name of the train's destination cannot be empty.";
         }
         if (trainNameIsOverlong(trainName)) {
-            return stage + " fail. Train name " + trainName + " is too long";
+            return stage + " failure. The name of the train is too long.";
         }
         if (trainDestinationNameIsOverlong(trainDestination)) {
-            return stage + " fail. Train destination name " + trainDestination + " is too long";
+            return stage + " failure. The name of the train's destination is too long.";
         }
         return null;
     }
