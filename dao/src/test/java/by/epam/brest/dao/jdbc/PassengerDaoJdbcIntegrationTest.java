@@ -1,7 +1,7 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.PassengerDao;
-import by.epam.brest.dao.jdbc.exception.ValidationErrorException;
+import by.epam.brest.model.exception.ValidationErrorException;
 import by.epam.brest.model.Passenger;
 import by.epam.brest.testDb.SpringJdbcConfig;
 import org.junit.jupiter.api.Test;

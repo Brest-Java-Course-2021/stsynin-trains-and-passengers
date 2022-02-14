@@ -1,9 +1,9 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.PassengerDao;
-import by.epam.brest.dao.jdbc.exception.ValidationErrorException;
-import by.epam.brest.dao.jdbc.exception.ArgumentNullException;
-import by.epam.brest.dao.jdbc.exception.ArgumentOutOfRangeException;
+import by.epam.brest.model.exception.ValidationErrorException;
+import by.epam.brest.model.exception.ArgumentNullException;
+import by.epam.brest.model.exception.ArgumentOutOfRangeException;
 import by.epam.brest.model.Passenger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

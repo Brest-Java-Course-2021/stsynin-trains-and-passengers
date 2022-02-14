@@ -1,6 +1,6 @@
 package by.epam.brest.service.rest_app;
 
-import by.epam.brest.dao.jdbc.exception.ArgumentNullException;
+import by.epam.brest.model.exception.ArgumentNullException;
 import by.epam.brest.service.exception.ResourceLockedException;
 import by.epam.brest.service.TrainService;
 import by.epam.brest.service.exception.ResourceNotFoundException;

@@ -1,4 +1,4 @@
-package by.epam.brest.dao.jdbc.exception;
+package by.epam.brest.model.exception;
 
 /**
  * @author Sergey Tsynin

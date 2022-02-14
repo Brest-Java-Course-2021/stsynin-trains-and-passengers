@@ -1,8 +1,8 @@
 package by.epam.brest.service.rest_app.exception;
 
-import by.epam.brest.dao.jdbc.exception.ValidationErrorException;
-import by.epam.brest.dao.jdbc.exception.ArgumentNullException;
-import by.epam.brest.dao.jdbc.exception.ArgumentOutOfRangeException;
+import by.epam.brest.model.exception.ValidationErrorException;
+import by.epam.brest.model.exception.ArgumentNullException;
+import by.epam.brest.model.exception.ArgumentOutOfRangeException;
 import by.epam.brest.service.exception.ResourceLockedException;
 import by.epam.brest.model.ErrorMessage;
 import by.epam.brest.service.exception.ResourceNotFoundException;

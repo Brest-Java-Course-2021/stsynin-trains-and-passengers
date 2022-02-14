@@ -1,7 +1,7 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.TrainDtoDao;
-import by.epam.brest.dao.jdbc.exception.ValidationErrorException;
+import by.epam.brest.model.exception.ValidationErrorException;
 import by.epam.brest.model.dto.TrainDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
