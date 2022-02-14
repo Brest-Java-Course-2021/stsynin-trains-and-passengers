@@ -21,10 +21,10 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static by.epam.brest.service.rest.config.TestConfig.TRAINS_URL;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
@@ -81,7 +81,7 @@ public class TrainRestServiceTest {
 
         LOGGER.debug("shouldFindTrainById()");
         // given
-        Integer id = 1;
+        int id = 1;
         Train train = createTrain(id);
 
         mockServer.expect(ExpectedCount.once(), requestTo(new URI(TRAINS_URL + "/" + id)))
@@ -92,13 +92,11 @@ public class TrainRestServiceTest {
                 );
 
         // when
-        Optional<Train> optionalTrain = trainService.findById(id);
+        Train returnedTrain = trainService.findById(id);
 
         // then
         mockServer.verify();
-        assertTrue(optionalTrain.isPresent());
-        assertEquals(id, optionalTrain.get().getTrainId());
-        assertEquals(train.getTrainName(), optionalTrain.get().getTrainName());
+        assertEquals(train, returnedTrain);
     }
 
     @Test
@@ -147,15 +145,12 @@ public class TrainRestServiceTest {
 
         // when
         int result = trainService.updateTrain(train);
-        Optional<Train> updatedTrainOptional = trainService.findById(id);
+        Train returnedTrain = trainService.findById(id);
 
         // then
         mockServer.verify();
         assertEquals(1, result);
-
-        assertTrue(updatedTrainOptional.isPresent());
-        assertEquals(id, updatedTrainOptional.get().getTrainId());
-        assertEquals(train.getTrainName(), updatedTrainOptional.get().getTrainName());
+        assertEquals(train, returnedTrain);
     }
 
     @Test
