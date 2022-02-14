@@ -39,24 +39,17 @@ public class TrainRestServiceTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainRestServiceTest.class);
 
     @Autowired
-    RestTemplate restTemplate;
-
-    @Autowired
     TrainService trainService;
 
-    private MockRestServiceServer mockServer;
+    @Autowired
+    MockRestServiceServer mockServer;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @BeforeEach
-    public void before() {
-        mockServer = MockRestServiceServer.createServer(restTemplate);
-    }
-
     @Test
     public void shouldFindAllTrains() throws Exception {
-
         LOGGER.debug("shouldFindAllTrains()");
+
         // given
         mockServer.expect(ExpectedCount.once(), requestTo(new URI(TRAINS_URL)))
                 .andExpect(method(HttpMethod.GET))
@@ -78,8 +71,8 @@ public class TrainRestServiceTest {
 
     @Test
     public void shouldFindTrainById() throws Exception {
-
         LOGGER.debug("shouldFindTrainById()");
+
         // given
         int id = 1;
         Train train = createTrain(id);
@@ -101,8 +94,8 @@ public class TrainRestServiceTest {
 
     @Test
     public void shouldCreateTrain() throws Exception {
-
         LOGGER.debug("shouldCreateTrain()");
+
         // given
         Train train = new Train("TrainName");
 
@@ -122,8 +115,8 @@ public class TrainRestServiceTest {
 
     @Test
     public void shouldUpdateTrain() throws Exception {
-
         LOGGER.debug("shouldUpdateTrain()");
+
         // given
         Integer id = 1;
         Train train = new Train("TrainName");
