@@ -4,7 +4,7 @@ import by.epam.brest.service.PassengerDtoService;
 import by.epam.brest.service.TrainDtoService;
 import by.epam.brest.service.TrainService;
 import by.epam.brest.service.rest.*;
-import by.epam.brest.service.rest.exception.ServiceExceptionHandler;
+import by.epam.brest.web_app.WebExceptionHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -58,7 +58,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    ServiceExceptionHandler exceptionHandler() {
-        return new ServiceExceptionHandler();
+    WebExceptionHandler exceptionHandler() {
+        return new WebExceptionHandler();
     }
 }

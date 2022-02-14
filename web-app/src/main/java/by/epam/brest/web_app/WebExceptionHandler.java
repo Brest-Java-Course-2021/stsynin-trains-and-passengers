@@ -1,4 +1,4 @@
-package by.epam.brest.service.rest.exception;
+package by.epam.brest.web_app;
 
 import by.epam.brest.model.ErrorMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,15 +15,15 @@ import java.io.IOException;
  * @author Sergey Tsynin
  */
 @ControllerAdvice
-public class ServiceExceptionHandler {
+public class WebExceptionHandler {
 
-    public ServiceExceptionHandler() {
+    public WebExceptionHandler() {
         LOGGER.info("RestServiceExceptionHandler was created");
     }
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceExceptionHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebExceptionHandler.class);
 
     @ExceptionHandler(HttpClientErrorException.NotFound.class)
     public ModelAndView handleNotFoundError(HttpClientErrorException.NotFound e) throws IOException {

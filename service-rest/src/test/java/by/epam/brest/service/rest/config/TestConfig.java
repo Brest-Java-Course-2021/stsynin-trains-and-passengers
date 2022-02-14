@@ -3,10 +3,7 @@ package by.epam.brest.service.rest.config;
 import by.epam.brest.service.PassengerDtoService;
 import by.epam.brest.service.TrainDtoService;
 import by.epam.brest.service.TrainService;
-import by.epam.brest.service.rest.PassengerDtoRestService;
-import by.epam.brest.service.rest.PassengerRestService;
-import by.epam.brest.service.rest.TrainDtoRestService;
-import by.epam.brest.service.rest.TrainRestService;
+import by.epam.brest.service.rest.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -52,10 +49,5 @@ public class TestConfig {
     @Bean
     PassengerDtoService passengerDtoService() {
         return new PassengerDtoRestService(PASSENGERS_DTOS_URL, restTemplate());
-    }
-
-    @Bean
-    ServiceExceptionHandler exceptionHandler() {
-        return new ServiceExceptionHandler();
     }
 }
