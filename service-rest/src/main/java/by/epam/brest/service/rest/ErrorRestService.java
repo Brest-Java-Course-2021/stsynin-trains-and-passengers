@@ -1,6 +1,7 @@
 package by.epam.brest.service.rest;
 
 import by.epam.brest.model.ErrorMessage;
+import by.epam.brest.service.exception.ResourceLockedException;
 import by.epam.brest.service.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -23,6 +24,10 @@ import static org.springframework.http.HttpStatus.Series.SERVER_ERROR;
 @Component
 public class ErrorRestService implements ResponseErrorHandler {
 
+    public ErrorRestService() {
+        LOGGER.info("ErrorRestService was created");
+    }
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorRestService.class);
@@ -44,11 +49,13 @@ public class ErrorRestService implements ResponseErrorHandler {
             // handle CLIENT_ERROR
             LOGGER.debug("CLIENT_ERROR");
             LOGGER.debug(String.valueOf(httpResponse.getStatusCode()));
+            String message = extractErrorMessage(httpResponse).getMessage();
+            LOGGER.error("message from server - " + message);
             if (httpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
-                String message = extractErrorMessage(httpResponse).getMessage();
-                LOGGER.error("message from server - " + message);
-//                throw new ResourceNotFoundException("We're sorry, but we can't find anything about this.");
                 throw new ResourceNotFoundException(message);
+            }
+            if (httpResponse.getStatusCode() == HttpStatus.LOCKED) {
+                throw new ResourceLockedException(message);
             }
             if (httpResponse.getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
                 LOGGER.error("wow! UNPROCESSABLE_ENTITY");

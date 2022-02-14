@@ -1,5 +1,6 @@
 package by.epam.brest.service.rest.exception;
 
+import by.epam.brest.service.exception.ResourceLockedException;
 import by.epam.brest.service.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +25,20 @@ public class RestServiceExceptionHandler {
         String errorMessage = e.getMessage();
         LOGGER.error("OUT: handleNotFoundError - [{}]", errorMessage);
         ModelAndView errorPage = new ModelAndView("error");
-        errorPage.addObject("errorMessage", "We're sorry, but we can't find anything about this.");
+        errorPage.addObject("errorMessage",
+                "We're sorry, but we can't find anything about this.");
         errorPage.addObject("errorDescription", errorMessage);
         return errorPage;
     }
-//
-//    @ExceptionHandler(ResourceNotFoundException.class)
-//    public String handleNotFoundError(ResourceNotFoundException e, RedirectAttributes redirectAttributes) {
-//        LOGGER.error(e.getMessage());
-//        redirectAttributes.addAttribute("errorMessage", e.getMessage());
-//        return "redirect:/error";
-//    }
+
+    @ExceptionHandler(ResourceLockedException.class)
+    public ModelAndView handleResourceLockedError(ResourceLockedException e) {
+        String errorMessage = e.getMessage();
+        LOGGER.error("OUT: handleResourceLockedError - [{}]", errorMessage);
+        ModelAndView errorPage = new ModelAndView("error");
+        errorPage.addObject("errorMessage",
+                "We're sorry, but we can't delete loaded train. You should remove passenger(s) first.");
+        errorPage.addObject("errorDescription", errorMessage);
+        return errorPage;
+    }
 }
