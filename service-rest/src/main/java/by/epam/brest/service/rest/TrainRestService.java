@@ -41,7 +41,7 @@ public class TrainRestService implements TrainService {
                 new ParameterizedTypeReference<>() {
                 });
         List<Train> trains = responseEntity.getBody();
-        LOGGER.debug("OUT: findAll() - found {} employee(s)", trains != null ? trains.size() : 0);
+        LOGGER.debug("OUT: findAll() - found {} train(s)", trains != null ? trains.size() : 0);
         return trains;
     }
 
