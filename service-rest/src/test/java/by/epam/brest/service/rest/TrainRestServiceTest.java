@@ -1,9 +1,11 @@
 package by.epam.brest.service.rest;
 
+import by.epam.brest.model.ErrorMessage;
 import by.epam.brest.model.Train;
 import by.epam.brest.service.TrainService;
 import by.epam.brest.service.rest.config.TestConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -88,6 +91,29 @@ public class TrainRestServiceTest {
         // then
         mockServer.verify();
         assertEquals(train, returnedTrain);
+    }
+
+    @Test
+    public void shouldReturnTrainNotFoundById() throws Exception {
+        LOGGER.debug("shouldReturnTrainNotFoundById()");
+
+        // given
+        int id = 9;
+        ErrorMessage errorMessage = new ErrorMessage("test error");
+        mockServer.expect(ExpectedCount.once(), requestTo(new URI(TRAINS_URL + "/" + id)))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withStatus(HttpStatus.NOT_FOUND)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(mapper.writeValueAsString(errorMessage))
+                );
+
+        // when
+        Exception exception = Assertions.assertThrows(HttpClientErrorException.NotFound.class,
+                () -> trainService.findById(id));
+
+        // then
+        mockServer.verify();
+        assertEquals("404 Not Found: [{\"message\":\"test error\"}]", exception.getMessage());
     }
 
     @Test
