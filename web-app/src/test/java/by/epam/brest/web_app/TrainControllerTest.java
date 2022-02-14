@@ -1,11 +1,14 @@
 package by.epam.brest.web_app;
 
 import by.epam.brest.model.Train;
+import by.epam.brest.model.dto.TrainDto;
 import by.epam.brest.service.TrainDtoService;
 import by.epam.brest.service.TrainService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,6 +18,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_DESTINATION_NAME_LENGTH;
 import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
@@ -28,6 +33,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = TrainController.class)
 class TrainControllerTest {
 
+    public TrainControllerTest() {
+        LOGGER.info("TrainControllerTest was created");
+    }
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainControllerTest.class);
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -39,27 +50,48 @@ class TrainControllerTest {
 
     @Test
     public void shouldReturnTrainsPageAfterSearch() throws Exception {
+        LOGGER.info("shouldReturnTrainsPageAfterSearch()");
+
+        // given
         LocalDate dateStart = LocalDate.of(2010, 10, 10);
         LocalDate dateEnd = LocalDate.of(2011, 11, 11);
+        List<TrainDto> trainDtoList = Arrays.asList(
+                new TrainDto(0, "first", "down", LocalDate.now(), 1),
+                new TrainDto(1, "second", "up", LocalDate.now(), 2));
+        when(trainDtoService.getFilteredByDateTrainListWithPassengersCount(dateStart, dateEnd))
+                .thenReturn(trainDtoList);
+
+        // when
         mockMvc.perform(get("/trains")
                         .param("dateStart", String.valueOf(dateStart))
                         .param("dateEnd", String.valueOf(dateEnd))
                 ).andDo(print())
+
+                // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/html;charset=UTF-8"))
                 .andExpect(model().attribute("dateStart", is(dateStart)))
                 .andExpect(model().attribute("dateEnd", is(dateEnd)))
-                .andExpect(view().name("trains"))
-        ;
+                .andExpect(model().attribute("trains", is(trainDtoList)))
+                .andExpect(view().name("trains"));
     }
 
     @Test
     public void shouldReturnErrorPageWithWrongFiltersOrder() throws Exception {
+        LOGGER.info("shouldReturnErrorPageWithWrongFiltersOrder()");
+
+        // when
         mockMvc.perform(get("/trains?dateStart=2011-11-11&dateEnd=2010-10-10")
                 ).andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/error"))
-        ;
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("text/html;charset=UTF-8"))
+                .andExpect(model().attribute("errorMessage",
+                        is("We don't know how it happened, but there was a mistake in the data you entered.")))
+                .andExpect(model().attribute("errorDescription",
+                        is("The start date {2011-11-11} is later than the end date {2010-10-10}.")))
+                .andExpect(view().name("error"));
     }
 
     @Test

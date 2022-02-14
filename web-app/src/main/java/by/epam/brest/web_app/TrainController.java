@@ -1,6 +1,8 @@
 package by.epam.brest.web_app;
 
 import by.epam.brest.model.Train;
+import by.epam.brest.model.dto.TrainDto;
+import by.epam.brest.model.exception.ValidationErrorException;
 import by.epam.brest.service.TrainDtoService;
 import by.epam.brest.service.TrainService;
 import org.slf4j.Logger;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_DESTINATION_NAME_LENGTH;
 import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
@@ -33,6 +36,7 @@ public class TrainController {
     public TrainController(TrainDtoService trainDtoService, TrainService trainService) {
         this.trainDtoService = trainDtoService;
         this.trainService = trainService;
+        LOGGER.info("TrainController was created");
     }
 
     /**
@@ -40,29 +44,25 @@ public class TrainController {
      *
      * @param dateStart start of period of time.
      * @param dateEnd   end of period of time.
-     * @param model     model.
-     * @return view trains or view error.
+     * @return view trains.
      */
     @GetMapping(value = "/trains")
     public final String trainsWithFilter(@RequestParam(required = false)
                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateStart,
                                          @RequestParam(required = false)
                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEnd,
-                                         Model model,
-                                         RedirectAttributes redirectAttributes) {
-        LOGGER.debug("user ask trains list from: {} to: {}", dateStart, dateEnd);
+                                         Model model) {
+        LOGGER.info(" IN: trainsWithFilter() - [from: {} to: {}]", dateStart, dateEnd);
         if (!(dateStart == null) && !(dateEnd == null) && dateEnd.isBefore(dateStart)) {
-            LOGGER.error("wrong filters order! alarm!!!");
-            redirectAttributes.addAttribute("errorMessage",
-                    "We're sorry, but you're using the wrong search parameters.");
-            return "redirect:/error";
-        } else {
-            LOGGER.debug("return result of search");
-            model.addAttribute("trains", trainDtoService.getFilteredByDateTrainListWithPassengersCount(dateStart, dateEnd));
-            model.addAttribute("dateStart", dateStart);
-            model.addAttribute("dateEnd", dateEnd);
-            return "trains";
+                throw new ValidationErrorException(
+                    "The start date {" + dateStart + "} is later than the end date {" + dateEnd + "}.");
         }
+        List<TrainDto> trains = trainDtoService.getFilteredByDateTrainListWithPassengersCount(dateStart, dateEnd);
+        model.addAttribute("trains", trains);
+        model.addAttribute("dateStart", dateStart);
+        model.addAttribute("dateEnd", dateEnd);
+        LOGGER.info("OUT: trainsWithFilter() - found {} train(s)", trains.size());
+        return "trains";
     }
 
     /**
