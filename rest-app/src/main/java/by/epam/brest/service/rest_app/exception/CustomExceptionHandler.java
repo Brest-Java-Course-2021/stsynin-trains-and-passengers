@@ -1,6 +1,6 @@
 package by.epam.brest.service.rest_app.exception;
 
-import by.epam.brest.dao.jdbc.exception.ArgumentException;
+import by.epam.brest.dao.jdbc.exception.ValidationErrorException;
 import by.epam.brest.dao.jdbc.exception.ArgumentNullException;
 import by.epam.brest.dao.jdbc.exception.ArgumentOutOfRangeException;
 import by.epam.brest.service.exception.ResourceLockedException;
@@ -46,9 +46,9 @@ public class CustomExceptionHandler {
         return new ErrorMessage(e.getMessage());
     }
 
-    @ExceptionHandler(ArgumentException.class)
+    @ExceptionHandler(ValidationErrorException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorMessage handleArgumentException(ArgumentException e) {
+    public ErrorMessage handleArgumentException(ValidationErrorException e) {
         LOGGER.error(e.getMessage());
         return new ErrorMessage(e.getMessage());
     }

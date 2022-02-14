@@ -54,7 +54,7 @@ public class TrainController {
         if (!(dateStart == null) && !(dateEnd == null) && dateEnd.isBefore(dateStart)) {
             LOGGER.error("wrong filters order! alarm!!!");
             redirectAttributes.addAttribute("errorMessage",
-                    "We're sorry, but we use wrong search parameters.");
+                    "We're sorry, but you're using the wrong search parameters.");
             return "redirect:/error";
         } else {
             LOGGER.debug("return result of search");

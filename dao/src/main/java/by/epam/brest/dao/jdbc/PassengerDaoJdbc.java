@@ -1,7 +1,7 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.PassengerDao;
-import by.epam.brest.dao.jdbc.exception.ArgumentException;
+import by.epam.brest.dao.jdbc.exception.ValidationErrorException;
 import by.epam.brest.dao.jdbc.exception.ArgumentNullException;
 import by.epam.brest.dao.jdbc.exception.ArgumentOutOfRangeException;
 import by.epam.brest.model.Passenger;
@@ -161,7 +161,7 @@ public class PassengerDaoJdbc implements PassengerDao {
         }
         if (isSecondPassengerWithSameNameExists(passenger)) {
             logger.error("Passenger named {} is already exists", passengerName);
-            throw new ArgumentException(
+            throw new ValidationErrorException(
                     stage + " fail. This name already exists: '" + passengerName + "'");
         }
     }

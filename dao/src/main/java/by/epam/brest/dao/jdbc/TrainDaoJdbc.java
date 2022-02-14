@@ -1,7 +1,7 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.TrainDao;
-import by.epam.brest.dao.jdbc.exception.ArgumentException;
+import by.epam.brest.dao.jdbc.exception.ValidationErrorException;
 import by.epam.brest.dao.jdbc.exception.ArgumentNullException;
 import by.epam.brest.dao.jdbc.exception.ArgumentOutOfRangeException;
 import by.epam.brest.model.Train;
@@ -172,7 +172,7 @@ public class TrainDaoJdbc implements TrainDao {
         }
         if (isSecondTrainWithSameNameExists(train)) {
             logger.error(stage + " fail. Train named {} is already exists", trainName);
-            throw new ArgumentException(
+            throw new ValidationErrorException(
                     stage + " fail. This name already exists.");
         }
         if (train.getTrainDestination() != null &&
