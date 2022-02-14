@@ -53,4 +53,9 @@ public class TestConfig {
     PassengerDtoService passengerDtoService() {
         return new PassengerDtoRestService(PASSENGERS_DTOS_URL, restTemplate());
     }
+
+    @Bean
+    ServiceExceptionHandler exceptionHandler() {
+        return new ServiceExceptionHandler();
+    }
 }

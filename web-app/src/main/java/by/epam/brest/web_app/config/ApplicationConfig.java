@@ -4,7 +4,7 @@ import by.epam.brest.service.PassengerDtoService;
 import by.epam.brest.service.TrainDtoService;
 import by.epam.brest.service.TrainService;
 import by.epam.brest.service.rest.*;
-import by.epam.brest.service.rest.exception.RestServiceExceptionHandler;
+import by.epam.brest.service.rest.exception.ServiceExceptionHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -29,7 +29,7 @@ public class ApplicationConfig {
     @Bean
     RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate(new SimpleClientHttpRequestFactory());
-        restTemplate.setErrorHandler(new ErrorRestService());
+//        restTemplate.setErrorHandler(new ErrorRestService());
         return restTemplate;
     }
 
@@ -58,7 +58,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    RestServiceExceptionHandler exceptionHandler() {
-        return new RestServiceExceptionHandler();
+    ServiceExceptionHandler exceptionHandler() {
+        return new ServiceExceptionHandler();
     }
 }
