@@ -28,7 +28,7 @@ public class WebExceptionHandler {
 
     @ExceptionHandler(HttpClientErrorException.NotFound.class)
     public ModelAndView handleNotFoundError(HttpClientErrorException.NotFound e) throws IOException {
-        String errorMessage = extractErrorMessage(e.getResponseBodyAsString()).getMessage();
+        String errorMessage = extractErrorMessage(e.getResponseBodyAsString());
         LOGGER.error(" IN: handleNotFoundError - [{}]", errorMessage);
         ModelAndView errorPage = new ModelAndView("error");
         errorPage.addObject("errorMessage",
@@ -40,7 +40,7 @@ public class WebExceptionHandler {
 
     @ExceptionHandler(HttpClientErrorException.Conflict.class)
     public ModelAndView handleResourceLockedError(HttpClientErrorException.Conflict e) throws IOException {
-        String errorMessage = extractErrorMessage(e.getResponseBodyAsString()).getMessage();
+        String errorMessage = extractErrorMessage(e.getResponseBodyAsString());
         LOGGER.error(" IN: handleResourceLockedError - [{}]", errorMessage);
         ModelAndView errorPage = new ModelAndView("error");
         errorPage.addObject("errorMessage",
@@ -74,7 +74,10 @@ public class WebExceptionHandler {
 //        return errorPage;
 //    }
 
-    private ErrorMessage extractErrorMessage(String message) throws IOException {
-        return objectMapper.readValue(message, ErrorMessage.class);
+    private String extractErrorMessage(String message) throws IOException {
+        if (message.length() == 0) {
+            return "no comments";
+        }
+        return objectMapper.readValue(message, ErrorMessage.class).getMessage();
     }
 }
