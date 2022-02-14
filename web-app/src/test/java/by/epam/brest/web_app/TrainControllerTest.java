@@ -276,69 +276,114 @@ class TrainControllerTest {
     }
 
     @Test
-    public void shouldUpdateTrainAfterEdit() throws Exception {
+    public void shouldUpdateTrain() throws Exception {
+        LOGGER.info("shouldUpdateTrain()");
+
+        // given
+        Train train = new Train(44, "new", "trainDestination", LocalDate.now());
+        when(trainService.updateTrain(train)).thenReturn(1);
+
+        // when
         mockMvc.perform(post("/train/1")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("trainName", "trainName")
-                        .param("trainDestination", "trainDestination")
-                ).andExpect(status().isFound())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(train))
+                ).andDo(print())
+
+                // then
+                .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/trains"))
-                .andExpect(redirectedUrl("/trains"))
-        ;
+                .andExpect(redirectedUrl("/trains"));
+        verify(trainService).updateTrain(train);
     }
 
     @Test
     public void shouldNotUpdateTrainBecauseEmptyName() throws Exception {
+        LOGGER.info("()");
+
+        // given
+        Train train = new Train(44, null, "trainDestination", LocalDate.now());
+
+        // when
         mockMvc.perform(post("/train/1")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("trainName", (String) null)
-                        .param("trainDestination", "trainDestination")
-                ).andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/error"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(train))
+                ).andDo(print())
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Update failure. The train name cannot be empty.")))
-        ;
+                        is("We don't know how it happened, but there was a mistake in the data you entered.")))
+                .andExpect(model().attribute("errorDescription",
+                        is("Update failure. The train name cannot be empty.")));
     }
 
     @Test
     public void shouldNotUpdateTrainBecauseOverlongName() throws Exception {
+        LOGGER.info("()");
+
+        // given
         String trainName = getOverlongName();
+        Train train = new Train(44, trainName, "trainDestination", LocalDate.now());
+
+        // when
         mockMvc.perform(post("/train/1")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("trainName", trainName)
-                        .param("trainDestination", "trainDestination")
-                ).andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/error"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(train))
+                ).andDo(print())
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Update failure. The name of the train is too long.")))
-        ;
+                        is("We don't know how it happened, but there was a mistake in the data you entered.")))
+                .andExpect(model().attribute("errorDescription",
+                        is("Update failure. The name of the train is too long.")));
     }
 
     @Test
     public void shouldNotUpdateTrainBecauseEmptyDestinationName() throws Exception {
+        LOGGER.info("()");
+
+        // given
+        Train train = new Train(44, "new", null, LocalDate.now());
+
+        // when
         mockMvc.perform(post("/train/1")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("trainName", "trainName")
-                        .param("trainDestination", (String) null)
-                ).andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/error"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(train))
+                ).andDo(print())
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Update failure. The name of the train's destination cannot be empty.")))
-        ;
+                        is("We don't know how it happened, but there was a mistake in the data you entered.")))
+                .andExpect(model().attribute("errorDescription",
+                        is("Update failure. The name of the train's destination cannot be empty.")));
     }
 
     @Test
     public void shouldNotUpdateTrainBecauseOverlongDestinationName() throws Exception {
+        LOGGER.info("()");
+
+        // given
         String trainDestination = getOverlongDestinationName();
+        Train train = new Train(44, "new", trainDestination, LocalDate.now());
+
+        // when
         mockMvc.perform(post("/train/1")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("trainName", "trainName")
-                        .param("trainDestination", trainDestination)
-                ).andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/error"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(train))
+                ).andDo(print())
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Update failure. The name of the train's destination is too long.")))
-        ;
+                        is("We don't know how it happened, but there was a mistake in the data you entered.")))
+                .andExpect(model().attribute("errorDescription",
+                        is("Update failure. The name of the train's destination is too long.")));
     }
 
     @Test

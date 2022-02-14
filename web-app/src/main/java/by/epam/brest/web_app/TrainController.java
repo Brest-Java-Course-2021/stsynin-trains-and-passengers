@@ -117,19 +117,17 @@ public class TrainController {
      * @return view trains or view error.
      */
     @PostMapping(value = "/train/{id}")
-    public String updateTrain(Train train,
+    public String updateTrain(@RequestBody Train train,
                               RedirectAttributes redirectAttributes) {
-        LOGGER.debug("user ask to update train");
+        LOGGER.info(" IN: updateTrain() - [{}]", train);
         String errorWithTrainNames = getErrorWithTrainNames(train, "Update");
         if (errorWithTrainNames != null) {
-            LOGGER.error(errorWithTrainNames);
-            redirectAttributes.addAttribute("errorMessage", errorWithTrainNames);
-            return "redirect:/error";
-        } else {
-            LOGGER.debug("updating {}", train);
-            this.trainService.updateTrain(train);
-            return "redirect:/trains";
+            throw new ValidationErrorException(errorWithTrainNames);
         }
+        Integer count = trainService.updateTrain(train);
+        LOGGER.debug("OUT: updateTrain() - updated: [{}]", count);
+        return "redirect:/trains";
+
     }
 
     /**
