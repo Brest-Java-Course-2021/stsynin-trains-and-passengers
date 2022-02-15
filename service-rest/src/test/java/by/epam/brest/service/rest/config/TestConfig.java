@@ -10,7 +10,6 @@ import by.epam.brest.service.rest.TrainRestService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -27,11 +26,6 @@ public class TestConfig {
     @Bean
     RestTemplate restTemplate() {
         return new RestTemplate(new SimpleClientHttpRequestFactory());
-    }
-
-    @Bean
-    MockRestServiceServer mockServer(RestTemplate restTemplate) {
-        return MockRestServiceServer.createServer(restTemplate);
     }
 
     @Bean

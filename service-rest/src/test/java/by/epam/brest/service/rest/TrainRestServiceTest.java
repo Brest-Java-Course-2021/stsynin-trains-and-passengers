@@ -6,6 +6,7 @@ import by.epam.brest.service.TrainService;
 import by.epam.brest.service.rest.config.TestConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -44,9 +46,16 @@ public class TrainRestServiceTest {
     TrainService trainService;
 
     @Autowired
-    MockRestServiceServer mockServer;
+    RestTemplate restTemplate;
+
+    private MockRestServiceServer mockServer;
 
     private final ObjectMapper mapper = new ObjectMapper();
+
+    @BeforeEach
+    public void before() {
+        mockServer = MockRestServiceServer.createServer(restTemplate);
+    }
 
     @Test
     public void shouldFindAllTrains() throws Exception {
