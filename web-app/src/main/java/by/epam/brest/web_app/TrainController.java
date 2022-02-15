@@ -12,7 +12,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -117,8 +116,7 @@ public class TrainController {
      * @return view trains or view error.
      */
     @PostMapping(value = "/train/{id}")
-    public String updateTrain(@RequestBody Train train,
-                              RedirectAttributes redirectAttributes) {
+    public String updateTrain(@RequestBody Train train) {
         LOGGER.info(" IN: updateTrain() - [{}]", train);
         String errorWithTrainNames = getErrorWithTrainNames(train, "Update");
         if (errorWithTrainNames != null) {
@@ -142,26 +140,6 @@ public class TrainController {
         trainService.deleteById(id);
         LOGGER.info("OUT: deleteTrain() - [deleted]");
         return "redirect:/trains";
-
-
-//        LOGGER.debug("user ask to delete train id: {}", id);
-//        Optional<Train> optionalTrain = Optional.of(trainService.findById(id));
-//        if (optionalTrain.isPresent()) {
-////            if (trainService.isTrainLoaded(id)) {
-////                LOGGER.error("...but train id: {} is loaded", id);
-////                redirectAttributes.addAttribute(
-////                        "errorMessage",
-////                        "We're sorry, but we can't delete loaded train. You should remove passenger(s) first.");
-////                return "redirect:/error";
-////            }
-//            LOGGER.debug("execute delete");
-//        } else {
-//            LOGGER.error("...but train id: {} was not found", id);
-//            redirectAttributes.addAttribute(
-//                    "errorMessage",
-//                    "We're sorry, but we can't find record for delete this train.");
-//            return "redirect:/error";
-//        }
     }
 
     private String getErrorWithTrainNames(Train train, String stage) {

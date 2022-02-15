@@ -8,7 +8,6 @@ import by.epam.brest.service.TrainService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDate;
@@ -387,8 +385,8 @@ class TrainControllerTest {
     }
 
     @Test
-    @Disabled
     public void shouldDeleteTrainById() throws Exception {
+        LOGGER.info("shouldDeleteTrainById()");
 
         // given
         Integer id = 42;
@@ -397,56 +395,69 @@ class TrainControllerTest {
         when(trainService.deleteById(id)).thenReturn(1);
 
         mockMvc.perform(get("/train/" + id + "/delete")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
 
+                // then
                 .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/trains"))
                 .andExpect(redirectedUrl("/trains"));
+        verify(trainService).deleteById(id);
     }
 
     @Test
-    @Disabled
     public void shouldReturnErrorPageBecauseDeleteNonexistentTrain() throws Exception {
+        LOGGER.info("shouldReturnErrorPageBecauseDeleteNonexistentTrain()");
 
         // given
-        Integer id = 42;
+        Integer id = 9;
+        ErrorMessage message = new ErrorMessage("help");
+        when(trainService.deleteById(id)).thenThrow(getNotFoundErrorException(message));
 
         // when
-        when(trainService.findById(id)).thenReturn(null);
-
         mockMvc.perform(get("/train/" + id + "/delete")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                ).andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/error"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("We're sorry, but we can't find record for delete this train.")))
-        ;
+                        is("We're sorry, but we can't find anything about this.")))
+                .andExpect(model().attribute("errorDescription",
+                        is("help")));
+        verify(trainService).deleteById(id);
     }
 
     @Test
-    @Disabled
     public void shouldReturnErrorPageBecauseDeleteLoadedTrain() throws Exception {
+        LOGGER.info("shouldReturnErrorPageBecauseDeleteLoadedTrain()");
 
         // given
-        Train train = new Train("TrainName");
-        Integer id = 42;
-        train.setTrainId(id);
+        Integer id = 3;
+        ErrorMessage message = new ErrorMessage("hi-hi");
+        when(trainService.deleteById(id)).thenThrow(
+                HttpClientErrorException.create(
+                        HttpStatus.CONFLICT,
+                        "none",
+                        null,
+                        mapper.writeValueAsString(message).getBytes(),
+                        null));
 
         // when
-//        when(trainService.findById(id)).thenReturn(Optional.of(train));
-//        when(trainService.isTrainLoaded(id)).thenReturn(true);
-
         mockMvc.perform(
                         MockMvcRequestBuilders.get("/train/" + id + "/delete")
-                                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                ).andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/error"))
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("We're sorry, but we can't delete loaded train. You should remove passenger(s) first.")))
-        ;
+                        is("We are sorry, but we cannot remove a loaded train. " +
+                                "You must first remove the passenger(s).")))
+                .andExpect(model().attribute("errorDescription",
+                        is("hi-hi")));
     }
 
 //TODO    public void shouldNotAddTrainIfTrainNameExistInBase() throws Exception {
