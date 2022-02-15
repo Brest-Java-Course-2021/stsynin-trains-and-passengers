@@ -70,7 +70,7 @@ public class CustomExceptionHandlerTest {
                 .andDo(print())
 
                 // then
-                .andExpect(status().isLocked())
+                .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("TrainLoadedError"));
 
         verify(trainService).deleteById(1);
