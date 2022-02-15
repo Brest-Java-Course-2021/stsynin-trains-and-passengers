@@ -63,16 +63,16 @@ public class WebExceptionHandler {
         return errorPage;
     }
 
-//    @ExceptionHandler(ConnectException.class)
-//    public ModelAndView handleConnectException(ConnectException e) {
-//        String errorMessage = e.getMessage();
-//        LOGGER.error("OUT: handleConnectException - [{}]", errorMessage);
-//        ModelAndView errorPage = new ModelAndView("error");
-//        errorPage.addObject("errorMessage",
-//                "Internal Server Error");
-//        errorPage.addObject("errorDescription", errorMessage);
-//        return errorPage;
-//    }
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleOtherException(Exception e) {
+        String errorMessage = e.getMessage();
+        LOGGER.error("OUT: handleOtherException - [{}]", errorMessage);
+        ModelAndView errorPage = new ModelAndView("error");
+        errorPage.addObject("errorMessage", "Unknown Error");
+        errorPage.addObject("errorDescription", errorMessage);
+        LOGGER.error("OUT: handleOtherException - [errorPage]");
+        return errorPage;
+    }
 
     private String extractErrorMessage(String message) throws IOException {
         if (message.length() == 0) {
