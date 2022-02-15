@@ -2,40 +2,51 @@ package by.epam.brest.service.impl;
 
 import by.epam.brest.dao.jdbc.TrainDtoDaoJdbc;
 import by.epam.brest.model.dto.TrainDto;
-import by.epam.brest.service.TrainDtoService;
-import by.epam.brest.testDb.SpringJdbcConfig;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@Import({TrainDtoServiceImpl.class, TrainDtoDaoJdbc.class})
-@PropertySource({"classpath:sql-requests.properties"})
-@ContextConfiguration(classes = SpringJdbcConfig.class)
-@ComponentScan(basePackages = {"by.epam.brest.t-and-p-dao", "com.epam.brest.t-and-p-test-db"})
-@Transactional
+@ExtendWith(MockitoExtension.class)
 class TrainDtoServiceImplIntegrationTest {
 
-    @Autowired
-    TrainDtoService trainDtoService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainDtoServiceImplIntegrationTest.class);
 
-//    @Test
-//    void findAllWithPassengersCount() {
-//        List<TrainDto> trains = trainDtoService.findAllWithPassengersCount();
-//
-//        assertNotNull(trains);
-//        assertTrue(trains.size() > 0);
-//        assertEquals(1, trains.get(0).getTrainPassengerCount());
-//        assertEquals(2, trains.get(1).getTrainPassengerCount());
-//        assertEquals(3, trains.get(2).getTrainPassengerCount());
-//    }
+    @InjectMocks
+    TrainDtoServiceImpl trainDtoService;
+
+    @Mock
+    TrainDtoDaoJdbc trainDtoDao;
+
+
+    @Test
+    void shouldReturnTrainListWithPassengersCount() {
+        LOGGER.info("shouldReturnTrainListWithPassengersCount()");
+
+        // given
+        LocalDate start = LocalDate.of(1900, 1, 1);
+        LocalDate end = LocalDate.of(2000, 1, 1);
+        List<TrainDto> testTrains = Arrays.asList(
+                new TrainDto(1, "first", "up", LocalDate.now(), 5),
+                new TrainDto(2, "second", "down", LocalDate.now(), 6));
+        when(trainDtoDao.getFilteredByDateTrainListWithPassengersCount(start, end)).thenReturn(testTrains);
+
+        // when
+        List<TrainDto> trainDtos = trainDtoService.getFilteredByDateTrainListWithPassengersCount(start, end);
+
+        // then
+        assertEquals(testTrains, trainDtos);
+        verify(trainDtoDao).getFilteredByDateTrainListWithPassengersCount(start, end);
+    }
 }
