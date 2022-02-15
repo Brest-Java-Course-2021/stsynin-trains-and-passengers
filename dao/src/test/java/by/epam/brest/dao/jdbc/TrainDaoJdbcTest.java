@@ -52,7 +52,6 @@ public class TrainDaoJdbcTest {
         // then
         assertTrue(optionalTrain.isPresent());
         Train train = optionalTrain.get();
-        System.out.println(train);
         assertEquals(1, train.getTrainId());
         assertEquals("first", train.getTrainName());
         assertEquals("first direction", train.getTrainDestination());
