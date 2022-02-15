@@ -17,7 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDate;
@@ -31,7 +30,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = TrainController.class)
@@ -70,8 +68,7 @@ class TrainControllerTest {
         // when
         mockMvc.perform(get("/trains")
                         .param("dateStart", String.valueOf(dateStart))
-                        .param("dateEnd", String.valueOf(dateEnd))
-                ).andDo(print())
+                        .param("dateEnd", String.valueOf(dateEnd)))
 
                 // then
                 .andExpect(status().isOk())
@@ -88,8 +85,7 @@ class TrainControllerTest {
         LOGGER.info("shouldReturnErrorPageWithWrongFiltersOrder()");
 
         // when
-        mockMvc.perform(get("/trains?dateStart=2011-11-11&dateEnd=2010-10-10")
-                ).andDo(print())
+        mockMvc.perform(get("/trains?dateStart=2011-11-11&dateEnd=2010-10-10"))
 
                 // then
                 .andExpect(status().isOk())
@@ -111,8 +107,7 @@ class TrainControllerTest {
         when(trainService.findById(id)).thenReturn(train);
 
         // when
-        mockMvc.perform(get("/train/" + id)
-                ).andDo(print())
+        mockMvc.perform(get("/train/" + id))
 
                 // then
                 .andExpect(status().isOk())
@@ -133,8 +128,7 @@ class TrainControllerTest {
         when(trainService.findById(id)).thenThrow(getNotFoundErrorException(message));
 
         // when
-        mockMvc.perform(get("/train/" + id)
-                ).andDo(print())
+        mockMvc.perform(get("/train/" + id))
 
                 // then
                 .andExpect(status().isOk())
@@ -151,8 +145,7 @@ class TrainControllerTest {
         LOGGER.info("shouldOpenNewTrainPage()");
 
         // when
-        mockMvc.perform(get("/train")
-                ).andDo(print())
+        mockMvc.perform(get("/train"))
 
                 // then
                 .andExpect(status().isOk())
@@ -173,8 +166,7 @@ class TrainControllerTest {
         // when
         mockMvc.perform(post("/train")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train))
-                ).andDo(print())
+                        .content(mapper.writeValueAsString(train)))
 
                 // then
                 .andExpect(status().isFound())
@@ -193,8 +185,7 @@ class TrainControllerTest {
         // when
         mockMvc.perform(post("/train")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train))
-                ).andDo(print())
+                        .content(mapper.writeValueAsString(train)))
 
                 // then
                 .andExpect(status().isOk())
@@ -216,8 +207,7 @@ class TrainControllerTest {
         // when
         mockMvc.perform(post("/train")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train))
-                ).andDo(print())
+                        .content(mapper.writeValueAsString(train)))
 
                 // then
                 .andExpect(status().isOk())
@@ -238,8 +228,7 @@ class TrainControllerTest {
         // when
         mockMvc.perform(post("/train")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train))
-                ).andDo(print())
+                        .content(mapper.writeValueAsString(train)))
 
                 // then
                 .andExpect(status().isOk())
@@ -261,8 +250,7 @@ class TrainControllerTest {
         // when
         mockMvc.perform(post("/train")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train))
-                ).andDo(print())
+                        .content(mapper.writeValueAsString(train)))
 
                 // then
                 .andExpect(status().isOk())
@@ -284,8 +272,7 @@ class TrainControllerTest {
         // when
         mockMvc.perform(post("/train/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train))
-                ).andDo(print())
+                        .content(mapper.writeValueAsString(train)))
 
                 // then
                 .andExpect(status().isFound())
@@ -304,8 +291,7 @@ class TrainControllerTest {
         // when
         mockMvc.perform(post("/train/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train))
-                ).andDo(print())
+                        .content(mapper.writeValueAsString(train)))
 
                 // then
                 .andExpect(status().isOk())
@@ -327,8 +313,7 @@ class TrainControllerTest {
         // when
         mockMvc.perform(post("/train/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train))
-                ).andDo(print())
+                        .content(mapper.writeValueAsString(train)))
 
                 // then
                 .andExpect(status().isOk())
@@ -349,8 +334,7 @@ class TrainControllerTest {
         // when
         mockMvc.perform(post("/train/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train))
-                ).andDo(print())
+                        .content(mapper.writeValueAsString(train)))
 
                 // then
                 .andExpect(status().isOk())
@@ -372,8 +356,7 @@ class TrainControllerTest {
         // when
         mockMvc.perform(post("/train/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train))
-                ).andDo(print())
+                        .content(mapper.writeValueAsString(train)))
 
                 // then
                 .andExpect(status().isOk())
@@ -396,7 +379,6 @@ class TrainControllerTest {
 
         mockMvc.perform(get("/train/" + id + "/delete")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
 
                 // then
                 .andExpect(status().isFound())
@@ -416,8 +398,7 @@ class TrainControllerTest {
 
         // when
         mockMvc.perform(get("/train/" + id + "/delete")
-                        .contentType(MediaType.APPLICATION_JSON)
-                ).andDo(print())
+                        .contentType(MediaType.APPLICATION_JSON))
 
                 // then
                 .andExpect(status().isOk())
@@ -445,10 +426,8 @@ class TrainControllerTest {
                         null));
 
         // when
-        mockMvc.perform(
-                        MockMvcRequestBuilders.get("/train/" + id + "/delete")
-                                .contentType(MediaType.APPLICATION_JSON)
-                ).andDo(print())
+        mockMvc.perform(get("/train/" + id + "/delete")
+                        .contentType(MediaType.APPLICATION_JSON))
 
                 // then
                 .andExpect(status().isOk())
@@ -459,10 +438,6 @@ class TrainControllerTest {
                 .andExpect(model().attribute("errorDescription",
                         is("hi-hi")));
     }
-
-//TODO    public void shouldNotAddTrainIfTrainNameExistInBase() throws Exception {
-
-//TODO    public void shouldNotUpdateTrainIfNewNameAlreadyExists() throws Exception {
 
     private HttpClientErrorException getNotFoundErrorException(ErrorMessage message) throws JsonProcessingException {
         return HttpClientErrorException.create(
