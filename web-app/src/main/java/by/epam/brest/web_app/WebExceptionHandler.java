@@ -44,7 +44,7 @@ public class WebExceptionHandler {
         LOGGER.error(" IN: handleResourceLockedError - [{}]", errorMessage);
         ModelAndView errorPage = new ModelAndView("error");
         errorPage.addObject("errorMessage",
-                "We are sorry, but we cannot remove a loaded train." +
+                "We are sorry, but we cannot remove a loaded train. " +
                         "You must first remove the passenger(s).");
         errorPage.addObject("errorDescription", errorMessage);
         LOGGER.error("OUT: handleResourceLockedError - [errorPage]");
