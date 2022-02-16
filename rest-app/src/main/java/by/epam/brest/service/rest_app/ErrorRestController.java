@@ -27,20 +27,21 @@ public class ErrorRestController implements ErrorController {
     @GetMapping("/error")
     public ResponseEntity<ErrorMessage> handleError(HttpServletRequest request) {
 
-        LOGGER.error("error detected!!!");
+        LOGGER.error(" IN: handleError() - []");
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+        Object uri = request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI);
         if (status != null) {
             int statusCode = Integer.parseInt(status.toString());
-            LOGGER.error(" statusCode: {}", statusCode);
+            LOGGER.error(" Error status code: {}", statusCode);
 
             if (statusCode == 404) {
-                LOGGER.error(" Resource not found");
+                LOGGER.error("OUT: handleError() - [Resource [{}] not found]", uri);
                 return new ResponseEntity<>(
                         new ErrorMessage("Resource not found"),
                         HttpStatus.NOT_FOUND);
             }
         }
-        LOGGER.error(" Unknown error");
+        LOGGER.error("OUT: handleError() - [Unknown error while [{}] request]", uri);
         return new ResponseEntity<>(
                 new ErrorMessage("Unknown error"),
                 HttpStatus.NOT_IMPLEMENTED);
