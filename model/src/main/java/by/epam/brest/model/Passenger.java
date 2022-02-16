@@ -55,7 +55,7 @@ public class Passenger {
 
     @Override
     public String toString() {
-        return "\n\rPassenger{" +
+        return "Passenger{" +
                 "passengerId=" + passengerId +
                 ", passengerName='" + passengerName + '\'' +
                 ", trainId=" + trainId +

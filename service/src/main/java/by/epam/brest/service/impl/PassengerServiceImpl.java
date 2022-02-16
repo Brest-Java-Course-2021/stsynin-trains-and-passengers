@@ -44,7 +44,11 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public Integer deletePassenger(Integer passengerId) {
-        return passengerDao.deletePassenger(passengerId);
+        Integer deleteResult = passengerDao.deletePassenger(passengerId);
+        if (deleteResult < 1) {
+            throw new ResourceNotFoundException(notFoundForThisIdMessage(passengerId));
+        }
+        return deleteResult;
     }
 
     @Override
