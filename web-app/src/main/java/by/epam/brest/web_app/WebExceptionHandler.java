@@ -5,6 +5,7 @@ import by.epam.brest.model.exception.ValidationErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
@@ -52,14 +53,26 @@ public class WebExceptionHandler {
     }
 
     @ExceptionHandler(ValidationErrorException.class)
-    public ModelAndView handleValidationError(ValidationErrorException e) throws IOException {
+    public ModelAndView handleManualValidationError(ValidationErrorException e) {
         String errorMessage = e.getMessage();
-        LOGGER.error(" IN: handleValidationError - [{}]", errorMessage);
+        LOGGER.error(" IN: handleManualValidationError - [{}]", errorMessage);
         ModelAndView errorPage = new ModelAndView("error");
         errorPage.addObject("errorMessage",
                 "We don't know how it happened, but there was a mistake in the data you entered.");
         errorPage.addObject("errorDescription", errorMessage);
-        LOGGER.error("OUT: handleValidationError - [errorPage]");
+        LOGGER.error("OUT: handleManualValidationError - [errorPage]");
+        return errorPage;
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ModelAndView handleAutoValidationError(MethodArgumentNotValidException e) {
+        String errorMessage = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+        LOGGER.error(" IN: handleAutoValidationError - [{}]", errorMessage);
+        ModelAndView errorPage = new ModelAndView("error");
+        errorPage.addObject("errorMessage",
+                "We don't know how it happened, but there was a mistake in the data you entered.");
+        errorPage.addObject("errorDescription", errorMessage);
+        LOGGER.error("OUT: handleAutoValidationError - [errorPage]");
         return errorPage;
     }
 
