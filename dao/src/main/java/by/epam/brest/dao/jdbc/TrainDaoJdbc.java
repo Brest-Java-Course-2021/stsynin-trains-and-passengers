@@ -1,7 +1,9 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.TrainDao;
-import by.epam.brest.dao.jdbc.exception.*;
+import by.epam.brest.model.exception.ValidationErrorException;
+import by.epam.brest.model.exception.ArgumentNullException;
+import by.epam.brest.model.exception.ArgumentOutOfRangeException;
 import by.epam.brest.model.Train;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,10 +119,6 @@ public class TrainDaoJdbc implements TrainDao {
 
     @Override
     public Integer deleteTrain(Integer trainId) {
-        if (isTrainLoaded(trainId)) {
-            logger.error("Can't delete train id: {}: this train have a passenger(s)", trainId);
-            throw new TrainLoadedException("Delete fail. There are registered passengers. Train id:" + trainId);
-        }
         logger.debug("Delete train id: {}", trainId);
         return namedParameterJdbcTemplate.update(
                 sqlDeleteTrainById,
@@ -128,17 +126,12 @@ public class TrainDaoJdbc implements TrainDao {
     }
 
     @Override
-    public Integer getTrainsCount() {
+    public Integer count() {
         logger.debug("count()");
         return namedParameterJdbcTemplate.queryForObject(
                 sqlGetTrainsCount,
                 new HashMap<>(),
                 Integer.class);
-    }
-
-    @Override
-    public boolean isTrainLoaded(Integer trainId) {
-        return getPassengerCountForTrain(trainId) > 0;
     }
 
     private Integer getPassengerCountForTrain(Integer trainId) {
@@ -158,7 +151,7 @@ public class TrainDaoJdbc implements TrainDao {
         return parameterSource;
     }
 
-    public boolean isSecondTrainWithSameNameExists(Train train) {
+    private boolean isSecondTrainWithSameNameExists(Train train) {
         List<Train> trains = namedParameterJdbcTemplate.query(
                 sqlGetTrainByName,
                 new MapSqlParameterSource(TRAIN_NAME, train.getTrainName()),
@@ -170,23 +163,23 @@ public class TrainDaoJdbc implements TrainDao {
         String trainName = train.getTrainName();
         if (trainName == null) {
             logger.error(stage + " fail. Train name is null");
-            throw new TrainEmptyNameException(stage + " fail. Train name can't be empty");
+            throw new ArgumentNullException(stage + " fail. Train name can't be empty");
         }
         if (trainName.length() > MAX_TRAIN_NAME_LENGTH) {
             logger.error(stage + " fail. Train name {} is too long", trainName);
-            throw new TrainOverlongNameException(
-                    stage + " fail. This name is too long : '" + trainName + "'");
+            throw new ArgumentOutOfRangeException(
+                    stage + " fail. This name is too long.");
         }
         if (isSecondTrainWithSameNameExists(train)) {
-            logger.error("Train named {} is already exists", trainName);
-            throw new TrainDuplicatedNameException(
-                    stage + " fail. This name already exists: '" + trainName + "'");
+            logger.error(stage + " fail. Train named {} is already exists", trainName);
+            throw new ValidationErrorException(
+                    stage + " fail. This name already exists.");
         }
         if (train.getTrainDestination() != null &&
                 train.getTrainDestination().length() > MAX_TRAIN_DESTINATION_NAME_LENGTH) {
             logger.error(stage + " fail. Train destination name {} is too long", train.getTrainDestination());
-            throw new TrainOverlongDestinationNameException(
-                    stage + " fail. This name of destination is too long : '" + train.getTrainDestination() + "'");
+            throw new ArgumentOutOfRangeException(
+                    stage + " fail. This name of destination is too long.");
         }
     }
 }

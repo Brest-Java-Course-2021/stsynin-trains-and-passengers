@@ -1,14 +1,16 @@
 package by.epam.brest.service.impl;
 
 import by.epam.brest.dao.TrainDao;
+import by.epam.brest.service.exception.ResourceLockedException;
 import by.epam.brest.model.Train;
 import by.epam.brest.service.TrainService;
+import by.epam.brest.service.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -27,8 +29,10 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public Optional<Train> findById(Integer trainId) {
-        return trainDao.findById(trainId);
+    public Train findById(Integer id) {
+        return trainDao.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(notFoundForThisIdMessage(id)));
     }
 
     @Override
@@ -42,22 +46,26 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public Integer deleteTrain(Integer trainId) {
-        return trainDao.deleteTrain(trainId);
+    public Integer deleteById(Integer id) {
+        Integer deleteResult;
+        try {
+            deleteResult = trainDao.deleteTrain(id);
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            throw new ResourceLockedException("Delete fail. There are registered passengers. Train id:" + id);
+        }
+        if (deleteResult < 1) {
+            throw new ResourceNotFoundException(notFoundForThisIdMessage(id));
+        }
+        return deleteResult;
     }
 
     @Override
     public Integer getTrainsCount() {
-        return trainDao.getTrainsCount();
+        return trainDao.count();
     }
 
-    @Override
-    public boolean isSecondTrainWithSameNameExists(Train train) {
-        return trainDao.isSecondTrainWithSameNameExists(train);
-    }
-
-    @Override
-    public boolean isTrainLoaded(Integer trainId) {
-        return trainDao.isTrainLoaded(trainId);
+    private String notFoundForThisIdMessage(Integer trainId) {
+        return String.format("No train with id %s exists!", trainId);
     }
 }

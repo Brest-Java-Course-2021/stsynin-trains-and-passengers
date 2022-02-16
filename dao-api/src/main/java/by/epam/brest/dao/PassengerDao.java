@@ -15,23 +15,23 @@ public interface PassengerDao {
     List<Passenger> findAll();
 
     /**
-     * Get passenger by Id.
+     * Get passenger by id.
      *
-     * @param passengerId passenger Id.
+     * @param passengerId passenger id.
      * @return passenger.
      */
     Optional<Passenger> findById(Integer passengerId);
 
     /**
-     * Save new passenger record.
+     * Save the new passenger.
      *
      * @param passenger object.
-     * @return saved passenger Id.
+     * @return saved passenger id.
      */
     Integer createPassenger(Passenger passenger);
 
     /**
-     * Update passenger record in the database.
+     * Update the passenger record in the database.
      *
      * @param passenger object.
      * @return number of updated passengers in the database.
@@ -39,9 +39,9 @@ public interface PassengerDao {
     Integer updatePassenger(Passenger passenger);
 
     /**
-     * Delete passenger by Id.
+     * Delete passenger by id.
      *
-     * @param passengerId train Id.
+     * @param passengerId passenger id.
      * @return number of deleted passengers in the database.
      */
     Integer deletePassenger(Integer passengerId);
@@ -54,7 +54,10 @@ public interface PassengerDao {
     Integer getPassengersCount();
 
     /**
-     * Check if this name of passenger is exist in the database.
+     * Check if this passenger name exists in the database.
+     *
+     * @param passenger object.
+     * @return passenger with the same name presence.
      */
     boolean isSecondPassengerWithSameNameExists(Passenger passenger);
 }

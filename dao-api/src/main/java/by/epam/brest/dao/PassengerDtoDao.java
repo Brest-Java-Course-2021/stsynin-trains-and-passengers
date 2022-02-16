@@ -10,7 +10,7 @@ import java.util.List;
 public interface PassengerDtoDao {
 
     /**
-     * Get all passenger with connected train name.
+     * Get all passengers with connected train name.
      *
      * @return passenger list
      */

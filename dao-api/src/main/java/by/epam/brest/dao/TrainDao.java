@@ -15,18 +15,18 @@ public interface TrainDao {
     List<Train> findAll();
 
     /**
-     * Get train by Id.
+     * Get train by id.
      *
-     * @param trainId train Id.
+     * @param trainId train id.
      * @return train.
      */
     Optional<Train> findById(Integer trainId);
 
     /**
-     * Save new train record.
+     * Save the new train.
      *
      * @param train object.
-     * @return saved train Id.
+     * @return new train id.
      */
     Integer createTrain(Train train);
 
@@ -39,33 +39,17 @@ public interface TrainDao {
     Integer updateTrain(Train train);
 
     /**
-     * Delete train by Id.
+     * Delete train by id.
      *
-     * @param trainId train Id.
+     * @param trainId train id.
      * @return number of deleted trains in the database.
      */
     Integer deleteTrain(Integer trainId);
 
     /**
-     * Get number of trains in the database.
+     * Get count of trains in the database.
      *
-     * @return number of trains in the database.
+     * @return count of trains in the database.
      */
-    Integer getTrainsCount();
-
-    /**
-     * Check for another train with the same name.
-     *
-     * @param train object.
-     * @return train with the same name presence.
-     */
-    boolean isSecondTrainWithSameNameExists(Train train);
-
-    /**
-     * Check if train have passengers.
-     *
-     * @param trainId train Id.
-     * @return the presence of passengers on this train.
-     */
-    boolean isTrainLoaded(Integer trainId);
+    Integer count();
 }

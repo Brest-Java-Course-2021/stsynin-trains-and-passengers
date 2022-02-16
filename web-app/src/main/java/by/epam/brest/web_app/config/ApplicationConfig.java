@@ -1,10 +1,12 @@
 package by.epam.brest.web_app.config;
 
 import by.epam.brest.service.PassengerDtoService;
-import by.epam.brest.service.PassengerService;
 import by.epam.brest.service.TrainDtoService;
 import by.epam.brest.service.TrainService;
-import by.epam.brest.service.rest.*;
+import by.epam.brest.service.rest.PassengerDtoRestService;
+import by.epam.brest.service.rest.PassengerRestService;
+import by.epam.brest.service.rest.TrainDtoRestService;
+import by.epam.brest.service.rest.TrainRestService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -28,9 +30,7 @@ public class ApplicationConfig {
 
     @Bean
     RestTemplate restTemplate() {
-        RestTemplate restTemplate = new RestTemplate(new SimpleClientHttpRequestFactory());
-        restTemplate.setErrorHandler(new ErrorRestService());
-        return restTemplate;
+        return new RestTemplate(new SimpleClientHttpRequestFactory());
     }
 
     @Bean

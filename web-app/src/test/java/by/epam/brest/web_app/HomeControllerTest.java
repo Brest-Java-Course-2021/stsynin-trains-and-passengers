@@ -4,9 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -20,12 +19,13 @@ class HomeControllerTest {
 
     @Test
     void shouldRedirectTrainsPage() throws Exception {
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/")
-        ).andDo(MockMvcResultHandlers.print())
+
+        // when
+        mockMvc.perform(get("/"))
+
+                //then
                 .andExpect(status().isFound())
                 .andExpect(view().name("redirect:trains"))
-                .andExpect(redirectedUrl("trains"))
-        ;
+                .andExpect(redirectedUrl("trains"));
     }
 }
