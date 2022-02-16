@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.servlet.RequestDispatcher;
@@ -38,7 +37,7 @@ class ErrorRestControllerUnitTest {
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(errorRestController)
                 .setMessageConverters(new MappingJackson2HttpMessageConverter())
-//                .alwaysDo(MockMvcResultHandlers.print())
+//                .alwaysDo(print())
                 .build();
     }
 
@@ -51,8 +50,7 @@ class ErrorRestControllerUnitTest {
                         .with(request -> {
                             request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, 404);
                             return request;
-                        })
-                )
+                        }))
 
                 // then
                 .andExpect(status().isNotFound())
@@ -69,8 +67,7 @@ class ErrorRestControllerUnitTest {
                         .with(request -> {
                             request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, 100);
                             return request;
-                        })
-                )
+                        }))
 
                 // then
                 .andExpect(status().isInternalServerError())

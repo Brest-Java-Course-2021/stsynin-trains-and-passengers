@@ -63,7 +63,6 @@ public class TrainDtoRestControllerUnitTest {
                         .param("dateStart", PERIOD_START)
                         .param("dateEnd", PERIOD_END)
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
 
                 // then
                 .andExpect(status().isOk())

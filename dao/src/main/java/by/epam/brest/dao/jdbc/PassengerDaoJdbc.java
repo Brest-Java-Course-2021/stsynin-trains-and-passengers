@@ -1,9 +1,6 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.PassengerDao;
-import by.epam.brest.model.exception.ValidationErrorException;
-import by.epam.brest.model.exception.ArgumentNullException;
-import by.epam.brest.model.exception.ArgumentOutOfRangeException;
 import by.epam.brest.model.Passenger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +86,6 @@ public class PassengerDaoJdbc implements PassengerDao {
 
     @Override
     public Integer createPassenger(Passenger passenger) {
-        checkPassengerName(passenger, "Create");
         SqlParameterSource parameterSource = newFillParameterSource(passenger);
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -105,7 +101,6 @@ public class PassengerDaoJdbc implements PassengerDao {
 
     @Override
     public Integer updatePassenger(Passenger passenger) {
-        checkPassengerName(passenger, "Update");
         logger.debug("Update {}", passenger);
         SqlParameterSource parameterSource = newFillParameterSource(passenger);
         return namedParameterJdbcTemplate.update(
@@ -146,23 +141,5 @@ public class PassengerDaoJdbc implements PassengerDao {
                 new MapSqlParameterSource(PASSENGER_NAME, passenger.getPassengerName()),
                 rowMapper);
         return passengers.size() > 0 && !passengers.get(0).getPassengerId().equals(passenger.getPassengerId());
-    }
-
-    private void checkPassengerName(Passenger passenger, String stage) {
-        String passengerName = passenger.getPassengerName();
-        if (passengerName == null) {
-            logger.error(stage + " fail. Passenger name is null");
-            throw new ArgumentNullException(stage + " fail. Passenger name can't be empty");
-        }
-        if (passengerName.length() > MAX_PASSENGER_NAME_LENGTH) {
-            logger.error("Passenger name {} is too long", passengerName);
-            throw new ArgumentOutOfRangeException(
-                    stage + " fail. This name is too long : '" + passengerName + "'");
-        }
-        if (isSecondPassengerWithSameNameExists(passenger)) {
-            logger.error("Passenger named {} is already exists", passengerName);
-            throw new ValidationErrorException(
-                    stage + " fail. This name already exists: '" + passengerName + "'");
-        }
     }
 }

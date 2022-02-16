@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -98,12 +99,8 @@ public class TrainController {
      * @return view trains.
      */
     @PostMapping(value = "/train")
-    public String addTrain(@RequestBody Train train) {
+    public String addTrain(@Valid @RequestBody Train train) {
         LOGGER.info(" IN: addTrain() - [{}]", train);
-        String errorWithTrainNames = getErrorWithTrainNames(train, "Creation");
-        if (errorWithTrainNames != null) {
-            throw new ValidationErrorException(errorWithTrainNames);
-        }
         Integer newId = trainService.createTrain(train);
         LOGGER.info("OUT: addTrain() - new train id: [{}]", newId);
         return "redirect:/trains";
@@ -116,12 +113,8 @@ public class TrainController {
      * @return view trains or view error.
      */
     @PostMapping(value = "/train/{id}")
-    public String updateTrain(@RequestBody Train train) {
+    public String updateTrain(@Valid @RequestBody Train train) {
         LOGGER.info(" IN: updateTrain() - [{}]", train);
-        String errorWithTrainNames = getErrorWithTrainNames(train, "Update");
-        if (errorWithTrainNames != null) {
-            throw new ValidationErrorException(errorWithTrainNames);
-        }
         Integer count = trainService.updateTrain(train);
         LOGGER.debug("OUT: updateTrain() - updated: [{}]", count);
         return "redirect:/trains";
@@ -140,24 +133,6 @@ public class TrainController {
         trainService.deleteById(id);
         LOGGER.info("OUT: deleteTrain() - [deleted]");
         return "redirect:/trains";
-    }
-
-    private String getErrorWithTrainNames(Train train, String stage) {
-        String trainName = train.getTrainName();
-        String trainDestination = train.getTrainDestination();
-        if (trainName == null) {
-            return stage + " failure. The train name cannot be empty.";
-        }
-        if (trainDestination == null) {
-            return stage + " failure. The name of the train's destination cannot be empty.";
-        }
-        if (trainNameIsOverlong(trainName)) {
-            return stage + " failure. The name of the train is too long.";
-        }
-        if (trainDestinationNameIsOverlong(trainDestination)) {
-            return stage + " failure. The name of the train's destination is too long.";
-        }
-        return null;
     }
 
     private boolean trainNameIsOverlong(String name) {

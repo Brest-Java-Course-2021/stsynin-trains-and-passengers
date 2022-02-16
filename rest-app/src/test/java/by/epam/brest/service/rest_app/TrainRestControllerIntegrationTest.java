@@ -15,6 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_DESTINATION_NAME_LENGTH;
-import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
+import static by.epam.brest.model.constants.TrainConstants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -35,6 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = TrainRestController.class)
 @Transactional
 @ComponentScan(basePackages = "by.epam.brest")
+@Sql(scripts = {"classpath:create-test-db.sql", "classpath:init-test-db.sql"},
+        executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class TrainRestControllerIntegrationTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainRestControllerIntegrationTest.class);
@@ -57,7 +59,7 @@ class TrainRestControllerIntegrationTest {
         mockMvc = MockMvcBuilders.standaloneSetup(trainRestController)
                 .setMessageConverters(new MappingJackson2HttpMessageConverter())
                 .setControllerAdvice(customExceptionHandler)
-//                .alwaysDo(MockMvcResultHandlers.print())
+//                .alwaysDo(print())
                 .build();
     }
 
@@ -203,10 +205,9 @@ class TrainRestControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
 
                 // then
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("Create fail. This name already exists."));
-
+                        .value("This name already exists"));
     }
 
     @Test
@@ -225,9 +226,9 @@ class TrainRestControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
 
                 // then
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("Create fail. Train name can't be empty"));
+                        .value(TRAIN_BLANK_NAME_WARN));
     }
 
     @Test
@@ -246,9 +247,9 @@ class TrainRestControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
 
                 // then
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("Create fail. This name is too long."));
+                        .value(TRAIN_OVERLONG_NAME_WARN));
     }
 
     @Test
@@ -267,9 +268,9 @@ class TrainRestControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
 
                 // then
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("Create fail. This name of destination is too long."));
+                        .value(TRAIN_OVERLONG_DESTINATION_NAME_WARN));
     }
 
     @Test
@@ -309,9 +310,9 @@ class TrainRestControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
 
                 // then
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("Update fail. This name already exists."));
+                        .value("This name already exists"));
     }
 
     @Test
@@ -330,9 +331,9 @@ class TrainRestControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
 
                 // then
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("Update fail. Train name can't be empty"));
+                        .value(TRAIN_BLANK_NAME_WARN));
     }
 
     @Test
@@ -351,9 +352,9 @@ class TrainRestControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
 
                 // then
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("Update fail. This name is too long."));
+                        .value(TRAIN_OVERLONG_NAME_WARN));
     }
 
     @Test
@@ -373,9 +374,9 @@ class TrainRestControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
 
                 // then
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("Update fail. This name of destination is too long."));
+                        .value(TRAIN_OVERLONG_DESTINATION_NAME_WARN));
     }
 
     private String getOverlongName() {

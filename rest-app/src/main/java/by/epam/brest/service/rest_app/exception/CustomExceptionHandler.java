@@ -1,14 +1,14 @@
 package by.epam.brest.service.rest_app.exception;
 
-import by.epam.brest.model.exception.ValidationErrorException;
-import by.epam.brest.model.exception.ArgumentNullException;
-import by.epam.brest.model.exception.ArgumentOutOfRangeException;
-import by.epam.brest.service.exception.ResourceLockedException;
 import by.epam.brest.model.ErrorMessage;
+import by.epam.brest.model.exception.ValidationErrorException;
+import by.epam.brest.service.exception.ResourceLockedException;
 import by.epam.brest.service.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -39,23 +39,25 @@ public class CustomExceptionHandler {
         return new ErrorMessage(e.getMessage());
     }
 
-    @ExceptionHandler(ArgumentNullException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorMessage handleArgumentNullException(ArgumentNullException e) {
-        LOGGER.error(e.getMessage());
-        return new ErrorMessage(e.getMessage());
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage handleValidationsErrors(MethodArgumentNotValidException exception) {
+        LOGGER.error(exception.getMessage());
+//        LOGGER.error(exception.getMessage(), exception);
+        return new ErrorMessage(exception.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+    }
+
+    @ExceptionHandler(DuplicateKeyException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage handleDuplicateKeyException(DuplicateKeyException exception) {
+        LOGGER.error(exception.getMessage());
+//        LOGGER.error(exception.getMessage(), exception);
+        return new ErrorMessage("This name already exists");
     }
 
     @ExceptionHandler(ValidationErrorException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessage handleArgumentException(ValidationErrorException e) {
-        LOGGER.error(e.getMessage());
-        return new ErrorMessage(e.getMessage());
-    }
-
-    @ExceptionHandler(ArgumentOutOfRangeException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorMessage handleArgumentOutOfRangeException(ArgumentOutOfRangeException e) {
         LOGGER.error(e.getMessage());
         return new ErrorMessage(e.getMessage());
     }

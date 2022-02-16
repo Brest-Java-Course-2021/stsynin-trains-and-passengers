@@ -3,7 +3,6 @@ package by.epam.brest.service;
 import by.epam.brest.model.Passenger;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface PassengerService {
 
@@ -20,7 +19,7 @@ public interface PassengerService {
      * @param passengerId passenger Id.
      * @return passenger.
      */
-    Optional<Passenger> findById(Integer passengerId);
+    Passenger findById(Integer passengerId);
 
     /**
      * Save new passenger record.

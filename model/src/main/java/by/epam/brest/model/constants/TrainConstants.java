@@ -9,4 +9,9 @@ public class TrainConstants {
 
     public static final int MAX_TRAIN_NAME_LENGTH = 128;
     public static final int MAX_TRAIN_DESTINATION_NAME_LENGTH = 128;
+
+    public static final String TRAIN_BLANK_NAME_WARN = "The train name cannot be empty.";
+    public static final String TRAIN_OVERLONG_NAME_WARN = "The name of the train is too long.";
+    public static final String TRAIN_OVERLONG_DESTINATION_NAME_WARN =
+            "The name of the train's destination is too long.";
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -62,7 +63,7 @@ public class TrainRestController {
      */
     @PostMapping(consumes = {"application/json"}, produces = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
-    public final Integer createTrain(@RequestBody Train train) {
+    public final Integer createTrain(@Valid @RequestBody Train train) {
         LOGGER.info(" IN: createTrain() - [{}]", train);
         Integer id = trainService.createTrain(train);
         LOGGER.info("OUT: createTrain() - [{}]", id);
@@ -76,7 +77,7 @@ public class TrainRestController {
      * @return number of updated trains in the database.
      */
     @PutMapping(consumes = {"application/json"}, produces = {"application/json"})
-    public final Integer updateTrain(@RequestBody Train train) {
+    public final Integer updateTrain(@Valid @RequestBody Train train) {
         LOGGER.info(" IN: updateTrain() - [{}]", train);
         Integer count = trainService.updateTrain(train);
         LOGGER.info("OUT: updateTrain() - [{}]", count);
