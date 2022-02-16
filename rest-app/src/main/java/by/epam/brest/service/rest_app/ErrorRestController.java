@@ -35,16 +35,16 @@ public class ErrorRestController implements ErrorController {
             LOGGER.error(" Error status code: {}", statusCode);
 
             if (statusCode == 404) {
-                LOGGER.error("OUT: handleError() - [Resource [{}] not found]", uri);
+                LOGGER.error("OUT: handleError() - [Resource [{}] was not found]", uri);
                 return new ResponseEntity<>(
-                        new ErrorMessage("Resource not found"),
+                        new ErrorMessage("Resource [" + uri + "] was not found"),
                         HttpStatus.NOT_FOUND);
             }
         }
         LOGGER.error("OUT: handleError() - [Unknown error while [{}] request]", uri);
         return new ResponseEntity<>(
-                new ErrorMessage("Unknown error"),
-                HttpStatus.NOT_IMPLEMENTED);
+                new ErrorMessage("Unknown error while [" + uri + "] request"),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**

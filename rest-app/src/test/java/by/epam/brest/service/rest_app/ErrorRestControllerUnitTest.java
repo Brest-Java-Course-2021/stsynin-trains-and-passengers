@@ -38,7 +38,7 @@ class ErrorRestControllerUnitTest {
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(errorRestController)
                 .setMessageConverters(new MappingJackson2HttpMessageConverter())
-                .alwaysDo(MockMvcResultHandlers.print())
+//                .alwaysDo(MockMvcResultHandlers.print())
                 .build();
     }
 
@@ -53,10 +53,11 @@ class ErrorRestControllerUnitTest {
                             return request;
                         })
                 )
+
                 // then
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message")
-                        .value("Resource not found"));
+                        .value("Resource [null] was not found"));
     }
 
     @Test
@@ -64,15 +65,16 @@ class ErrorRestControllerUnitTest {
         LOGGER.info("shouldProcessUnknownError()");
 
         // when
-        mockMvc.perform(
-                        get("/error")
-                                .with(request -> {
-                                    request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, 100);
-                                    return request;
-                                })
+        mockMvc.perform(get("/error")
+                        .with(request -> {
+                            request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, 100);
+                            return request;
+                        })
                 )
-                .andExpect(status().isNotImplemented())
+
+                // then
+                .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.message")
-                        .value("Unknown error"));
+                        .value("Unknown error while [null] request"));
     }
 }
