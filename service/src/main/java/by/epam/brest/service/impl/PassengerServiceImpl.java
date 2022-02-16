@@ -3,12 +3,12 @@ package by.epam.brest.service.impl;
 import by.epam.brest.dao.PassengerDao;
 import by.epam.brest.model.Passenger;
 import by.epam.brest.service.PassengerService;
+import by.epam.brest.service.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -27,8 +27,9 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public Optional<Passenger> findById(Integer passengerId) {
-        return passengerDao.findById(passengerId);
+    public Passenger findById(Integer passengerId) {
+        return passengerDao.findById(passengerId)
+                .orElseThrow(() -> new ResourceNotFoundException(notFoundForThisIdMessage(passengerId)));
     }
 
     @Override
@@ -54,5 +55,9 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public boolean isSecondPassengerWithSameNameExists(Passenger passenger) {
         return passengerDao.isSecondPassengerWithSameNameExists(passenger);
+    }
+
+    private String notFoundForThisIdMessage(Integer trainId) {
+        return String.format("No passenger with id %s exists!", trainId);
     }
 }
