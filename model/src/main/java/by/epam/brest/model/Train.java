@@ -5,15 +5,23 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Objects;
+
+import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_DESTINATION_NAME_LENGTH;
+import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
 
 public class Train {
 
     private Integer trainId;
 
+    @NotBlank(message = "Train name can't be empty")
+    @Size(max = MAX_TRAIN_NAME_LENGTH, message = "This name is too long")
     private String trainName;
 
+    @Size(max = MAX_TRAIN_DESTINATION_NAME_LENGTH, message = "This name of destination is too long")
     private String trainDestination;
 
     @JsonDeserialize(using = LocalDateDeserializer.class)

@@ -1,9 +1,6 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.TrainDao;
-import by.epam.brest.model.exception.ValidationErrorException;
-import by.epam.brest.model.exception.ArgumentNullException;
-import by.epam.brest.model.exception.ArgumentOutOfRangeException;
 import by.epam.brest.model.Train;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,10 +54,6 @@ public class TrainDaoJdbc implements TrainDao {
     @Value("${TRN.sqlGetTrainsCount}")
     private String sqlGetTrainsCount;
 
-    @SuppressWarnings("unused")
-    @Value("${TRN.sqlGetPassengersCountForTrain}")
-    private String sqlGetPassengersCountForTrain;
-
     Logger logger = LoggerFactory.getLogger(TrainDaoJdbc.class);
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -93,7 +86,6 @@ public class TrainDaoJdbc implements TrainDao {
 
     @Override
     public Integer updateTrain(Train train) {
-        checksTrainNames(train, "Update");
         logger.debug("Update {}", train);
         SqlParameterSource parameterSource = newFillParameterSource(train);
         return namedParameterJdbcTemplate.update(
@@ -103,7 +95,6 @@ public class TrainDaoJdbc implements TrainDao {
 
     @Override
     public Integer createTrain(Train train) {
-        checksTrainNames(train, "Create");
         SqlParameterSource parameterSource = newFillParameterSource(train);
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -134,13 +125,6 @@ public class TrainDaoJdbc implements TrainDao {
                 Integer.class);
     }
 
-    private Integer getPassengerCountForTrain(Integer trainId) {
-        return namedParameterJdbcTemplate.queryForObject(
-                sqlGetPassengersCountForTrain,
-                new MapSqlParameterSource(TRAIN_ID, trainId),
-                Integer.class);
-    }
-
     private SqlParameterSource newFillParameterSource(Train train) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.
@@ -149,37 +133,5 @@ public class TrainDaoJdbc implements TrainDao {
                 addValue(TRAIN_DESTINATION, train.getTrainDestination()).
                 addValue(TRAIN_DEPARTURE_DATE, train.getTrainDepartureDate());
         return parameterSource;
-    }
-
-    private boolean isSecondTrainWithSameNameExists(Train train) {
-        List<Train> trains = namedParameterJdbcTemplate.query(
-                sqlGetTrainByName,
-                new MapSqlParameterSource(TRAIN_NAME, train.getTrainName()),
-                rowMapper);
-        return trains.size() > 0 && !trains.get(0).getTrainId().equals(train.getTrainId());
-    }
-
-    private void checksTrainNames(Train train, String stage) {
-        String trainName = train.getTrainName();
-        if (trainName == null) {
-            logger.error(stage + " fail. Train name is null");
-            throw new ArgumentNullException(stage + " fail. Train name can't be empty");
-        }
-        if (trainName.length() > MAX_TRAIN_NAME_LENGTH) {
-            logger.error(stage + " fail. Train name {} is too long", trainName);
-            throw new ArgumentOutOfRangeException(
-                    stage + " fail. This name is too long.");
-        }
-        if (isSecondTrainWithSameNameExists(train)) {
-            logger.error(stage + " fail. Train named {} is already exists", trainName);
-            throw new ValidationErrorException(
-                    stage + " fail. This name already exists.");
-        }
-        if (train.getTrainDestination() != null &&
-                train.getTrainDestination().length() > MAX_TRAIN_DESTINATION_NAME_LENGTH) {
-            logger.error(stage + " fail. Train destination name {} is too long", train.getTrainDestination());
-            throw new ArgumentOutOfRangeException(
-                    stage + " fail. This name of destination is too long.");
-        }
     }
 }
