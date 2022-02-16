@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.RequestDispatcher;
@@ -24,7 +24,7 @@ public class ErrorRestController implements ErrorController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ErrorRestController.class);
 
-    @RequestMapping("/error")
+    @GetMapping("/error")
     public ResponseEntity<ErrorMessage> handleError(HttpServletRequest request) {
 
         LOGGER.error("error detected!!!");
