@@ -48,12 +48,10 @@ public class CustomExceptionHandlerTest {
         // when
         mockMvc.perform(get(URI_ID, 9)
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
 
                 // then
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("not found"));
-
         verify(trainService).findById(9);
     }
 
@@ -67,12 +65,10 @@ public class CustomExceptionHandlerTest {
         // when
         mockMvc.perform(delete(URI_ID, 1)
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
 
                 // then
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("TrainLoadedError"));
-
         verify(trainService).deleteById(1);
     }
 
@@ -86,12 +82,10 @@ public class CustomExceptionHandlerTest {
         // when
         mockMvc.perform(delete(URI_ID, 1)
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
 
                 // then
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message").value("ArgumentError"));
-
         verify(trainService).deleteById(1);
     }
 
@@ -105,12 +99,10 @@ public class CustomExceptionHandlerTest {
         // when
         mockMvc.perform(get(URI + "/count")
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
 
                 // then
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.message").value("Happened unknown error!"));
-
         verify(trainService).getTrainsCount();
     }
 }
