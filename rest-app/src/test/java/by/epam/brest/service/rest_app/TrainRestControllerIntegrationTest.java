@@ -23,8 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_DESTINATION_NAME_LENGTH;
-import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
+import static by.epam.brest.model.constants.TrainConstants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -229,7 +228,7 @@ class TrainRestControllerIntegrationTest {
                 // then
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("Train name can't be empty"));
+                        .value(TRAIN_BLANK_NAME_WARN));
     }
 
     @Test
@@ -250,7 +249,7 @@ class TrainRestControllerIntegrationTest {
                 // then
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("This name is too long"));
+                        .value(TRAIN_OVERLONG_NAME_WARN));
     }
 
     @Test
@@ -271,7 +270,7 @@ class TrainRestControllerIntegrationTest {
                 // then
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("This name of destination is too long"));
+                        .value(TRAIN_OVERLONG_DESTINATION_NAME_WARN));
     }
 
     @Test
@@ -334,7 +333,7 @@ class TrainRestControllerIntegrationTest {
                 // then
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("Train name can't be empty"));
+                        .value(TRAIN_BLANK_NAME_WARN));
     }
 
     @Test
@@ -355,7 +354,7 @@ class TrainRestControllerIntegrationTest {
                 // then
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("This name is too long"));
+                        .value(TRAIN_OVERLONG_NAME_WARN));
     }
 
     @Test
@@ -377,7 +376,7 @@ class TrainRestControllerIntegrationTest {
                 // then
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("This name of destination is too long"));
+                        .value(TRAIN_OVERLONG_DESTINATION_NAME_WARN));
     }
 
     private String getOverlongName() {

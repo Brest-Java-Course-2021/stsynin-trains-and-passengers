@@ -23,8 +23,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_DESTINATION_NAME_LENGTH;
-import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
+import static by.epam.brest.model.constants.TrainConstants.*;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -193,7 +192,7 @@ class TrainControllerTest {
                 .andExpect(model().attribute("errorMessage",
                         is("We don't know how it happened, but there was a mistake in the data you entered.")))
                 .andExpect(model().attribute("errorDescription",
-                        is("Creation failure. The train name cannot be empty.")));
+                        is(TRAIN_BLANK_NAME_WARN)));
     }
 
     @Test
@@ -215,28 +214,7 @@ class TrainControllerTest {
                 .andExpect(model().attribute("errorMessage",
                         is("We don't know how it happened, but there was a mistake in the data you entered.")))
                 .andExpect(model().attribute("errorDescription",
-                        is("Creation failure. The name of the train is too long.")));
-    }
-
-    @Test
-    public void shouldNotAddNewTrainBecauseEmptyDestinationName() throws Exception {
-        LOGGER.info("shouldNotAddNewTrainBecauseEmptyDestinationName()");
-
-        // given
-        Train train = new Train(null, "new", null, LocalDate.now());
-
-        // when
-        mockMvc.perform(post("/train")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train)))
-
-                // then
-                .andExpect(status().isOk())
-                .andExpect(view().name("error"))
-                .andExpect(model().attribute("errorMessage",
-                        is("We don't know how it happened, but there was a mistake in the data you entered.")))
-                .andExpect(model().attribute("errorDescription",
-                        is("Creation failure. The name of the train's destination cannot be empty.")));
+                        is(TRAIN_OVERLONG_NAME_WARN)));
     }
 
     @Test
@@ -258,7 +236,7 @@ class TrainControllerTest {
                 .andExpect(model().attribute("errorMessage",
                         is("We don't know how it happened, but there was a mistake in the data you entered.")))
                 .andExpect(model().attribute("errorDescription",
-                        is("Creation failure. The name of the train's destination is too long.")));
+                        is(TRAIN_OVERLONG_DESTINATION_NAME_WARN)));
     }
 
     @Test
@@ -299,7 +277,7 @@ class TrainControllerTest {
                 .andExpect(model().attribute("errorMessage",
                         is("We don't know how it happened, but there was a mistake in the data you entered.")))
                 .andExpect(model().attribute("errorDescription",
-                        is("Update failure. The train name cannot be empty.")));
+                        is(TRAIN_BLANK_NAME_WARN)));
     }
 
     @Test
@@ -321,28 +299,7 @@ class TrainControllerTest {
                 .andExpect(model().attribute("errorMessage",
                         is("We don't know how it happened, but there was a mistake in the data you entered.")))
                 .andExpect(model().attribute("errorDescription",
-                        is("Update failure. The name of the train is too long.")));
-    }
-
-    @Test
-    public void shouldNotUpdateTrainBecauseEmptyDestinationName() throws Exception {
-        LOGGER.info("()");
-
-        // given
-        Train train = new Train(44, "new", null, LocalDate.now());
-
-        // when
-        mockMvc.perform(post("/train/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train)))
-
-                // then
-                .andExpect(status().isOk())
-                .andExpect(view().name("error"))
-                .andExpect(model().attribute("errorMessage",
-                        is("We don't know how it happened, but there was a mistake in the data you entered.")))
-                .andExpect(model().attribute("errorDescription",
-                        is("Update failure. The name of the train's destination cannot be empty.")));
+                        is(TRAIN_OVERLONG_NAME_WARN)));
     }
 
     @Test
@@ -364,7 +321,7 @@ class TrainControllerTest {
                 .andExpect(model().attribute("errorMessage",
                         is("We don't know how it happened, but there was a mistake in the data you entered.")))
                 .andExpect(model().attribute("errorDescription",
-                        is("Update failure. The name of the train's destination is too long.")));
+                        is(TRAIN_OVERLONG_DESTINATION_NAME_WARN)));
     }
 
     @Test

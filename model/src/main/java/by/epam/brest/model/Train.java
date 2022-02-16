@@ -10,18 +10,17 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_DESTINATION_NAME_LENGTH;
-import static by.epam.brest.model.constants.TrainConstants.MAX_TRAIN_NAME_LENGTH;
+import static by.epam.brest.model.constants.TrainConstants.*;
 
 public class Train {
 
     private Integer trainId;
 
-    @NotBlank(message = "Train name can't be empty")
-    @Size(max = MAX_TRAIN_NAME_LENGTH, message = "This name is too long")
+    @NotBlank(message = TRAIN_BLANK_NAME_WARN)
+    @Size(max = MAX_TRAIN_NAME_LENGTH, message = TRAIN_OVERLONG_NAME_WARN)
     private String trainName;
 
-    @Size(max = MAX_TRAIN_DESTINATION_NAME_LENGTH, message = "This name of destination is too long")
+    @Size(max = MAX_TRAIN_DESTINATION_NAME_LENGTH, message = TRAIN_OVERLONG_DESTINATION_NAME_WARN)
     private String trainDestination;
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
