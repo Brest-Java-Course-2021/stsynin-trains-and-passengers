@@ -1,8 +1,7 @@
 package by.epam.brest.service.rest_app;
 
-import by.epam.brest.model.exception.ArgumentNullException;
-import by.epam.brest.service.exception.ResourceLockedException;
 import by.epam.brest.service.TrainService;
+import by.epam.brest.service.exception.ResourceLockedException;
 import by.epam.brest.service.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -17,7 +16,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -69,23 +67,6 @@ public class CustomExceptionHandlerTest {
                 // then
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("TrainLoadedError"));
-        verify(trainService).deleteById(1);
-    }
-
-    @Test
-    void shouldReturnArgumentError() throws Exception {
-        LOGGER.info("shouldReturnArgumentError()");
-
-        // given
-        when(trainService.deleteById(1)).thenThrow(new ArgumentNullException("ArgumentError"));
-
-        // when
-        mockMvc.perform(delete(URI_ID, 1)
-                        .accept(MediaType.APPLICATION_JSON))
-
-                // then
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.message").value("ArgumentError"));
         verify(trainService).deleteById(1);
     }
 

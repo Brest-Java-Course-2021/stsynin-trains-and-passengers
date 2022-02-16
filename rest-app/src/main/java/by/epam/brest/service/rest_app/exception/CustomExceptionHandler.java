@@ -1,8 +1,6 @@
 package by.epam.brest.service.rest_app.exception;
 
 import by.epam.brest.model.ErrorMessage;
-import by.epam.brest.model.exception.ArgumentNullException;
-import by.epam.brest.model.exception.ArgumentOutOfRangeException;
 import by.epam.brest.model.exception.ValidationErrorException;
 import by.epam.brest.service.exception.ResourceLockedException;
 import by.epam.brest.service.exception.ResourceNotFoundException;
@@ -57,23 +55,9 @@ public class CustomExceptionHandler {
         return new ErrorMessage("This name already exists");
     }
 
-    @ExceptionHandler(ArgumentNullException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorMessage handleArgumentNullException(ArgumentNullException e) {
-        LOGGER.error(e.getMessage());
-        return new ErrorMessage(e.getMessage());
-    }
-
     @ExceptionHandler(ValidationErrorException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessage handleArgumentException(ValidationErrorException e) {
-        LOGGER.error(e.getMessage());
-        return new ErrorMessage(e.getMessage());
-    }
-
-    @ExceptionHandler(ArgumentOutOfRangeException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorMessage handleArgumentOutOfRangeException(ArgumentOutOfRangeException e) {
         LOGGER.error(e.getMessage());
         return new ErrorMessage(e.getMessage());
     }
