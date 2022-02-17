@@ -1,7 +1,7 @@
 package by.epam.brest.service.rest;
 
-import by.epam.brest.model.Acknowledgement;
 import by.epam.brest.model.Passenger;
+import by.epam.brest.service.PassengerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -11,140 +11,128 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * @author Sergey Tsynin
  */
 @Service
-public class PassengerRestService {
+public class PassengerRestService implements PassengerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PassengerRestService.class);
 
-    private String url;
+    private final String url;
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     public PassengerRestService(String url, RestTemplate restTemplate) {
         this.url = url;
         this.restTemplate = restTemplate;
+        LOGGER.info("PassengerRestService was created");
     }
 
-    /**
-     * Get all passengers from the database.
-     *
-     * @return passengers list.
-     */
     public List<Passenger> findAll() {
-        LOGGER.debug("findAll()");
+        LOGGER.debug(" IN: findAll() - []");
+
         ResponseEntity<List<Passenger>> responseEntity = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {
                 });
-        return responseEntity.getBody();
+        List<Passenger> passengers = responseEntity.getBody();
+        LOGGER.debug("OUT: findAll() - found {} passenger(s)", passengers != null ? passengers.size() : 0);
+        return passengers;
     }
 
-    /**
-     * Get passenger by Id.
-     *
-     * @param passengerId passenger Id.
-     * @return passenger.
-     */
-    public Optional<Passenger> findById(Integer passengerId) {
-        LOGGER.debug("findById({})", passengerId);
-        ResponseEntity<Passenger> responseEntity =
-                restTemplate.getForEntity(
-                        url + "/" + passengerId,
-                        Passenger.class);
-        return Optional.ofNullable(responseEntity.getBody());
+    public Passenger findById(Integer id) {
+        LOGGER.debug(" IN: findById() - [{}]", id);
+
+        Passenger passenger = restTemplate.getForObject(url + "/" + id, Passenger.class);
+        LOGGER.debug("OUT: findById() - [{}]", passenger);
+        return passenger;
     }
 
-    /**
-     * Save new passenger record.
-     *
-     * @param passenger object.
-     * @return Acknowledgement with saved passenger Id.
-     */
-    public Acknowledgement createPassenger(Passenger passenger) {
-        LOGGER.debug("createPassenger()");
-        Acknowledgement response = restTemplate.postForObject(url, passenger, Acknowledgement.class);
-        LOGGER.debug("raw answer: {}", Objects.requireNonNull(response).getMessage());
-        if (response.getMessage().equals("OK")) {
-            LOGGER.debug("answer from rest controller: {}", response.getDescriptions());
-        } else {
-            LOGGER.error("passenger not created");
-        }
-        return response;
+    public Integer createPassenger(Passenger passenger) {
+        LOGGER.debug(" IN: createPassenger() - [{}]", passenger);
+
+        Integer id = restTemplate.postForEntity(
+                url,
+                passenger,
+                Integer.class).getBody();
+        LOGGER.debug("OUT: createPassenger() - new passenger id: [{}]", id);
+        return id;
+//        Acknowledgement response = restTemplate.postForObject(url, passenger, Acknowledgement.class);
+//        LOGGER.debug("raw answer: {}", Objects.requireNonNull(response).getMessage());
+//        if (response.getMessage().equals("OK")) {
+//            LOGGER.debug("answer from rest controller: {}", response.getDescriptions());
+//        } else {
+//            LOGGER.error("passenger not created");
+//        }
+//        return 1;
     }
 
-    /**
-     * Update passenger record in the database.
-     *
-     * @param passenger object.
-     * @return Acknowledgement.
-     */
-    public Acknowledgement updatePassenger(Passenger passenger) {
-        LOGGER.debug("updatePassenger({})", passenger);
+    public Integer updatePassenger(Passenger passenger) {
+        LOGGER.debug(" IN: updatePassenger() - [{}]", passenger);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         HttpEntity<Passenger> entity = new HttpEntity<>(passenger, headers);
-        Acknowledgement response = restTemplate.exchange(
+        Integer count = restTemplate.exchange(
                 url,
                 HttpMethod.PUT,
                 entity,
-                Acknowledgement.class).getBody();
-        LOGGER.debug("raw answer: {}", Objects.requireNonNull(response).getMessage());
-        if (response.getMessage().equals("OK")) {
-            LOGGER.debug("answer from rest controller: {}", response.getDescriptions());
-        } else {
-            LOGGER.error("passenger not updated");
-        }
-        return response;
+                Integer.class).getBody();
+        LOGGER.debug("OUT: updatePassenger() - updated: [{}]", count);
+        return count;
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//        HttpEntity<Passenger> entity = new HttpEntity<>(passenger, headers);
+//        Acknowledgement response = restTemplate.exchange(
+//                url,
+//                HttpMethod.PUT,
+//                entity,
+//                Acknowledgement.class).getBody();
+//        LOGGER.debug("raw answer: {}", Objects.requireNonNull(response).getMessage());
+//        if (response.getMessage().equals("OK")) {
+//            LOGGER.debug("answer from rest controller: {}", response.getDescriptions());
+//        } else {
+//            LOGGER.error("passenger not updated");
+//        }
+//        return 1;
     }
 
-    /**
-     * Delete passenger by Id.
-     *
-     * @param passengerId train Id.
-     * @return Acknowledgement.
-     */
-    public Acknowledgement deletePassenger(Integer passengerId) {
-        LOGGER.debug("deletePassenger({})", passengerId);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        HttpEntity<Passenger> entity = new HttpEntity<>(headers);
-        Acknowledgement response = restTemplate.exchange(
-                url + "/" + passengerId,
+    public Integer deleteById(Integer id) {
+        LOGGER.debug(" IN: deleteById() - [{}]", id);
+
+        restTemplate.exchange(
+                url + "/" + id,
                 HttpMethod.DELETE,
-                entity,
-                Acknowledgement.class).getBody();
-        LOGGER.debug("raw answer: {}", Objects.requireNonNull(response).getMessage());
-        if (response.getMessage().equals("OK")) {
-            LOGGER.debug("answer from rest controller: {}", response.getDescriptions());
-        } else {
-            LOGGER.error("passenger not deleted");
-        }
-        return response;
+                null,
+                Integer.class);
+        LOGGER.debug("OUT: deleteById() - deleted []");
+        return 1;
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//        HttpEntity<Passenger> entity = new HttpEntity<>(headers);
+//        Acknowledgement response = restTemplate.exchange(
+//                url + "/" + passengerId,
+//                HttpMethod.DELETE,
+//                entity,
+//                Acknowledgement.class).getBody();
+//        LOGGER.debug("raw answer: {}", Objects.requireNonNull(response).getMessage());
+//        if (response.getMessage().equals("OK")) {
+//            LOGGER.debug("answer from rest controller: {}", response.getDescriptions());
+//        } else {
+//            LOGGER.error("passenger not deleted");
+//        }
+//        return 1;
     }
 
-    /**
-     * Get number of passengers in the database.
-     *
-     * @return number of passengers in the database.
-     */
     public Integer getPassengersCount() {
-        return null;
-    }
+        LOGGER.debug(" IN: getPassengersCount() - []");
 
-    /**
-     * Check if this name of passenger is exist in the database.
-     *
-     * @param passenger
-     */
-    public boolean isSecondPassengerWithSameNameExists(Passenger passenger) {
-        return false;
+        Integer count = restTemplate.getForObject(url + "/count", Integer.class);
+        LOGGER.debug("OUT: getPassengersCount() - [{}]", count);
+        return count;
     }
 }
