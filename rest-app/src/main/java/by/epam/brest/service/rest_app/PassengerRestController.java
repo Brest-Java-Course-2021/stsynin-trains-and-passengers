@@ -91,7 +91,7 @@ public class PassengerRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public final Integer deletePassengerById(@PathVariable Integer id) {
         LOGGER.info(" IN: deletePassengerById - [{}]", id);
-        Integer deleteResult = passengerService.deletePassenger(id);
+        Integer deleteResult = passengerService.deleteById(id);
         LOGGER.info("OUT: deletePassengerById - [passengers deleted:{}]", deleteResult);
         return deleteResult;
     }

@@ -27,9 +27,9 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public Passenger findById(Integer passengerId) {
-        return passengerDao.findById(passengerId)
-                .orElseThrow(() -> new ResourceNotFoundException(notFoundForThisIdMessage(passengerId)));
+    public Passenger findById(Integer id) {
+        return passengerDao.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(notFoundForThisIdMessage(id)));
     }
 
     @Override
@@ -43,10 +43,10 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public Integer deletePassenger(Integer passengerId) {
-        Integer deleteResult = passengerDao.deletePassenger(passengerId);
+    public Integer deleteById(Integer id) {
+        Integer deleteResult = passengerDao.deletePassenger(id);
         if (deleteResult < 1) {
-            throw new ResourceNotFoundException(notFoundForThisIdMessage(passengerId));
+            throw new ResourceNotFoundException(notFoundForThisIdMessage(id));
         }
         return deleteResult;
     }
@@ -54,11 +54,6 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public Integer getPassengersCount() {
         return passengerDao.getPassengersCount();
-    }
-
-    @Override
-    public boolean isSecondPassengerWithSameNameExists(Passenger passenger) {
-        return passengerDao.isSecondPassengerWithSameNameExists(passenger);
     }
 
     private String notFoundForThisIdMessage(Integer trainId) {
