@@ -330,10 +330,9 @@ class TrainControllerTest {
 
         // given
         Integer id = 42;
-
-        // when
         when(trainService.deleteById(id)).thenReturn(1);
 
+        // when
         mockMvc.perform(get("/train/" + id + "/delete")
                         .contentType(MediaType.APPLICATION_JSON))
 
