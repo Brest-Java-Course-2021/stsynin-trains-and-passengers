@@ -1,7 +1,6 @@
 package by.epam.brest.dao.jdbc;
 
 import by.epam.brest.dao.PassengerDao;
-import by.epam.brest.model.exception.ValidationErrorException;
 import by.epam.brest.model.Passenger;
 import by.epam.brest.testDb.SpringJdbcConfig;
 import org.junit.jupiter.api.Test;
@@ -70,16 +69,6 @@ class PassengerDaoJdbcIntegrationTest {
     }
 
     @Test
-    public void test_updatePassengerWithDuplicatedName() {
-        List<Passenger> passengers = passengerDao.findAll();
-        Passenger renewablePassenger = passengers.get(0);
-        renewablePassenger.setPassengerName(passengers.get(1).getPassengerName());
-        assertThrows(ValidationErrorException.class, () ->
-                passengerDao.updatePassenger(renewablePassenger)
-        );
-    }
-
-    @Test
     public void test_updatePassengerWithSameName() {
         Passenger passengerForUpdate = new Passenger("RabbitSameName");
         passengerForUpdate.setTrainId(1);
@@ -112,12 +101,6 @@ class PassengerDaoJdbcIntegrationTest {
 
         assertEquals(baseSizeBeforeCreate + 1, passengerDao.getPassengersCount());
         assertEquals(newPassenger, passengerDao.findById(newPassengerId).orElse(null));
-    }
-
-    @Test
-    public void test_createPassengerWithExistsName() {
-        assertThrows(ValidationErrorException.class, () ->
-                passengerDao.createPassenger(new Passenger(passengerDao.findAll().get(0).getPassengerName())));
     }
 
     @Test

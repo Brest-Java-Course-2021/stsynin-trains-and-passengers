@@ -18,21 +18,17 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static by.epam.brest.model.constants.PassengerConstants.*;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = PassengerController.class)
@@ -166,7 +162,6 @@ public class PassengerControllerTest {
 
         // when
         mockMvc.perform(get("/passenger/" + id))
-                .andDo(print())
 
                 // then
                 .andExpect(status().isOk())
@@ -187,8 +182,7 @@ public class PassengerControllerTest {
         when(passengerService.findById(id)).thenThrow(getNotFoundErrorException(message));
 
         // when
-        mockMvc.perform(get("/passenger/" + id)
-                ).andDo(print())
+        mockMvc.perform(get("/passenger/" + id))
                 .andExpect(status().isOk())
                 .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",

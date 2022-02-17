@@ -17,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,7 +58,7 @@ class TrainDtoRestControllerIntegrationTest {
         mockMvc = MockMvcBuilders.standaloneSetup(trainDtoRestController)
                 .setMessageConverters(new MappingJackson2HttpMessageConverter())
                 .setControllerAdvice(customExceptionHandler)
-                .alwaysDo(MockMvcResultHandlers.print())
+//                .alwaysDo(print())
                 .build();
     }
 
@@ -136,9 +135,9 @@ class TrainDtoRestControllerIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON))
 
                 // then
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message")
-                        .value("Wrong dates order for filtering"));
+                        .value("Wrong date order for filtering"));
     }
 
     private List<Integer> getAllTrainsIds(List<TrainDto> trains) {
