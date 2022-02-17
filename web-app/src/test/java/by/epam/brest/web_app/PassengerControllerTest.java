@@ -1,25 +1,34 @@
 package by.epam.brest.web_app;
 
-import by.epam.brest.model.Acknowledgement;
+import by.epam.brest.model.ErrorMessage;
 import by.epam.brest.model.Passenger;
+import by.epam.brest.model.dto.PassengerDto;
 import by.epam.brest.service.PassengerDtoService;
 import by.epam.brest.service.TrainService;
 import by.epam.brest.service.rest.PassengerRestService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-import static by.epam.brest.model.constants.PassengerConstants.MAX_PASSENGER_NAME_LENGTH;
+import static by.epam.brest.model.constants.PassengerConstants.*;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -28,6 +37,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = PassengerController.class)
 public class PassengerControllerTest {
+
+    public PassengerControllerTest() {
+        LOGGER.info("PassengerControllerTest was created");
+    }
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PassengerControllerTest.class);
+
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     private MockMvc mockMvc;
@@ -43,182 +60,259 @@ public class PassengerControllerTest {
 
     @Test
     public void shouldReturnPassengersPage() throws Exception {
-        mockMvc.perform(get("/passengers")
-        ).andDo(print())
+        LOGGER.info("shouldReturnPassengersPage()");
+
+        // given
+        List<PassengerDto> passengers = Arrays.asList(
+                new PassengerDto(0, "first", "down"),
+                new PassengerDto(1, "second", "up"));
+        when(passengerDtoService.findAllPassengersWithTrainName()).thenReturn(passengers);
+
+        // when
+        mockMvc.perform(get("/passengers"))
+                .andExpect(status().isOk())
+
+                // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/html;charset=UTF-8"))
                 .andExpect(view().name("passengers"))
-        ;
+                .andExpect(model().attribute("passengers", is(passengers)));
     }
 
     @Test
     public void shouldOpenNewPassengerPage() throws Exception {
-        mockMvc.perform(get("/passenger")
-        ).andDo(MockMvcResultHandlers.print())
+        LOGGER.info("shouldOpenNewPassengerPage()");
+
+        // when
+        mockMvc.perform(get("/passenger"))
+
+                // then
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType("text/html;charset=UTF-8"))
+                .andExpect(content().contentType("text/html;charset=UTF-8"))
                 .andExpect(view().name("passenger"))
-                .andExpect(model().attribute("isNew", is(true)))
-        ;
+                .andExpect(model().attribute("isNew", is(true)));
     }
 
     @Test
     public void shouldAddNewPassenger() throws Exception {
+        LOGGER.info("shouldAddNewPassenger()");
+
+        // given
+        Passenger passenger = new Passenger(null, "Alice", 1);
+        when(passengerService.createPassenger(passenger)).thenReturn(1024);
 
         // when
-        when(this.passengerService.createPassenger(any())).thenReturn(new Acknowledgement(
-                "OK",
-                "Passenger id: 42 was successfully created"));
-
         mockMvc.perform(post("/passenger")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("passengerName", "passengerName")
-        ).andExpect(status().isFound())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(passenger)))
+
+                .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/passengers"))
-                .andExpect(redirectedUrl("/passengers"))
-        ;
+                .andExpect(redirectedUrl("/passengers"));
+        verify(passengerService).createPassenger(passenger);
     }
 
     @Test
     public void shouldNotAddNewPassengerBecauseEmptyName() throws Exception {
+        LOGGER.info("shouldNotAddNewPassengerBecauseEmptyName()");
+
+        // given
+        Passenger passenger = new Passenger(null, null, 1);
+
+        // when
         mockMvc.perform(post("/passenger")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("passengerName", (String) null)
-        ).andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/error"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(passenger)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Create fail. Passenger name can't be empty")))
-        ;
+                        is("We don't know how it happened, but there was a mistake in the data you entered.")))
+                .andExpect(model().attribute("errorDescription",
+                        PASSENGER_BLANK_NAME_WARN));
     }
 
     @Test
     public void shouldNotAddNewPassengerBecauseOverlongName() throws Exception {
-        String passengerName = getOverlongName();
+        LOGGER.info("shouldNotAddNewPassengerBecauseOverlongName()");
+
+        // given
+        String longName = getOverlongName();
+        Passenger passenger = new Passenger(null, longName, 1);
+
+        // when
         mockMvc.perform(post("/passenger")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("passengerName", passengerName)
-        ).andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/error"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(passenger)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Create fail. Passenger name " + passengerName + " is too long")))
-        ;
+                        is("We don't know how it happened, but there was a mistake in the data you entered.")))
+                .andExpect(model().attribute("errorDescription",
+                        PASSENGER_OVERLONG_NAME_WARN));
     }
 
     @Test
-    public void shouldOpenToEditPassengerPageById() throws Exception {
+    public void shouldReturnPassengerPageToEdit() throws Exception {
+        LOGGER.info("shouldReturnPassengerPageToEdit()");
 
         // given
-        Passenger passenger = new Passenger("PassengerName");
         Integer id = 1;
-        passenger.setPassengerId(id);
+        Passenger passenger = new Passenger(1, "Alfred", 1);
+        when(passengerService.findById(id)).thenReturn(passenger);
 
         // when
-        when(passengerService.findById(id)).thenReturn(Optional.of(passenger));
+        mockMvc.perform(get("/passenger/" + id))
+                .andDo(print())
 
-        mockMvc.perform(get("/passenger/" + id)
-        ).andDo(print())
+                // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/html;charset=UTF-8"))
                 .andExpect(view().name("passenger"))
                 .andExpect(model().attribute("isNew", is(false)))
-                .andExpect(model().attribute("passenger", is(passenger)))
-        ;
+                .andExpect(model().attribute("passenger", is(passenger)));
+        verify(passengerService).findById(id);
     }
 
     @Test
     public void shouldRedirectToErrorPageIfPassengerNotFoundById() throws Exception {
+        LOGGER.info("shouldRedirectToErrorPageIfPassengerNotFoundById()");
 
         // given
         Integer id = 9;
+        ErrorMessage message = new ErrorMessage("none");
+        when(passengerService.findById(id)).thenThrow(getNotFoundErrorException(message));
 
         // when
-        when(passengerService.findById(id)).thenReturn(Optional.empty());
-
-        mockMvc.perform(get("/passenger/1")
-        ).andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/error"))
+        mockMvc.perform(get("/passenger/" + id)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("We're sorry, but we can't find record for this passenger.")))
-        ;
+                        is("We're sorry, but we can't find anything about this.")))
+                .andExpect(model().attribute("errorDescription",
+                        is("none")));
+        verify(passengerService).findById(id);
     }
 
     @Test
-    public void shouldUpdatePassengerAfterEdit() throws Exception {
+    public void shouldUpdatePassenger() throws Exception {
+        LOGGER.info("shouldUpdatePassenger()");
+
+        // given
+        Integer id = 1;
+        Passenger passenger = new Passenger(id, "Alice", 1);
+        when(passengerService.updatePassenger(passenger)).thenReturn(1);
 
         // when
-        when(this.passengerService.updatePassenger(any())).thenReturn(new Acknowledgement(
-                "OK",
-                "Passenger id: 42 was successfully updated"));
+        mockMvc.perform(post("/passenger/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(passenger)))
 
-        mockMvc.perform(post("/passenger/42")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("passengerName", "passengerName")
-        ).andExpect(status().isFound())
+                // then
+                .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/passengers"))
-                .andExpect(redirectedUrl("/passengers"))
-        ;
+                .andExpect(redirectedUrl("/passengers"));
+        verify(passengerService).updatePassenger(passenger);
     }
 
     @Test
     public void shouldNotUpdatePassengerBecauseEmptyName() throws Exception {
-        mockMvc.perform(post("/passenger/1")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("passengerName", (String) null)
-        ).andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/error"))
+        LOGGER.info("shouldNotUpdatePassengerBecauseEmptyName()");
+
+        // given
+        Integer id = 1;
+        Passenger passenger = new Passenger(id, null, 1);
+
+        // when
+        mockMvc.perform(post("/passenger/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(passenger)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Update fail. Passenger name can't be empty")))
-        ;
+                        is("We don't know how it happened, but there was a mistake in the data you entered.")))
+                .andExpect(model().attribute("errorDescription",
+                        is(PASSENGER_BLANK_NAME_WARN)));
     }
 
     @Test
     public void shouldNotUpdatePassengerBecauseOverlongName() throws Exception {
-        String passengerName = getOverlongName();
-        mockMvc.perform(post("/passenger/1")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("passengerName", passengerName)
-        ).andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/error"))
+        LOGGER.info("shouldNotUpdatePassengerBecauseOverlongName()");
+
+        // given
+        Integer id = 1;
+        String longName = getOverlongName();
+        Passenger passenger = new Passenger(id, longName, 1);
+
+        // when
+        mockMvc.perform(post("/passenger/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(passenger)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("Update fail. Passenger name " + passengerName + " is too long")))
-        ;
+                        is("We don't know how it happened, but there was a mistake in the data you entered.")))
+                .andExpect(model().attribute("errorDescription",
+                        is(PASSENGER_OVERLONG_NAME_WARN)));
     }
 
     @Test
     public void shouldDeletePassengerById() throws Exception {
+        LOGGER.info("shouldDeletePassengerById()");
+
         // given
-        Passenger passenger = new Passenger("PassengerName");
         Integer id = 42;
-        passenger.setPassengerId(id);
+        when(passengerService.deleteById(id)).thenReturn(1);
 
         // when
-        when(passengerService.findById(id)).thenReturn(Optional.of(passenger));
-
         mockMvc.perform(get("/passenger/" + id + "/delete")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-        ).andExpect(status().isFound())
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                // then
+                .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/passengers"))
                 .andExpect(redirectedUrl("/passengers"));
+        verify(passengerService).deleteById(id);
     }
 
     @Test
     public void shouldReturnErrorPageIfTryToDeleteUnknownId() throws Exception {
+        LOGGER.info("shouldReturnErrorPageIfTryToDeleteUnknownId()");
 
         // given
-        Integer id = 42;
+        Integer id = 9;
+        ErrorMessage message = new ErrorMessage("help");
+        when(passengerService.deleteById(id)).thenThrow(getNotFoundErrorException(message));
 
         // when
-        when(passengerService.findById(id)).thenReturn(Optional.empty());
-
         mockMvc.perform(get("/passenger/" + id + "/delete")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-        ).andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isFound())
-                .andExpect(view().name("redirect:/error"))
+                        .contentType(MediaType.APPLICATION_JSON))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
-                        is("We're sorry, but we can't find record for delete this passenger.")))
-        ;
+                        is("We're sorry, but we can't find anything about this.")))
+                .andExpect(model().attribute("errorDescription",
+                        is("help")));
+        verify(passengerService).deleteById(id);
+    }
+
+    private HttpClientErrorException getNotFoundErrorException(ErrorMessage message) throws JsonProcessingException {
+        return HttpClientErrorException.create(
+                HttpStatus.NOT_FOUND,
+                "none",
+                null,
+                mapper.writeValueAsString(message).getBytes(),
+                null);
     }
 
     private String getOverlongName() {
