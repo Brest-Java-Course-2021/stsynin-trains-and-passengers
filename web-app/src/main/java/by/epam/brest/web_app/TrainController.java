@@ -93,7 +93,7 @@ public class TrainController {
     }
 
     /**
-     * Save new train information into storage. Check name & destination for null and length.
+     * Save new train information into storage.
      *
      * @param train new train data.
      * @return view trains.
@@ -107,18 +107,17 @@ public class TrainController {
     }
 
     /**
-     * Update train information in storage. Check name & destination for null and length.
+     * Update train information in storage.
      *
      * @param train updated train data.
-     * @return view trains or view error.
+     * @return view trains.
      */
     @PostMapping(value = "/train/{id}")
     public String updateTrain(@Valid @RequestBody Train train) {
         LOGGER.info(" IN: updateTrain() - [{}]", train);
         Integer count = trainService.updateTrain(train);
-        LOGGER.debug("OUT: updateTrain() - updated: [{}]", count);
+        LOGGER.info("OUT: updateTrain() - updated: [{}]", count);
         return "redirect:/trains";
-
     }
 
     /**

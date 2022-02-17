@@ -18,7 +18,7 @@ public class PassengerDtoDaoJdbc implements PassengerDtoDao {
     @Value("${PSG.sqlFindAllPassengersWithTrainName}")
     private String sqlFindAllPassengersWithTrainName;
 
-    Logger logger = LoggerFactory.getLogger(TrainDtoDaoJdbc.class);
+    Logger logger = LoggerFactory.getLogger(PassengerDtoDaoJdbc.class);
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 

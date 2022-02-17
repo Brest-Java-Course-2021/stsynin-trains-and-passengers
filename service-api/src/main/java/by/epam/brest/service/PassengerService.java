@@ -7,25 +7,25 @@ import java.util.List;
 public interface PassengerService {
 
     /**
-     * Get all passengers from the database.
+     * Get all passengers list.
      *
      * @return passengers list.
      */
     List<Passenger> findAll();
 
     /**
-     * Get passenger by Id.
+     * Get passenger by id.
      *
-     * @param passengerId passenger Id.
+     * @param id passenger id.
      * @return passenger.
      */
-    Passenger findById(Integer passengerId);
+    Passenger findById(Integer id);
 
     /**
-     * Save new passenger record.
+     * Save the new passenger.
      *
      * @param passenger object.
-     * @return saved passenger Id.
+     * @return new passenger id.
      */
     Integer createPassenger(Passenger passenger);
 
@@ -38,22 +38,17 @@ public interface PassengerService {
     Integer updatePassenger(Passenger passenger);
 
     /**
-     * Delete passenger by Id.
+     * Delete passenger by id.
      *
-     * @param passengerId train Id.
+     * @param id train Id.
      * @return number of deleted passengers in the database.
      */
-    Integer deletePassenger(Integer passengerId);
+    Integer deleteById(Integer id);
 
     /**
-     * Get number of passengers in the database.
+     * Get count of passengers in the database.
      *
-     * @return number of passengers in the database.
+     * @return count of passengers in the database.
      */
     Integer getPassengersCount();
-
-    /**
-     * Check if this name of passenger is exist in the database.
-     */
-    boolean isSecondPassengerWithSameNameExists(Passenger passenger);
 }

@@ -36,6 +36,19 @@ public class PassengerDto {
     }
 
     /**
+     * Constructor with all parameters.
+     *
+     * @param passengerId        passenger id.
+     * @param passengerName      passenger name.
+     * @param passengerTrainName passenger's train name.
+     */
+    public PassengerDto(Integer passengerId, String passengerName, String passengerTrainName) {
+        this.passengerId = passengerId;
+        this.passengerName = passengerName;
+        this.passengerTrainName = passengerTrainName;
+    }
+
+    /**
      * Returns <code>Integer</code> representation of this passengerId.
      *
      * @return passenger id.

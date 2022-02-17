@@ -4,14 +4,14 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
-import static by.epam.brest.model.constants.PassengerConstants.MAX_PASSENGER_NAME_LENGTH;
+import static by.epam.brest.model.constants.PassengerConstants.*;
 
 public class Passenger {
 
     private Integer passengerId;
 
-    @NotBlank(message = "Passenger name can't be empty")
-    @Size(max = MAX_PASSENGER_NAME_LENGTH, message = "This name is too long")
+    @NotBlank(message = PASSENGER_BLANK_NAME_WARN)
+    @Size(max = MAX_PASSENGER_NAME_LENGTH, message = PASSENGER_OVERLONG_NAME_WARN)
     private String passengerName;
 
     private Integer trainId;

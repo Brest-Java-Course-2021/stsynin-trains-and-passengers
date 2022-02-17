@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static by.epam.brest.model.constants.PassengerConstants.MAX_PASSENGER_NAME_LENGTH;
+import static by.epam.brest.model.constants.PassengerConstants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -156,7 +156,7 @@ class PassengerRestControllerIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message")
-                        .value("Passenger name can't be empty"));
+                        .value(PASSENGER_BLANK_NAME_WARN));
     }
 
     @Test
@@ -179,7 +179,7 @@ class PassengerRestControllerIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message")
-                        .value("This name is too long"));
+                        .value(PASSENGER_OVERLONG_NAME_WARN));
     }
 
     @Test
@@ -222,7 +222,7 @@ class PassengerRestControllerIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message")
-                        .value("Passenger name can't be empty"));
+                        .value(PASSENGER_BLANK_NAME_WARN));
     }
 
     @Test
@@ -245,7 +245,7 @@ class PassengerRestControllerIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.message")
-                        .value("This name is too long"));
+                        .value(PASSENGER_OVERLONG_NAME_WARN));
     }
 
     @Test
