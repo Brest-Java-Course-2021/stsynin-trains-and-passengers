@@ -5,7 +5,7 @@ import by.epam.brest.model.exception.ValidationErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
@@ -64,22 +64,23 @@ public class WebExceptionHandler {
         return errorPage;
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ModelAndView handleAutoValidationError(MethodArgumentNotValidException e) {
+    @ExceptionHandler(BindException.class)
+    public ModelAndView handleBindException(BindException e) {
         String errorMessage = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
-        LOGGER.error(" IN: handleAutoValidationError - [{}]", errorMessage);
+        LOGGER.error(" IN: handleBindException - [{}]", errorMessage);
+//        LOGGER.error(" IN: handleBindException - [{}]", errorMessage, e);
         ModelAndView errorPage = new ModelAndView("error");
         errorPage.addObject("errorMessage",
                 "We don't know how it happened, but there was a mistake in the data you entered.");
         errorPage.addObject("errorDescription", errorMessage);
-        LOGGER.error("OUT: handleAutoValidationError - [errorPage]");
+        LOGGER.error("OUT: handleBindException - [errorPage]");
         return errorPage;
     }
 
     @ExceptionHandler(Exception.class)
     public ModelAndView handleOtherException(Exception e) {
         String errorMessage = e.getMessage();
-        LOGGER.error("OUT: handleOtherException - [{}]", errorMessage);
+        LOGGER.error("OUT: handleOtherException - [{}]", errorMessage, e);
         ModelAndView errorPage = new ModelAndView("error");
         errorPage.addObject("errorMessage", "Unknown Error");
         errorPage.addObject("errorDescription", errorMessage);

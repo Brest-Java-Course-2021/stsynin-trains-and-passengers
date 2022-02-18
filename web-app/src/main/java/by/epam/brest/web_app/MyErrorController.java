@@ -44,7 +44,7 @@ public class MyErrorController implements ErrorController {
     }
 
     private String getErrorMessage(int statusCode) {
-        String errorMsg = "";
+        String errorMsg = "Really unknown error";
         switch (statusCode) {
             case 404: {
                 errorMsg = "Http Error Code: 404. Resource not found";
