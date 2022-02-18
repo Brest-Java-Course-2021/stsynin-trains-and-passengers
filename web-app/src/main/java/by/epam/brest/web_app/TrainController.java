@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -99,7 +102,7 @@ public class TrainController {
      * @return view trains.
      */
     @PostMapping(value = "/train")
-    public String addTrain(@Valid @RequestBody Train train) {
+    public String addTrain(@Valid Train train) {
         LOGGER.info(" IN: addTrain() - [{}]", train);
         Integer newId = trainService.createTrain(train);
         LOGGER.info("OUT: addTrain() - new train id: [{}]", newId);
@@ -113,7 +116,7 @@ public class TrainController {
      * @return view trains.
      */
     @PostMapping(value = "/train/{id}")
-    public String updateTrain(@Valid @RequestBody Train train) {
+    public String updateTrain(@Valid Train train) {
         LOGGER.info(" IN: updateTrain() - [{}]", train);
         Integer count = trainService.updateTrain(train);
         LOGGER.info("OUT: updateTrain() - updated: [{}]", count);
