@@ -16,8 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Arrays;
@@ -99,8 +100,7 @@ public class PassengerControllerTest {
 
         // when
         mockMvc.perform(post("/passenger")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(passenger)))
+                        .params(getParameters(passenger)))
 
                 .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/passengers"))
@@ -117,8 +117,7 @@ public class PassengerControllerTest {
 
         // when
         mockMvc.perform(post("/passenger")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(passenger)))
+                        .params(getParameters(passenger)))
 
                 // then
                 .andExpect(status().isOk())
@@ -139,8 +138,7 @@ public class PassengerControllerTest {
 
         // when
         mockMvc.perform(post("/passenger")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(passenger)))
+                        .params(getParameters(passenger)))
 
                 // then
                 .andExpect(status().isOk())
@@ -183,6 +181,8 @@ public class PassengerControllerTest {
 
         // when
         mockMvc.perform(get("/passenger/" + id))
+
+                // then
                 .andExpect(status().isOk())
                 .andExpect(view().name("error"))
                 .andExpect(model().attribute("errorMessage",
@@ -203,8 +203,7 @@ public class PassengerControllerTest {
 
         // when
         mockMvc.perform(post("/passenger/" + id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(passenger)))
+                        .params(getParameters(passenger)))
 
                 // then
                 .andExpect(status().isFound())
@@ -223,8 +222,7 @@ public class PassengerControllerTest {
 
         // when
         mockMvc.perform(post("/passenger/" + id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(passenger)))
+                        .params(getParameters(passenger)))
 
                 // then
                 .andExpect(status().isOk())
@@ -246,8 +244,7 @@ public class PassengerControllerTest {
 
         // when
         mockMvc.perform(post("/passenger/" + id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(passenger)))
+                        .params(getParameters(passenger)))
 
                 // then
                 .andExpect(status().isOk())
@@ -267,8 +264,7 @@ public class PassengerControllerTest {
         when(passengerService.deleteById(id)).thenReturn(1);
 
         // when
-        mockMvc.perform(get("/passenger/" + id + "/delete")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/passenger/" + id + "/delete"))
 
                 // then
                 .andExpect(status().isFound())
@@ -287,8 +283,7 @@ public class PassengerControllerTest {
         when(passengerService.deleteById(id)).thenThrow(getNotFoundErrorException(message));
 
         // when
-        mockMvc.perform(get("/passenger/" + id + "/delete")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/passenger/" + id + "/delete"))
 
                 // then
                 .andExpect(status().isOk())
@@ -307,6 +302,17 @@ public class PassengerControllerTest {
                 null,
                 mapper.writeValueAsString(message).getBytes(),
                 null);
+    }
+
+    private MultiValueMap<String, String> getParameters(Passenger passenger) {
+        MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
+        multiValueMap.add("passengerId",
+                passenger.getPassengerId() == null ? null : String.valueOf(passenger.getPassengerId()));
+        multiValueMap.add("passengerName",
+                passenger.getPassengerName() == null ? null : passenger.getPassengerName());
+        multiValueMap.add("trainId",
+                passenger.getTrainId() == null ? null : String.valueOf(passenger.getTrainId()));
+        return multiValueMap;
     }
 
     private String getOverlongName() {

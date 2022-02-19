@@ -13,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -48,7 +47,7 @@ public class PassengerController {
         LOGGER.info(" IN: passengers() - []");
         List<PassengerDto> passengers = passengerDtoService.findAllPassengersWithTrainName();
         model.addAttribute("passengers", passengers);
-        LOGGER.info("OUT: passengers() - [found {} passenger(s)]", passengers);
+        LOGGER.info("OUT: passengers() - [found {} passenger(s)]", passengers.size());
         return "passengers";
     }
 
@@ -93,7 +92,7 @@ public class PassengerController {
      * @return view passengers.
      */
     @PostMapping(value = "/passenger")
-    public String addPassenger(@Valid @RequestBody Passenger passenger) {
+    public String addPassenger(@Valid Passenger passenger) {
         LOGGER.info(" IN: addPassenger() - [{}]", passenger);
         Integer id = passengerService.createPassenger(passenger);
         LOGGER.info("OUT: addPassenger() - [new passenger id:{}]", id);
@@ -107,7 +106,7 @@ public class PassengerController {
      * @return view passengers.
      */
     @PostMapping(value = "/passenger/{id}")
-    public String updatePassenger(@Valid @RequestBody Passenger passenger) {
+    public String updatePassenger(@Valid Passenger passenger) {
         LOGGER.info(" IN: updatePassenger() - [{}]", passenger);
         Integer count = passengerService.updatePassenger(passenger);
         LOGGER.info("OUT: updatePassenger() - updated: [{}]", count);

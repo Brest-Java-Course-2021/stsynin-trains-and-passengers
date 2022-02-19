@@ -17,6 +17,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDate;
@@ -159,13 +161,12 @@ class TrainControllerTest {
         LOGGER.info("shouldAddNewTrain()");
 
         // given
-        Train train = new Train(null, "new", "nowhere", LocalDate.now());
+        Train train = new Train(null, "new", "nowhere", null);
         when(trainService.createTrain(train)).thenReturn(69);
 
         // when
         mockMvc.perform(post("/train")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train)))
+                        .params(getParameters(train)))
 
                 // then
                 .andExpect(status().isFound())
@@ -179,12 +180,11 @@ class TrainControllerTest {
         LOGGER.info("shouldNotAddNewTrainBecauseEmptyName()");
 
         // given
-        Train train = new Train(null, null, "nowhere", LocalDate.now());
+        Train train = new Train(null, null, "nowhere", null);
 
         // when
         mockMvc.perform(post("/train")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train)))
+                        .params(getParameters(train)))
 
                 // then
                 .andExpect(status().isOk())
@@ -201,12 +201,11 @@ class TrainControllerTest {
 
         // given
         String trainName = getOverlongName();
-        Train train = new Train(null, trainName, "nowhere", LocalDate.now());
+        Train train = new Train(null, trainName, "nowhere", null);
 
         // when
         mockMvc.perform(post("/train")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train)))
+                        .params(getParameters(train)))
 
                 // then
                 .andExpect(status().isOk())
@@ -223,12 +222,11 @@ class TrainControllerTest {
 
         // given
         String trainDestination = getOverlongDestinationName();
-        Train train = new Train(null, "new", trainDestination, LocalDate.now());
+        Train train = new Train(null, "new", trainDestination, null);
 
         // when
         mockMvc.perform(post("/train")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train)))
+                        .params(getParameters(train)))
 
                 // then
                 .andExpect(status().isOk())
@@ -244,13 +242,12 @@ class TrainControllerTest {
         LOGGER.info("shouldUpdateTrain()");
 
         // given
-        Train train = new Train(44, "new", "trainDestination", LocalDate.now());
+        Train train = new Train(44, "new", "trainDestination", null);
         when(trainService.updateTrain(train)).thenReturn(1);
 
         // when
         mockMvc.perform(post("/train/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train)))
+                        .params(getParameters(train)))
 
                 // then
                 .andExpect(status().isFound())
@@ -264,12 +261,11 @@ class TrainControllerTest {
         LOGGER.info("()");
 
         // given
-        Train train = new Train(44, null, "trainDestination", LocalDate.now());
+        Train train = new Train(44, null, "trainDestination", null);
 
         // when
         mockMvc.perform(post("/train/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train)))
+                        .params(getParameters(train)))
 
                 // then
                 .andExpect(status().isOk())
@@ -286,12 +282,11 @@ class TrainControllerTest {
 
         // given
         String trainName = getOverlongName();
-        Train train = new Train(44, trainName, "trainDestination", LocalDate.now());
+        Train train = new Train(44, trainName, "trainDestination", null);
 
         // when
         mockMvc.perform(post("/train/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train)))
+                        .params(getParameters(train)))
 
                 // then
                 .andExpect(status().isOk())
@@ -304,16 +299,15 @@ class TrainControllerTest {
 
     @Test
     public void shouldNotUpdateTrainBecauseOverlongDestinationName() throws Exception {
-        LOGGER.info("()");
+        LOGGER.info("shouldNotUpdateTrainBecauseOverlongDestinationName()");
 
         // given
         String trainDestination = getOverlongDestinationName();
-        Train train = new Train(44, "new", trainDestination, LocalDate.now());
+        Train train = new Train(44, "new", trainDestination, null);
 
         // when
         mockMvc.perform(post("/train/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(train)))
+                        .params(getParameters(train)))
 
                 // then
                 .andExpect(status().isOk())
@@ -333,8 +327,7 @@ class TrainControllerTest {
         when(trainService.deleteById(id)).thenReturn(1);
 
         // when
-        mockMvc.perform(get("/train/" + id + "/delete")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/train/" + id + "/delete"))
 
                 // then
                 .andExpect(status().isFound())
@@ -353,8 +346,7 @@ class TrainControllerTest {
         when(trainService.deleteById(id)).thenThrow(getNotFoundErrorException(message));
 
         // when
-        mockMvc.perform(get("/train/" + id + "/delete")
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/train/" + id + "/delete"))
 
                 // then
                 .andExpect(status().isOk())
@@ -383,7 +375,7 @@ class TrainControllerTest {
 
         // when
         mockMvc.perform(get("/train/" + id + "/delete")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
 
                 // then
                 .andExpect(status().isOk())
@@ -402,6 +394,14 @@ class TrainControllerTest {
                 null,
                 mapper.writeValueAsString(message).getBytes(),
                 null);
+    }
+
+    private MultiValueMap<String, String> getParameters(Train train) {
+        MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
+        multiValueMap.add("trainId", train.getTrainId() == null ? null : String.valueOf(train.getTrainId()));
+        multiValueMap.add("trainName", train.getTrainName() == null ? null : train.getTrainName());
+        multiValueMap.add("trainDestination", train.getTrainDestination());
+        return multiValueMap;
     }
 
     private String getOverlongName() {
